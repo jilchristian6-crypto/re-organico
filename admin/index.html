@@ -18,8 +18,8 @@
 
             <div class="acceso-tarjeta">
                 <div class="acceso-icono" aria-hidden="true">🔐</div>
-                <h1>Acceso administrativo</h1>
-                <p>
+                <h1 id="titulo-acceso">Acceso administrativo</h1>
+                <p id="descripcion-acceso">
                     Solo el administrador autorizado puede modificar el catálogo.
                     Los clientes no tienen acceso a esta sección.
                 </p>
@@ -36,6 +36,34 @@
 
                     <button class="boton-principal" id="boton-login" type="submit">
                         Iniciar sesión
+                    </button>
+                </form>
+
+                <form id="formulario-recuperacion" class="formulario-login" hidden>
+                    <label for="nueva-password">Nueva contraseña</label>
+                    <div class="campo-password">
+                        <input
+                            id="nueva-password"
+                            type="password"
+                            autocomplete="new-password"
+                            minlength="8"
+                            required
+                        >
+                    </div>
+
+                    <label for="repetir-password">Repetir contraseña</label>
+                    <div class="campo-password">
+                        <input
+                            id="repetir-password"
+                            type="password"
+                            autocomplete="new-password"
+                            minlength="8"
+                            required
+                        >
+                    </div>
+
+                    <button class="boton-principal" id="boton-recuperacion" type="submit">
+                        Guardar nueva contraseña
                     </button>
                 </form>
 

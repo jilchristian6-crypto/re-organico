@@ -17,6 +17,7 @@ let clienteSupabase = null;
 let productos = [];
 let usuarioActual = null;
 let temporizadorToast = null;
+let modoRecuperacion = false;
 
 const elementos = {
     vistaAcceso: document.getElementById("vista-acceso"),
@@ -27,6 +28,12 @@ const elementos = {
     botonLogin: document.getElementById("boton-login"),
     mostrarPassword: document.getElementById("mostrar-password"),
     mensajeLogin: document.getElementById("mensaje-login"),
+    tituloAcceso: document.getElementById("titulo-acceso"),
+    descripcionAcceso: document.getElementById("descripcion-acceso"),
+    formularioRecuperacion: document.getElementById("formulario-recuperacion"),
+    nuevaPassword: document.getElementById("nueva-password"),
+    repetirPassword: document.getElementById("repetir-password"),
+    botonRecuperacion: document.getElementById("boton-recuperacion"),
     correoAdmin: document.getElementById("correo-admin"),
     cerrarSesion: document.getElementById("cerrar-sesion"),
     nuevoProducto: document.getElementById("nuevo-producto"),
@@ -72,6 +79,27 @@ async function inicializar() {
         configuracion.anonKey
     );
 
+    clienteSupabase.auth.onAuthStateChange(async (evento, sessionActual) => {
+        if (evento === "PASSWORD_RECOVERY") {
+            modoRecuperacion = true;
+            mostrarVistaRecuperacion();
+            return;
+        }
+
+        if (evento === "SIGNED_OUT") {
+            usuarioActual = null;
+
+            if (!modoRecuperacion) {
+                mostrarVistaAcceso();
+            }
+            return;
+        }
+
+        if (evento === "TOKEN_REFRESHED" && sessionActual?.user) {
+            usuarioActual = sessionActual.user;
+        }
+    });
+
     const {
         data: { session },
         error
@@ -82,20 +110,9 @@ async function inicializar() {
         return;
     }
 
-    if (session?.user) {
+    if (session?.user && !modoRecuperacion) {
         await autorizarYMostrarPanel(session.user);
     }
-
-    clienteSupabase.auth.onAuthStateChange(async (evento, sessionActual) => {
-        if (evento === "SIGNED_OUT") {
-            usuarioActual = null;
-            mostrarVistaAcceso();
-        }
-
-        if (evento === "TOKEN_REFRESHED" && sessionActual?.user) {
-            usuarioActual = sessionActual.user;
-        }
-    });
 }
 
 function configuracionValida(configuracion) {
@@ -109,6 +126,7 @@ function configuracionValida(configuracion) {
 
 function registrarEventos() {
     elementos.formularioLogin.addEventListener("submit", iniciarSesion);
+    elementos.formularioRecuperacion.addEventListener("submit", guardarNuevaPassword);
     elementos.mostrarPassword.addEventListener("click", alternarPassword);
     elementos.cerrarSesion.addEventListener("click", cerrarSesion);
     elementos.formularioProducto.addEventListener("submit", guardarProducto);
@@ -133,6 +151,80 @@ function alternarPassword() {
     const visible = elementos.password.type === "text";
     elementos.password.type = visible ? "password" : "text";
     elementos.mostrarPassword.textContent = visible ? "👁️" : "🙈";
+}
+
+function mostrarVistaRecuperacion() {
+    elementos.vistaPanel.hidden = true;
+    elementos.vistaAcceso.hidden = false;
+    elementos.formularioLogin.hidden = true;
+    elementos.formularioRecuperacion.hidden = false;
+    elementos.tituloAcceso.textContent = "Crear nueva contraseña";
+    elementos.descripcionAcceso.textContent =
+        "Escribe y confirma la nueva contraseña de tu cuenta administrativa.";
+
+    limpiarMensaje(elementos.mensajeLogin);
+    elementos.nuevaPassword.focus();
+}
+
+async function guardarNuevaPassword(evento) {
+    evento.preventDefault();
+    limpiarMensaje(elementos.mensajeLogin);
+
+    const nuevaPassword = elementos.nuevaPassword.value;
+    const repetirPassword = elementos.repetirPassword.value;
+
+    if (nuevaPassword.length < 8) {
+        mostrarMensaje(
+            elementos.mensajeLogin,
+            "La contraseña debe tener por lo menos 8 caracteres."
+        );
+        return;
+    }
+
+    if (nuevaPassword !== repetirPassword) {
+        mostrarMensaje(elementos.mensajeLogin, "Las contraseñas no coinciden.");
+        return;
+    }
+
+    cambiarEstadoBoton(elementos.botonRecuperacion, true, "Guardando...");
+
+    const { error } = await clienteSupabase.auth.updateUser({
+        password: nuevaPassword
+    });
+
+    cambiarEstadoBoton(
+        elementos.botonRecuperacion,
+        false,
+        "Guardar nueva contraseña"
+    );
+
+    if (error) {
+        console.error("No se pudo cambiar la contraseña:", error);
+        mostrarMensaje(
+            elementos.mensajeLogin,
+            "No se pudo cambiar la contraseña. Solicita un enlace nuevo."
+        );
+        return;
+    }
+
+    elementos.formularioRecuperacion.reset();
+    modoRecuperacion = false;
+
+    window.history.replaceState({}, document.title, window.location.pathname);
+
+    await clienteSupabase.auth.signOut();
+
+    elementos.formularioRecuperacion.hidden = true;
+    elementos.formularioLogin.hidden = false;
+    elementos.tituloAcceso.textContent = "Acceso administrativo";
+    elementos.descripcionAcceso.textContent =
+        "Solo el administrador autorizado puede modificar el catálogo. Los clientes no tienen acceso a esta sección.";
+
+    mostrarMensaje(
+        elementos.mensajeLogin,
+        "Contraseña actualizada correctamente. Ya puedes iniciar sesión.",
+        true
+    );
 }
 
 async function iniciarSesion(evento) {
@@ -213,6 +305,11 @@ async function verificarAdministrador(userId) {
 function mostrarVistaAcceso() {
     elementos.vistaPanel.hidden = true;
     elementos.vistaAcceso.hidden = false;
+    elementos.formularioRecuperacion.hidden = true;
+    elementos.formularioLogin.hidden = false;
+    elementos.tituloAcceso.textContent = "Acceso administrativo";
+    elementos.descripcionAcceso.textContent =
+        "Solo el administrador autorizado puede modificar el catálogo. Los clientes no tienen acceso a esta sección.";
     elementos.password.value = "";
 }
 

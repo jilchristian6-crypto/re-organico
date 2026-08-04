@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Re Orgánico: catálogo de productos naturales, cuidado personal y hogar. Consulta disponibilidad y arma tu pedido por WhatsApp.">
+    <meta name="theme-color" content="#1f4d3a">
+
+    <meta property="og:title" content="Re Orgánico | Productos naturales">
+    <meta property="og:description" content="Productos naturales para una vida más consciente.">
+    <meta property="og:type" content="website">
+
+    <title>Re Orgánico | Productos naturales</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="encabezado" id="encabezado">
+        <nav class="contenedor navegacion" aria-label="Navegación principal">
+            <a href="#inicio" class="logo" aria-label="Ir al inicio">
+                Re <span>Orgánico</span>
+            </a>
+
+            <button class="boton-menu" id="boton-menu" type="button" aria-label="Abrir menú" aria-expanded="false">
+                ☰
+            </button>
+
+            <ul class="menu" id="menu">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#productos">Productos</a></li>
+                <li><a href="#nosotros">Nosotros</a></li>
+                <li><a href="#preguntas">Preguntas</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+
+            <div class="acciones-navegacion">
+
+                <button class="boton-carrito-menu" id="abrir-carrito" type="button" aria-label="Abrir carrito de cotización">
+                    🛒
+                    <span id="contador-carrito">0</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" id="inicio">
+            <div class="contenedor hero-contenido">
+                <div class="hero-texto revelar">
+                    <span class="etiqueta">🌿 Productos naturales y conscientes</span>
+
+                    <h1>
+                        Vuelve a lo natural con
+                        <strong>Re Orgánico</strong>
+                    </h1>
+
+                    <p>
+                        Descubre productos seleccionados para cuidar tu bienestar,
+                        tu hogar y el medioambiente.
+                    </p>
+
+                    <div class="hero-botones">
+                        <a href="#productos" class="boton boton-principal">Ver productos</a>
+                        <button class="boton boton-secundario" id="hero-abrir-carrito" type="button">
+                            Armar mi pedido
+                        </button>
+                    </div>
+
+                    <div class="beneficios">
+                        <div class="beneficio">
+                            <strong>Selección</strong>
+                            <span>Natural y responsable</span>
+                        </div>
+                        <div class="beneficio">
+                            <strong>Pedido</strong>
+                            <span>Fácil por WhatsApp</span>
+                        </div>
+                        <div class="beneficio">
+                            <strong>Atención</strong>
+                            <span>Personalizada</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-imagen revelar">
+                    <div class="circulo-decorativo"></div>
+
+                    <div class="tarjeta-portada">
+                        <div class="hojas-portada" aria-hidden="true">
+                            <span>🌿</span>
+                            <span>🍃</span>
+                            <span>🌱</span>
+                        </div>
+
+                        <span class="mini-etiqueta">Re Orgánico</span>
+                        <h2>Una vitrina natural, cercana y moderna</h2>
+                        <p>
+                            Explora el catálogo, revisa la disponibilidad y reúne
+                            varios productos en una sola cotización.
+                        </p>
+
+                        <div class="producto-destacado">
+                            <span>♻️</span>
+                            <div>
+                                <strong>Compra consciente</strong>
+                                <small>Elige lo que realmente necesitas</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="seccion-productos" id="productos">
+            <div class="contenedor">
+                <div class="titulo-seccion revelar">
+                    <span>Catálogo natural</span>
+                    <h2>Productos seleccionados para ti</h2>
+                    <p>
+                        Busca, filtra y agrega productos a tu cotización. Los precios
+                        y estados son actualizados únicamente por el administrador.
+                    </p>
+                </div>
+
+                <div class="herramientas-catalogo revelar">
+                    <label class="buscador-productos" for="buscador-productos">
+                        <span>🔍</span>
+                        <input
+                            id="buscador-productos"
+                            type="search"
+                            placeholder="Buscar un producto..."
+                            autocomplete="off"
+                        >
+                        <button id="limpiar-busqueda" type="button" aria-label="Limpiar búsqueda">×</button>
+                    </label>
+
+                    <p id="contador-productos" class="contador-productos"></p>
+                </div>
+
+                <div class="filtros-productos revelar" id="filtros-productos">
+                    <button class="filtro activo" type="button" data-categoria="todos">Todos</button>
+                    <button class="filtro" type="button" data-categoria="alimentos">Alimentos</button>
+                    <button class="filtro" type="button" data-categoria="cuidado">Cuidado personal</button>
+                    <button class="filtro" type="button" data-categoria="hogar">Hogar</button>
+                </div>
+
+                <div class="lista-productos" id="lista-productos"></div>
+
+                <div class="sin-resultados" id="sin-resultados" hidden>
+                    <span>🌿</span>
+                    <h3>No encontramos ese producto</h3>
+                    <p>Prueba con otro nombre o selecciona una categoría diferente.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="seccion-ventajas">
+            <div class="contenedor">
+                <div class="titulo-seccion revelar">
+                    <span>Nuestra esencia</span>
+                    <h2>Elegir mejor también puede ser sencillo</h2>
+                    <p>Una experiencia pensada para informar, orientar y facilitar cada consulta.</p>
+                </div>
+
+                <div class="lista-ventajas">
+                    <article class="tarjeta-ventaja revelar">
+                        <div class="ventaja-icono">🌱</div>
+                        <h3>Selección consciente</h3>
+                        <p>Productos organizados por categoría, precio y disponibilidad.</p>
+                    </article>
+
+                    <article class="tarjeta-ventaja revelar">
+                        <div class="ventaja-icono">🛒</div>
+                        <h3>Cotización simple</h3>
+                        <p>Agrega varios productos, ajusta cantidades y envía un solo mensaje.</p>
+                    </article>
+
+                    <article class="tarjeta-ventaja revelar">
+                        <div class="ventaja-icono">🤝</div>
+                        <h3>Atención cercana</h3>
+                        <p>La compra se confirma personalmente por WhatsApp antes de coordinar.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="seccion-nosotros" id="nosotros">
+            <div class="contenedor nosotros-contenido">
+                <div class="nosotros-visual revelar">
+                    <div class="nosotros-fondo"></div>
+                    <div class="nosotros-tarjeta">
+                        <span class="nosotros-icono">🌿</span>
+                        <strong>Re Orgánico</strong>
+                        <p>Una forma más natural y consciente de elegir.</p>
+                    </div>
+                </div>
+
+                <div class="nosotros-texto revelar">
+                    <span class="subtitulo">Sobre nosotros</span>
+                    <h2>Una tienda creada para volver a lo esencial</h2>
+                    <p>
+                        En Re Orgánico creemos que cada elección puede aportar al bienestar
+                        personal y al cuidado del medioambiente.
+                    </p>
+                    <p>
+                        Por eso reunimos productos naturales, responsables y cuidadosamente
+                        seleccionados para acompañarte en tu vida diaria.
+                    </p>
+
+                    <div class="nosotros-datos">
+                        <div class="dato-nosotros">
+                            <strong>Calidad</strong>
+                            <span>Productos seleccionados</span>
+                        </div>
+                        <div class="dato-nosotros">
+                            <strong>Cercanía</strong>
+                            <span>Atención personalizada</span>
+                        </div>
+                    </div>
+
+                    <a href="#contacto" class="boton boton-principal">Conocer más</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="seccion-preguntas" id="preguntas">
+            <div class="contenedor">
+                <div class="titulo-seccion revelar">
+                    <span>Resolvemos tus dudas</span>
+                    <h2>Preguntas frecuentes</h2>
+                    <p>Información básica para usar esta vitrina y enviar una cotización.</p>
+                </div>
+
+                <div class="lista-preguntas">
+                    <article class="pregunta revelar">
+                        <button class="pregunta-boton" type="button" aria-expanded="false">
+                            <span>¿Cómo puedo solicitar productos?</span>
+                            <span class="pregunta-icono">+</span>
+                        </button>
+                        <div class="pregunta-respuesta">
+                            <p>Agrega los productos al carrito, ajusta las cantidades y envía la cotización por WhatsApp.</p>
+                        </div>
+                    </article>
+
+                    <article class="pregunta revelar">
+                        <button class="pregunta-boton" type="button" aria-expanded="false">
+                            <span>¿El total se paga directamente en la página?</span>
+                            <span class="pregunta-icono">+</span>
+                        </button>
+                        <div class="pregunta-respuesta">
+                            <p>No. El total es referencial y el pedido se confirma directamente con Re Orgánico.</p>
+                        </div>
+                    </article>
+
+                    <article class="pregunta revelar">
+                        <button class="pregunta-boton" type="button" aria-expanded="false">
+                            <span>¿Cómo sé si un producto está disponible?</span>
+                            <span class="pregunta-icono">+</span>
+                        </button>
+                        <div class="pregunta-respuesta">
+                            <p>Cada tarjeta muestra Disponible, Últimas unidades, A pedido o Agotado.</p>
+                        </div>
+                    </article>
+
+                    <article class="pregunta revelar">
+                        <button class="pregunta-boton" type="button" aria-expanded="false">
+                            <span>¿Los datos se actualizan desde cualquier computador?</span>
+                            <span class="pregunta-icono">+</span>
+                        </button>
+                        <div class="pregunta-respuesta">
+                            <p>Por ahora el panel guarda los cambios en este navegador. Para sincronizar varios dispositivos se conectará una base de datos.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="seccion-contacto" id="contacto">
+            <div class="contenedor contacto-contenido">
+                <div class="contacto-texto revelar">
+                    <span class="subtitulo subtitulo-claro">Hablemos</span>
+                    <h2>¿Buscas un producto en especial?</h2>
+                    <p>
+                        Escríbenos para confirmar disponibilidad, formas de pago,
+                        entrega y cualquier otra característica del producto.
+                    </p>
+
+                    <a id="enlace-whatsapp-contacto" href="#" class="boton-contacto" target="_blank" rel="noopener noreferrer">
+                        💬 Hablar por WhatsApp
+                    </a>
+                </div>
+
+                <div class="contacto-informacion revelar">
+                    <div class="contacto-item">
+                        <div class="contacto-icono">📍</div>
+                        <div>
+                            <span>Ubicación</span>
+                            <strong id="dato-direccion">Dirección por confirmar</strong>
+                        </div>
+                    </div>
+
+                    <div class="contacto-item">
+                        <div class="contacto-icono">📱</div>
+                        <div>
+                            <span>WhatsApp</span>
+                            <strong id="dato-whatsapp">+56 9 0000 0000</strong>
+                        </div>
+                    </div>
+
+                    <div class="contacto-item">
+                        <div class="contacto-icono">📸</div>
+                        <div>
+                            <span>Instagram</span>
+                            <strong id="dato-instagram">@reorganico</strong>
+                        </div>
+                    </div>
+
+                    <div class="contacto-item">
+                        <div class="contacto-icono">🕒</div>
+                        <div>
+                            <span>Horario</span>
+                            <strong id="dato-horario">Horario por confirmar</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contenedor consulta-rapida revelar">
+                <div class="consulta-encabezado">
+                    <span>Consulta personalizada</span>
+                    <h2>Cuéntanos qué producto necesitas</h2>
+                    <p>Completa tus datos y se abrirá WhatsApp con un mensaje preparado.</p>
+                </div>
+
+                <form class="formulario-consulta" id="formulario-consulta">
+                    <div class="campo-formulario">
+                        <label for="nombre-cliente">Nombre</label>
+                        <input id="nombre-cliente" type="text" placeholder="Escribe tu nombre" required>
+                    </div>
+
+                    <div class="campo-formulario">
+                        <label for="producto-consulta">Producto</label>
+                        <select id="producto-consulta" required>
+                            <option value="">Selecciona un producto</option>
+                        </select>
+                    </div>
+
+                    <div class="campo-formulario campo-completo">
+                        <label for="mensaje-consulta">Mensaje</label>
+                        <textarea id="mensaje-consulta" rows="4" placeholder="Quisiera conocer la disponibilidad y forma de entrega."></textarea>
+                    </div>
+
+                    <button class="boton-enviar-consulta" type="submit">💬 Enviar consulta por WhatsApp</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="pie-pagina">
+        <div class="contenedor pie-contenido">
+            <div>
+                <a href="#inicio" class="logo logo-pie">Re <span>Orgánico</span></a>
+                <p>Productos naturales para una vida más consciente.</p>
+            </div>
+
+            <div class="pie-enlaces">
+                <a href="#inicio">Inicio</a>
+                <a href="#productos">Productos</a>
+                <a href="#nosotros">Nosotros</a>
+                <a href="#contacto">Contacto</a>
+            </div>
+        </div>
+
+        <div class="contenedor pie-final">
+            <p>© 2026 Re Orgánico. Todos los derechos reservados.</p>
+            <p>Vitrina digital con cotización por WhatsApp.</p>
+        </div>
+    </footer>
+
+    <button class="boton-volver-arriba" id="volver-arriba" type="button" aria-label="Volver al inicio">↑</button>
+
+    <a id="whatsapp-flotante" href="#" class="whatsapp-flotante" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">
+        💬
+    </a>
+
+    <div class="modal" id="modal-producto" aria-hidden="true">
+        <button class="modal-fondo" type="button" data-cerrar-modal="producto" aria-label="Cerrar detalles"></button>
+        <section class="modal-contenido modal-producto-contenido" role="dialog" aria-modal="true" aria-labelledby="modal-producto-titulo">
+            <button class="modal-cerrar" type="button" data-cerrar-modal="producto" aria-label="Cerrar">×</button>
+            <div class="modal-producto-visual" id="modal-producto-visual"></div>
+            <div class="modal-producto-info">
+                <span class="modal-categoria" id="modal-producto-categoria"></span>
+                <h2 id="modal-producto-titulo"></h2>
+                <p id="modal-producto-descripcion"></p>
+                <div class="modal-producto-precio" id="modal-producto-precio"></div>
+                <button class="boton boton-principal" id="modal-agregar-carrito" type="button">Agregar a la cotización</button>
+            </div>
+        </section>
+    </div>
+
+    <aside class="carrito" id="carrito" aria-hidden="true">
+        <button class="carrito-fondo" id="cerrar-carrito-fondo" type="button" aria-label="Cerrar carrito"></button>
+        <section class="carrito-panel" role="dialog" aria-modal="true" aria-labelledby="carrito-titulo">
+            <header class="carrito-encabezado">
+                <div>
+                    <span>Tu selección</span>
+                    <h2 id="carrito-titulo">Cotización</h2>
+                </div>
+                <button id="cerrar-carrito" type="button" aria-label="Cerrar carrito">×</button>
+            </header>
+
+            <div class="carrito-lista" id="carrito-lista"></div>
+
+            <div class="carrito-vacio" id="carrito-vacio">
+                <span>🛒</span>
+                <h3>Tu cotización está vacía</h3>
+                <p>Agrega productos desde el catálogo.</p>
+            </div>
+
+            <footer class="carrito-resumen">
+                <div>
+                    <span>Total referencial</span>
+                    <strong id="carrito-total">$0</strong>
+                </div>
+                <button class="boton-enviar-pedido" id="enviar-pedido" type="button">
+                    💬 Enviar por WhatsApp
+                </button>
+                <button class="boton-vaciar-carrito" id="vaciar-carrito" type="button">Vaciar cotización</button>
+            </footer>
+        </section>
+    </aside>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

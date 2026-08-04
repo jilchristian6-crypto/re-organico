@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#1f4d3a">
+    <title>Administración | Re Orgánico</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <main class="admin-pagina">
+        <section class="acceso" id="vista-acceso">
+            <div class="acceso-marca">
+                <a href="../index.html" class="logo">Re <span>Orgánico</span></a>
+                <span class="insignia">Panel privado</span>
+            </div>
+
+            <div class="acceso-tarjeta">
+                <div class="acceso-icono" aria-hidden="true">🔐</div>
+                <h1>Acceso administrativo</h1>
+                <p>
+                    Solo el administrador autorizado puede modificar el catálogo.
+                    Los clientes no tienen acceso a esta sección.
+                </p>
+
+                <form id="formulario-login" class="formulario-login">
+                    <label for="login-email">Correo electrónico</label>
+                    <input id="login-email" type="email" autocomplete="username" required>
+
+                    <label for="login-password">Contraseña</label>
+                    <div class="campo-password">
+                        <input id="login-password" type="password" autocomplete="current-password" required>
+                        <button id="mostrar-password" type="button" aria-label="Mostrar u ocultar contraseña">👁️</button>
+                    </div>
+
+                    <button class="boton-principal" id="boton-login" type="submit">
+                        Iniciar sesión
+                    </button>
+                </form>
+
+                <p class="mensaje" id="mensaje-login" role="status" aria-live="polite"></p>
+                <a href="../index.html" class="volver-tienda">← Volver a la tienda</a>
+            </div>
+        </section>
+
+        <section class="panel" id="vista-panel" hidden>
+            <header class="barra-panel">
+                <div>
+                    <a href="../index.html" class="logo logo-claro">Re <span>Orgánico</span></a>
+                    <p>Administración segura del catálogo</p>
+                </div>
+
+                <div class="sesion-info">
+                    <span id="correo-admin"></span>
+                    <a href="../index.html">Ver tienda</a>
+                    <button id="cerrar-sesion" type="button">Cerrar sesión</button>
+                </div>
+            </header>
+
+            <div class="panel-contenido">
+                <section class="resumen-panel">
+                    <div>
+                        <span>Panel administrativo</span>
+                        <h1>Productos de Re Orgánico</h1>
+                        <p>
+                            Agrega, edita o elimina productos. Los cambios quedan guardados
+                            en la base de datos y se muestran en la página pública.
+                        </p>
+                    </div>
+
+                    <button class="boton-secundario" id="nuevo-producto" type="button">
+                        + Nuevo producto
+                    </button>
+                </section>
+
+                <div class="panel-grid">
+                    <section class="tarjeta-formulario">
+                        <div class="titulo-bloque">
+                            <span id="modo-formulario">Nuevo producto</span>
+                            <h2 id="titulo-formulario">Agregar al catálogo</h2>
+                        </div>
+
+                        <form id="formulario-producto" class="formulario-producto">
+                            <input id="producto-id" type="hidden">
+
+                            <div class="campo">
+                                <label for="producto-nombre">Nombre</label>
+                                <input id="producto-nombre" type="text" maxlength="80" required>
+                            </div>
+
+                            <div class="campo">
+                                <label for="producto-precio">Precio en pesos</label>
+                                <input id="producto-precio" type="number" min="0" step="1" required>
+                            </div>
+
+                            <div class="campo">
+                                <label for="producto-categoria">Categoría</label>
+                                <select id="producto-categoria" required>
+                                    <option value="alimentos">Alimentos</option>
+                                    <option value="cuidado">Cuidado personal</option>
+                                    <option value="hogar">Hogar</option>
+                                </select>
+                            </div>
+
+                            <div class="campo">
+                                <label for="producto-estado">Disponibilidad</label>
+                                <select id="producto-estado" required>
+                                    <option value="disponible">Disponible</option>
+                                    <option value="ultimas">Últimas unidades</option>
+                                    <option value="pedido">A pedido</option>
+                                    <option value="agotado">Agotado</option>
+                                </select>
+                            </div>
+
+                            <div class="campo">
+                                <label for="producto-emoji">Emoji o ícono</label>
+                                <input id="producto-emoji" type="text" maxlength="8" placeholder="🌿" required>
+                            </div>
+
+                            <div class="campo">
+                                <label for="producto-etiqueta">Etiqueta opcional</label>
+                                <input id="producto-etiqueta" type="text" maxlength="40" placeholder="Destacado">
+                            </div>
+
+                            <div class="campo">
+                                <label for="producto-orden">Orden de aparición</label>
+                                <input id="producto-orden" type="number" min="0" step="1" value="1" required>
+                            </div>
+
+                            <div class="campo campo-completo">
+                                <label for="producto-descripcion">Descripción</label>
+                                <textarea id="producto-descripcion" rows="5" maxlength="350" required></textarea>
+                            </div>
+
+                            <div class="acciones-formulario campo-completo">
+                                <button class="boton-principal" id="guardar-producto" type="submit">
+                                    Guardar producto
+                                </button>
+                                <button class="boton-cancelar" id="cancelar-edicion" type="button">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </form>
+
+                        <p class="mensaje" id="mensaje-producto" role="status" aria-live="polite"></p>
+                    </section>
+
+                    <section class="tarjeta-listado">
+                        <div class="listado-cabecera">
+                            <div>
+                                <span>Catálogo actual</span>
+                                <h2>Productos</h2>
+                            </div>
+                            <button id="actualizar-listado" type="button" aria-label="Actualizar catálogo">↻ Actualizar</button>
+                        </div>
+
+                        <div class="estado-carga" id="estado-carga">Cargando productos...</div>
+                        <div class="lista-admin" id="lista-admin"></div>
+                    </section>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../supabase-config.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

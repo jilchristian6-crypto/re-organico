@@ -1,0 +1,494 @@
+"use strict";
+
+const CATEGORIAS = {
+    alimentos: "Alimentos",
+    cuidado: "Cuidado personal",
+    hogar: "Hogar"
+};
+
+const ESTADOS = {
+    disponible: "Disponible",
+    ultimas: "Últimas unidades",
+    pedido: "A pedido",
+    agotado: "Agotado"
+};
+
+let clienteSupabase = null;
+let productos = [];
+let usuarioActual = null;
+let temporizadorToast = null;
+
+const elementos = {
+    vistaAcceso: document.getElementById("vista-acceso"),
+    vistaPanel: document.getElementById("vista-panel"),
+    formularioLogin: document.getElementById("formulario-login"),
+    email: document.getElementById("login-email"),
+    password: document.getElementById("login-password"),
+    botonLogin: document.getElementById("boton-login"),
+    mostrarPassword: document.getElementById("mostrar-password"),
+    mensajeLogin: document.getElementById("mensaje-login"),
+    correoAdmin: document.getElementById("correo-admin"),
+    cerrarSesion: document.getElementById("cerrar-sesion"),
+    nuevoProducto: document.getElementById("nuevo-producto"),
+    actualizarListado: document.getElementById("actualizar-listado"),
+    formularioProducto: document.getElementById("formulario-producto"),
+    productoId: document.getElementById("producto-id"),
+    productoNombre: document.getElementById("producto-nombre"),
+    productoPrecio: document.getElementById("producto-precio"),
+    productoCategoria: document.getElementById("producto-categoria"),
+    productoEstado: document.getElementById("producto-estado"),
+    productoEmoji: document.getElementById("producto-emoji"),
+    productoEtiqueta: document.getElementById("producto-etiqueta"),
+    productoOrden: document.getElementById("producto-orden"),
+    productoDescripcion: document.getElementById("producto-descripcion"),
+    guardarProducto: document.getElementById("guardar-producto"),
+    cancelarEdicion: document.getElementById("cancelar-edicion"),
+    modoFormulario: document.getElementById("modo-formulario"),
+    tituloFormulario: document.getElementById("titulo-formulario"),
+    mensajeProducto: document.getElementById("mensaje-producto"),
+    estadoCarga: document.getElementById("estado-carga"),
+    listaAdmin: document.getElementById("lista-admin"),
+    toast: document.getElementById("toast")
+};
+
+inicializar();
+
+async function inicializar() {
+    registrarEventos();
+
+    const configuracion = window.REORGANICO_SUPABASE;
+
+    if (!configuracionValida(configuracion) || !window.supabase) {
+        mostrarMensaje(
+            elementos.mensajeLogin,
+            "Primero debes configurar Supabase en el archivo supabase-config.js."
+        );
+        elementos.botonLogin.disabled = true;
+        return;
+    }
+
+    clienteSupabase = window.supabase.createClient(
+        configuracion.url,
+        configuracion.anonKey
+    );
+
+    const {
+        data: { session },
+        error
+    } = await clienteSupabase.auth.getSession();
+
+    if (error) {
+        mostrarMensaje(elementos.mensajeLogin, "No se pudo comprobar la sesión.");
+        return;
+    }
+
+    if (session?.user) {
+        await autorizarYMostrarPanel(session.user);
+    }
+
+    clienteSupabase.auth.onAuthStateChange(async (evento, sessionActual) => {
+        if (evento === "SIGNED_OUT") {
+            usuarioActual = null;
+            mostrarVistaAcceso();
+        }
+
+        if (evento === "TOKEN_REFRESHED" && sessionActual?.user) {
+            usuarioActual = sessionActual.user;
+        }
+    });
+}
+
+function configuracionValida(configuracion) {
+    return Boolean(
+        configuracion?.url &&
+        configuracion?.anonKey &&
+        !configuracion.url.includes("PEGA_AQUI") &&
+        !configuracion.anonKey.includes("PEGA_AQUI")
+    );
+}
+
+function registrarEventos() {
+    elementos.formularioLogin.addEventListener("submit", iniciarSesion);
+    elementos.mostrarPassword.addEventListener("click", alternarPassword);
+    elementos.cerrarSesion.addEventListener("click", cerrarSesion);
+    elementos.formularioProducto.addEventListener("submit", guardarProducto);
+    elementos.cancelarEdicion.addEventListener("click", limpiarFormulario);
+    elementos.nuevoProducto.addEventListener("click", () => {
+        limpiarFormulario();
+        elementos.productoNombre.focus();
+    });
+    elementos.actualizarListado.addEventListener("click", cargarProductos);
+
+    elementos.listaAdmin.addEventListener("click", (evento) => {
+        const boton = evento.target.closest("[data-accion]");
+        if (!boton) return;
+
+        const { accion, id } = boton.dataset;
+        if (accion === "editar") editarProducto(id);
+        if (accion === "eliminar") eliminarProducto(id);
+    });
+}
+
+function alternarPassword() {
+    const visible = elementos.password.type === "text";
+    elementos.password.type = visible ? "password" : "text";
+    elementos.mostrarPassword.textContent = visible ? "👁️" : "🙈";
+}
+
+async function iniciarSesion(evento) {
+    evento.preventDefault();
+    limpiarMensaje(elementos.mensajeLogin);
+
+    const email = elementos.email.value.trim();
+    const password = elementos.password.value;
+
+    if (!email || !password) {
+        mostrarMensaje(elementos.mensajeLogin, "Completa el correo y la contraseña.");
+        return;
+    }
+
+    cambiarEstadoBoton(elementos.botonLogin, true, "Ingresando...");
+
+    const { data, error } = await clienteSupabase.auth.signInWithPassword({
+        email,
+        password
+    });
+
+    if (error || !data.user) {
+        cambiarEstadoBoton(elementos.botonLogin, false, "Iniciar sesión");
+        mostrarMensaje(
+            elementos.mensajeLogin,
+            "No fue posible iniciar sesión. Revisa el correo y la contraseña."
+        );
+        return;
+    }
+
+    const autorizado = await autorizarYMostrarPanel(data.user);
+
+    if (!autorizado) {
+        await clienteSupabase.auth.signOut();
+        cambiarEstadoBoton(elementos.botonLogin, false, "Iniciar sesión");
+        mostrarMensaje(
+            elementos.mensajeLogin,
+            "Esta cuenta no tiene permisos de administrador."
+        );
+        return;
+    }
+
+    elementos.formularioLogin.reset();
+    cambiarEstadoBoton(elementos.botonLogin, false, "Iniciar sesión");
+}
+
+async function autorizarYMostrarPanel(usuario) {
+    const autorizado = await verificarAdministrador(usuario.id);
+
+    if (!autorizado) {
+        return false;
+    }
+
+    usuarioActual = usuario;
+    elementos.correoAdmin.textContent = usuario.email || "Administrador";
+    elementos.vistaAcceso.hidden = true;
+    elementos.vistaPanel.hidden = false;
+    limpiarMensaje(elementos.mensajeLogin);
+    await cargarProductos();
+    return true;
+}
+
+async function verificarAdministrador(userId) {
+    const { data, error } = await clienteSupabase
+        .from("admin_users")
+        .select("user_id")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+    if (error) {
+        console.error("No se pudo verificar el permiso administrativo:", error);
+        return false;
+    }
+
+    return Boolean(data?.user_id);
+}
+
+function mostrarVistaAcceso() {
+    elementos.vistaPanel.hidden = true;
+    elementos.vistaAcceso.hidden = false;
+    elementos.password.value = "";
+}
+
+async function cerrarSesion() {
+    await clienteSupabase.auth.signOut();
+    mostrarVistaAcceso();
+    mostrarToast("Sesión cerrada");
+}
+
+async function cargarProductos() {
+    elementos.estadoCarga.hidden = false;
+    elementos.estadoCarga.textContent = "Cargando productos...";
+    elementos.listaAdmin.innerHTML = "";
+
+    const { data, error } = await clienteSupabase
+        .from("productos")
+        .select("id,nombre,precio,categoria,descripcion,emoji,etiqueta,estado,orden")
+        .order("orden", { ascending: true })
+        .order("nombre", { ascending: true });
+
+    if (error) {
+        console.error("Error cargando productos:", error);
+        elementos.estadoCarga.textContent =
+            "No se pudo cargar el catálogo. Comprueba la conexión y los permisos.";
+        return;
+    }
+
+    productos = Array.isArray(data) ? data : [];
+    renderizarProductos();
+}
+
+function renderizarProductos() {
+    elementos.estadoCarga.hidden = productos.length > 0;
+
+    if (productos.length === 0) {
+        elementos.estadoCarga.hidden = false;
+        elementos.estadoCarga.textContent = "Todavía no hay productos en el catálogo.";
+        elementos.listaAdmin.innerHTML = "";
+        return;
+    }
+
+    elementos.listaAdmin.innerHTML = productos
+        .map(
+            (producto) => `
+                <article class="producto-admin">
+                    <div class="producto-admin-icono" aria-hidden="true">
+                        ${escaparHTML(producto.emoji)}
+                    </div>
+
+                    <div class="producto-admin-info">
+                        <h3>${escaparHTML(producto.nombre)}</h3>
+                        <p>
+                            ${CATEGORIAS[producto.categoria] || "Producto"}
+                            · ${formatearPrecio(producto.precio)}
+                            · Orden ${Number(producto.orden) || 0}
+                        </p>
+                        <span class="estado-mini">${ESTADOS[producto.estado] || producto.estado}</span>
+                    </div>
+
+                    <div class="producto-admin-acciones">
+                        <button type="button" data-accion="editar" data-id="${escaparHTML(producto.id)}">
+                            Editar
+                        </button>
+                        <button class="eliminar" type="button" data-accion="eliminar" data-id="${escaparHTML(producto.id)}">
+                            Eliminar
+                        </button>
+                    </div>
+                </article>
+            `
+        )
+        .join("");
+}
+
+async function guardarProducto(evento) {
+    evento.preventDefault();
+    limpiarMensaje(elementos.mensajeProducto);
+
+    const idExistente = elementos.productoId.value;
+    const nombre = elementos.productoNombre.value.trim();
+    const precio = Number(elementos.productoPrecio.value);
+    const categoria = elementos.productoCategoria.value;
+    const estado = elementos.productoEstado.value;
+    const emoji = elementos.productoEmoji.value.trim();
+    const etiqueta = elementos.productoEtiqueta.value.trim();
+    const orden = Number(elementos.productoOrden.value);
+    const descripcion = elementos.productoDescripcion.value.trim();
+
+    if (
+        !nombre ||
+        !Number.isFinite(precio) ||
+        precio < 0 ||
+        !categoria ||
+        !estado ||
+        !emoji ||
+        !Number.isFinite(orden) ||
+        orden < 0 ||
+        !descripcion
+    ) {
+        mostrarMensaje(elementos.mensajeProducto, "Revisa los datos del producto.");
+        return;
+    }
+
+    const payload = {
+        nombre,
+        precio: Math.round(precio),
+        categoria,
+        estado,
+        emoji,
+        etiqueta: etiqueta || null,
+        orden: Math.round(orden),
+        descripcion
+    };
+
+    cambiarEstadoBoton(elementos.guardarProducto, true, "Guardando...");
+
+    let resultado;
+
+    if (idExistente) {
+        resultado = await clienteSupabase
+            .from("productos")
+            .update(payload)
+            .eq("id", idExistente);
+    } else {
+        payload.id = crearIdUnico(nombre);
+        resultado = await clienteSupabase
+            .from("productos")
+            .insert(payload);
+    }
+
+    cambiarEstadoBoton(elementos.guardarProducto, false, "Guardar producto");
+
+    if (resultado.error) {
+        console.error("No se pudo guardar el producto:", resultado.error);
+        mostrarMensaje(
+            elementos.mensajeProducto,
+            "No se pudo guardar. Comprueba tu sesión y los permisos de Supabase."
+        );
+        return;
+    }
+
+    mostrarMensaje(
+        elementos.mensajeProducto,
+        idExistente ? "Producto actualizado correctamente." : "Producto agregado correctamente.",
+        true
+    );
+    mostrarToast(idExistente ? "Producto actualizado" : "Producto agregado");
+    limpiarFormulario(false);
+    await cargarProductos();
+}
+
+function editarProducto(id) {
+    const producto = productos.find((item) => item.id === id);
+    if (!producto) return;
+
+    elementos.productoId.value = producto.id;
+    elementos.productoNombre.value = producto.nombre;
+    elementos.productoPrecio.value = producto.precio;
+    elementos.productoCategoria.value = producto.categoria;
+    elementos.productoEstado.value = producto.estado;
+    elementos.productoEmoji.value = producto.emoji;
+    elementos.productoEtiqueta.value = producto.etiqueta || "";
+    elementos.productoOrden.value = Number(producto.orden) || 0;
+    elementos.productoDescripcion.value = producto.descripcion;
+    elementos.modoFormulario.textContent = "Editando producto";
+    elementos.tituloFormulario.textContent = producto.nombre;
+    limpiarMensaje(elementos.mensajeProducto);
+    elementos.productoNombre.focus();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+async function eliminarProducto(id) {
+    const producto = productos.find((item) => item.id === id);
+    if (!producto) return;
+
+    const confirmado = window.confirm(
+        `¿Seguro que deseas eliminar “${producto.nombre}”? Esta acción afectará el catálogo público.`
+    );
+
+    if (!confirmado) return;
+
+    const { error } = await clienteSupabase
+        .from("productos")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+        console.error("No se pudo eliminar el producto:", error);
+        mostrarToast("No se pudo eliminar el producto");
+        return;
+    }
+
+    if (elementos.productoId.value === id) {
+        limpiarFormulario();
+    }
+
+    mostrarToast("Producto eliminado");
+    await cargarProductos();
+}
+
+function limpiarFormulario(limpiarMensajeActual = true) {
+    elementos.formularioProducto.reset();
+    elementos.productoId.value = "";
+    elementos.productoCategoria.value = "alimentos";
+    elementos.productoEstado.value = "disponible";
+    elementos.productoOrden.value = siguienteOrden();
+    elementos.modoFormulario.textContent = "Nuevo producto";
+    elementos.tituloFormulario.textContent = "Agregar al catálogo";
+
+    if (limpiarMensajeActual) {
+        limpiarMensaje(elementos.mensajeProducto);
+    }
+}
+
+function siguienteOrden() {
+    if (productos.length === 0) return 1;
+    return Math.max(...productos.map((producto) => Number(producto.orden) || 0)) + 1;
+}
+
+function crearIdUnico(nombre) {
+    const base = nombre
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "") || "producto";
+
+    let id = base;
+    let numero = 2;
+
+    while (productos.some((producto) => producto.id === id)) {
+        id = `${base}-${numero}`;
+        numero += 1;
+    }
+
+    return id;
+}
+
+function formatearPrecio(valor) {
+    return new Intl.NumberFormat("es-CL", {
+        style: "currency",
+        currency: "CLP",
+        maximumFractionDigits: 0
+    }).format(Number(valor) || 0);
+}
+
+function escaparHTML(texto) {
+    return String(texto ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function mostrarMensaje(elemento, texto, exito = false) {
+    elemento.textContent = texto;
+    elemento.classList.toggle("exito", exito);
+}
+
+function limpiarMensaje(elemento) {
+    elemento.textContent = "";
+    elemento.classList.remove("exito");
+}
+
+function cambiarEstadoBoton(boton, cargando, texto) {
+    boton.disabled = cargando;
+    boton.textContent = texto;
+}
+
+function mostrarToast(mensaje) {
+    elementos.toast.textContent = mensaje;
+    elementos.toast.classList.add("visible");
+
+    clearTimeout(temporizadorToast);
+    temporizadorToast = setTimeout(() => {
+        elementos.toast.classList.remove("visible");
+    }, 2400);
+}

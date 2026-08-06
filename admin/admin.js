@@ -65,10 +65,19 @@ async function inicializar() {
 
     const configuracion = window.REORGANICO_SUPABASE;
 
-    if (!configuracionValida(configuracion) || !window.supabase) {
+    if (!configuracionValida(configuracion)) {
         mostrarMensaje(
             elementos.mensajeLogin,
-            "Primero debes configurar Supabase en el archivo supabase-config.js."
+            "La configuración de Supabase no es válida."
+        );
+        elementos.botonLogin.disabled = true;
+        return;
+    }
+
+    if (!window.supabase || !window.supabase.createClient) {
+        mostrarMensaje(
+            elementos.mensajeLogin,
+            "No se pudo cargar la conexión con Supabase."
         );
         elementos.botonLogin.disabled = true;
         return;
@@ -79,26 +88,97 @@ async function inicializar() {
         configuracion.anonKey
     );
 
-    clienteSupabase.auth.onAuthStateChange(async (evento, sessionActual) => {
-        if (evento === "PASSWORD_RECOVERY") {
-            modoRecuperacion = true;
-            mostrarVistaRecuperacion();
-            return;
-        }
+    if (!clienteSupabase || !clienteSupabase.auth) {
+        mostrarMensaje(
+            elementos.mensajeLogin,
+            "No fue posible iniciar Supabase. Actualiza la página."
+        );
+        return;
+    }
 
-        if (evento === "SIGNED_OUT") {
-            usuarioActual = null;
+    clienteSupabase.auth.onAuthStateChange(
+        (evento, sessionActual) => {
+            console.log("Evento Supabase:", evento);
 
-            if (!modoRecuperacion) {
-                mostrarVistaAcceso();
+            if (evento === "PASSWORD_RECOVERY") {
+                modoRecuperacion = true;
+                mostrarVistaRecuperacion();
+                return;
             }
+
+            if (evento === "SIGNED_OUT") {
+                usuarioActual = null;
+
+                if (!modoRecuperacion) {
+                    mostrarVistaAcceso();
+                }
+
+                return;
+            }
+
+            if (
+                evento === "TOKEN_REFRESHED" &&
+                sessionActual?.user
+            ) {
+                usuarioActual = sessionActual.user;
+            }
+        }
+    );
+
+    const parametrosHash = new URLSearchParams(
+        window.location.hash.replace("#", "")
+    );
+
+    const parametrosUrl = new URLSearchParams(
+        window.location.search
+    );
+
+    const errorEnlace =
+        parametrosHash.get("error_code") ||
+        parametrosUrl.get("error_code");
+
+    if (errorEnlace) {
+        mostrarMensaje(
+            elementos.mensajeLogin,
+            "El enlace de recuperación venció o ya fue utilizado. Solicita uno nuevo."
+        );
+        return;
+    }
+
+    const codigoRecuperacion = parametrosUrl.get("code");
+
+    if (codigoRecuperacion) {
+        const {
+            data: datosIntercambio,
+            error: errorIntercambio
+        } = await clienteSupabase.auth.exchangeCodeForSession(
+            codigoRecuperacion
+        );
+
+        if (errorIntercambio || !datosIntercambio?.session) {
+            console.error(
+                "No se pudo procesar el enlace de recuperación:",
+                errorIntercambio
+            );
+
+            mostrarMensaje(
+                elementos.mensajeLogin,
+                "El enlace venció o ya fue utilizado. Solicita un correo nuevo."
+            );
             return;
         }
 
-        if (evento === "TOKEN_REFRESHED" && sessionActual?.user) {
-            usuarioActual = sessionActual.user;
-        }
-    });
+        modoRecuperacion = true;
+        mostrarVistaRecuperacion();
+
+        window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+        );
+
+        return;
+    }
 
     const {
         data: { session },
@@ -106,11 +186,27 @@ async function inicializar() {
     } = await clienteSupabase.auth.getSession();
 
     if (error) {
-        mostrarMensaje(elementos.mensajeLogin, "No se pudo comprobar la sesión.");
+        console.error("Error comprobando sesión:", error);
+
+        mostrarMensaje(
+            elementos.mensajeLogin,
+            "No se pudo comprobar la sesión."
+        );
         return;
     }
 
-    if (session?.user && !modoRecuperacion) {
+    const tipoEnlace = parametrosHash.get("type");
+    const tieneTokenRecuperacion =
+        parametrosHash.has("access_token") &&
+        tipoEnlace === "recovery";
+
+    if (tieneTokenRecuperacion && session?.user) {
+        modoRecuperacion = true;
+        mostrarVistaRecuperacion();
+        return;
+    }
+
+    if (session?.user) {
         await autorizarYMostrarPanel(session.user);
     }
 }
@@ -182,7 +278,10 @@ async function guardarNuevaPassword(evento) {
     }
 
     if (nuevaPassword !== repetirPassword) {
-        mostrarMensaje(elementos.mensajeLogin, "Las contraseñas no coinciden.");
+        mostrarMensaje(
+            elementos.mensajeLogin,
+            "Las contraseñas no coinciden."
+        );
         return;
     }
 
@@ -246,12 +345,20 @@ async function iniciarSesion(evento) {
         password
     });
 
-    if (error || !data.user) {
-        cambiarEstadoBoton(elementos.botonLogin, false, "Iniciar sesión");
+    if (error || !data?.user) {
+        console.error("Error real de Supabase:", error);
+
+        cambiarEstadoBoton(
+            elementos.botonLogin,
+            false,
+            "Iniciar sesión"
+        );
+
         mostrarMensaje(
             elementos.mensajeLogin,
-            "No fue posible iniciar sesión. Revisa el correo y la contraseña."
+            `Error: ${error?.code || "sin código"} - ${error?.message || "No se recibió el usuario."}`
         );
+
         return;
     }
 

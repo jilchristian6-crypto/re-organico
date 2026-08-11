@@ -3,21 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Re Orgánico: catálogo de productos naturales, cuidado personal y hogar. Consulta disponibilidad y arma tu pedido por WhatsApp.">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; media-src 'self' https://bkhpkiwbwdzlnjysdzqw.supabase.co; connect-src 'self' https://bkhpkiwbwdzlnjysdzqw.supabase.co wss://bkhpkiwbwdzlnjysdzqw.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; form-action 'self'; upgrade-insecure-requests">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="description" content="Re Orgánico: productos naturales con entregas en rutas programadas y despachos a todo Chile por Starken, Blue Express o CorreosChile. Cotiza por WhatsApp.">
     <meta name="theme-color" content="#1f4d3a">
 
     <meta property="og:title" content="Re Orgánico | Productos naturales">
-    <meta property="og:description" content="Productos naturales para una vida más consciente.">
+    <meta property="og:description" content="Productos naturales con entregas por rutas Re Orgánico y despachos a todo Chile.">
     <meta property="og:type" content="website">
 
     <title>Re Orgánico | Productos naturales</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
     <link rel="stylesheet" href="style.css">
+
+    <style>
+        .galeria-dinamica-item video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background: #102d22;
+        }
+
+        .galeria-dinamica-item .caso-overlay {
+            pointer-events: none;
+        }
+
+        .galeria-dinamica-item.es-video .caso-contenido {
+            pointer-events: none;
+            padding-bottom: 64px;
+        }
+
+        .galeria-dinamica-item.es-video video {
+            z-index: 0;
+        }
+
+        .galeria-dinamica-item .caso-contenido > span {
+            max-width: max-content;
+        }
+    </style>
 </head>
 <body>
     <header class="encabezado" id="encabezado">
         <nav class="contenedor navegacion" aria-label="Navegación principal">
-            <a href="#inicio" class="logo" aria-label="Ir al inicio">
-                Re <span>Orgánico</span>
+            <a href="#inicio" class="logo logo-principal" aria-label="Ir al inicio de Re Orgánico">
+                <img src="assets/logo-re-organico.png" alt="Re Orgánico">
             </a>
 
             <button class="boton-menu" id="boton-menu" type="button" aria-label="Abrir menú" aria-expanded="false">
@@ -27,6 +58,8 @@
             <ul class="menu" id="menu">
                 <li><a href="#inicio">Inicio</a></li>
                 <li><a href="#productos">Productos</a></li>
+                <li><a href="#envios">Despachos</a></li>
+                <li><a href="#trabajo">Nuestro trabajo</a></li>
                 <li><a href="#nosotros">Nosotros</a></li>
                 <li><a href="#preguntas">Preguntas</a></li>
                 <li><a href="#contacto">Contacto</a></li>
@@ -75,8 +108,8 @@
                             <span>Fácil por WhatsApp</span>
                         </div>
                         <div class="beneficio">
-                            <strong>Atención</strong>
-                            <span>Personalizada</span>
+                            <strong>Despachos</strong>
+                            <span>A todo Chile</span>
                         </div>
                     </div>
                 </div>
@@ -110,6 +143,42 @@
             </div>
         </section>
 
+        <section class="franja-servicios" aria-label="Servicios de Re Orgánico">
+            <div class="contenedor franja-servicios-contenido">
+                <article class="servicio-rapido revelar">
+                    <span aria-hidden="true">🚚</span>
+                    <div>
+                        <strong>Despachos a todo Chile</strong>
+                        <small>Coordinamos el envío según tu comuna</small>
+                    </div>
+                </article>
+
+                <article class="servicio-rapido revelar">
+                    <span aria-hidden="true">📦</span>
+                    <div>
+                        <strong>Starken · Blue Express · CorreosChile</strong>
+                        <small>Despachos coordinados según destino</small>
+                    </div>
+                </article>
+
+                <article class="servicio-rapido revelar">
+                    <span aria-hidden="true">🗺️</span>
+                    <div>
+                        <strong>Rutas Re Orgánico</strong>
+                        <small>Entregas programadas en localidades de la Región de Valparaíso</small>
+                    </div>
+                </article>
+
+                <article class="servicio-rapido revelar">
+                    <span aria-hidden="true">💬</span>
+                    <div>
+                        <strong>Atención por WhatsApp</strong>
+                        <small>Confirmamos stock, total y entrega</small>
+                    </div>
+                </article>
+            </div>
+        </section>
+
         <section class="seccion-productos" id="productos">
             <div class="contenedor">
                 <div class="titulo-seccion revelar">
@@ -138,9 +207,20 @@
 
                 <div class="filtros-productos revelar" id="filtros-productos">
                     <button class="filtro activo" type="button" data-categoria="todos">Todos</button>
-                    <button class="filtro" type="button" data-categoria="alimentos">Alimentos</button>
-                    <button class="filtro" type="button" data-categoria="cuidado">Cuidado personal</button>
-                    <button class="filtro" type="button" data-categoria="hogar">Hogar</button>
+                    <button class="filtro" type="button" data-categoria="bolsas">Bolsas compostables</button>
+                    <button class="filtro" type="button" data-categoria="rollos">Bolsas en rollo</button>
+                    <button class="filtro" type="button" data-categoria="papel">Papel compost</button>
+                    <button class="filtro" type="button" data-categoria="contenedores">Contenedores</button>
+                    <button class="filtro" type="button" data-categoria="vasos">Vasos</button>
+                    <button class="filtro" type="button" data-categoria="tapas">Tapas</button>
+                    <button class="filtro" type="button" data-categoria="heladeria">Heladería</button>
+                    <button class="filtro" type="button" data-categoria="cubiertos">Cubiertos</button>
+                    <button class="filtro" type="button" data-categoria="bombillas">Bombillas</button>
+                </div>
+
+                <div class="aviso-venta-minima revelar">
+                    <strong>📦 Importante sobre las cantidades</strong>
+                    <span>En las bolsas por pack, <b>1 pack = 100 bolsas</b>. La compra mínima es 1 pack (100 unidades). En rollos y cajas, cada producto indica claramente cuántas bolsas contiene.</span>
                 </div>
 
                 <div class="lista-productos" id="lista-productos"></div>
@@ -179,6 +259,250 @@
                         <h3>Atención cercana</h3>
                         <p>La compra se confirma personalmente por WhatsApp antes de coordinar.</p>
                     </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="seccion-envios" id="envios">
+            <div class="contenedor envios-contenido">
+                <div class="envios-texto revelar">
+                    <span class="subtitulo">Entregas y despachos</span>
+                    <h2>Recibe tu pedido donde estés</h2>
+                    <p>
+                        Realizamos entregas mediante rutas programadas de Re Orgánico y despachos a todo Chile
+                        por Starken, Blue Express o CorreosChile.
+                    </p>
+
+                    <div class="rutas-entrega">
+                        <h3>Rutas de entrega Re Orgánico</h3>
+                        <ul>
+                            <li><strong>Ruta 1:</strong> Llay Llay · Catemu</li>
+                            <li><strong>Ruta 2:</strong> San Felipe · Panquehue · Putaendo · Santa María</li>
+                            <li><strong>Ruta 3:</strong> Los Andes · Rinconada · Calle Larga · San Esteban</li>
+                            <li><strong>Ruta 4:</strong> Ocoa · Hijuelas · Romeral · El Melón · Puchuncaví · Maitencillo · Laguna Zapallar · Catapilco</li>
+                            <li><strong>Ruta 5:</strong> Papudo · Pullally · La Ligua · Petorca</li>
+                        </ul>
+                    </div>
+
+                    <div class="aviso-envio">
+                        <span aria-hidden="true">ℹ️</span>
+                        <p>
+                            El valor del despacho se confirma según destino, peso y tamaño del pedido.
+                            En rutas Re Orgánico aceptamos efectivo o transferencia. Para despachos por transportista, el pago es solo mediante transferencia.
+                        </p>
+                    </div>
+
+                    <a href="#contacto" class="boton boton-principal">Consultar mi despacho</a>
+                </div>
+
+                <div class="envios-pasos revelar">
+                    <article class="paso-envio">
+                        <span>01</span>
+                        <div>
+                            <h3>Elige tus productos</h3>
+                            <p>Agrega al carrito todo lo que necesites.</p>
+                        </div>
+                    </article>
+
+                    <article class="paso-envio">
+                        <span>02</span>
+                        <div>
+                            <h3>Indica tu ubicación</h3>
+                            <p>Elige una ruta Re Orgánico o indica tu región y comuna.</p>
+                        </div>
+                    </article>
+
+                    <article class="paso-envio">
+                        <span>03</span>
+                        <div>
+                            <h3>Confirmamos el costo</h3>
+                            <p>Revisamos stock, transporte y valor del despacho.</p>
+                        </div>
+                    </article>
+
+                    <article class="paso-envio">
+                        <span>04</span>
+                        <div>
+                            <h3>Coordinamos la entrega</h3>
+                            <p>Confirmamos despacho, forma de pago y datos finales por WhatsApp.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="seccion-trabajo seccion-casos" id="trabajo">
+            <div class="contenedor">
+                <div class="casos-encabezado revelar">
+                    <div class="casos-copy">
+                        <span class="subtitulo">Nuestro trabajo</span>
+                        <h2>Una solución compostable para distintos momentos del día</h2>
+                        <p>
+                            Seleccionamos cuatro aplicaciones para mostrar de forma clara, limpia y cercana
+                            cómo las bolsas Re Orgánico pueden integrarse en compras cotidianas y distintos tipos de comercio.
+                        </p>
+                    </div>
+
+                    <a
+                        class="boton boton-secundario trabajo-instagram"
+                        href="https://www.instagram.com/reorganico/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Ver Instagram ↗
+                    </a>
+                </div>
+
+                <div class="casos-grid" id="casos-grid-publico" aria-label="Aplicaciones y contenido de Re Orgánico">
+                    <article class="caso-card caso-card-familia revelar">
+                        <img
+                            src="img/nuestro-trabajo/hogar_03.png"
+                            alt="Uso cotidiano de bolsas compostables Re Orgánico en el hogar"
+                            loading="lazy"
+                        >
+                        <div class="caso-overlay"></div>
+                        <div class="caso-contenido">
+                            <span>Hogar</span>
+                            <h3>Una elección para toda la familia</h3>
+                            <p>Prácticas para acompañar las compras y rutinas de todos los días.</p>
+                        </div>
+                    </article>
+
+                    <article class="caso-card revelar">
+                        <img
+                            src="img/nuestro-trabajo/verduleria_feria.png"
+                            alt="Uso de bolsa compostable en feria y mercado"
+                            loading="lazy"
+                        >
+                        <div class="caso-overlay"></div>
+                        <div class="caso-contenido">
+                            <span>Feria y mercado</span>
+                            <h3>Perfectas para feria y mercado</h3>
+                            <p>Una alternativa cómoda para frutas, verduras y compras frescas.</p>
+                        </div>
+                    </article>
+
+                    <article class="caso-card revelar">
+                        <img
+                            src="img/nuestro-trabajo/carniceria_pago.png"
+                            alt="Uso cotidiano de bolsa compostable en atención de local"
+                            loading="lazy"
+                        >
+                        <div class="caso-overlay"></div>
+                        <div class="caso-contenido">
+                            <span>Comercio</span>
+                            <h3>Compra cotidiana en local</h3>
+                            <p>Una presentación simple y responsable para la atención directa al cliente.</p>
+                        </div>
+                    </article>
+
+                    <article class="caso-card revelar">
+                        <img
+                            src="img/nuestro-trabajo/tienda_lana.png"
+                            alt="Uso de bolsa compostable en tienda de lana"
+                            loading="lazy"
+                        >
+                        <div class="caso-overlay"></div>
+                        <div class="caso-contenido">
+                            <span>Tienda especializada</span>
+                            <h3>Ideal para tienda de lana</h3>
+                            <p>Livianas y versátiles para tejidos, lanas y productos de uso cotidiano.</p>
+                        </div>
+                    </article>
+                </div>
+
+                <p class="casos-nota revelar">
+                    Las aplicaciones iniciales son imágenes referenciales. El contenido adicional es publicado por Re Orgánico.
+                </p>
+            </div>
+        </section>
+
+        <section class="seccion-impacto" id="impacto">
+            <div class="contenedor">
+                <div class="impacto-encabezado revelar">
+                    <span class="subtitulo subtitulo-claro">Nuestro impacto</span>
+                    <h2>Del uso al compostaje</h2>
+                    <p>
+                        Nuestro propósito va más allá de reemplazar una bolsa convencional: buscamos acercar
+                        alternativas compostables y promover una gestión más consciente de los residuos orgánicos.
+                    </p>
+                </div>
+
+                <div class="impacto-contenido">
+                    <div class="impacto-videos">
+                        <article class="impacto-video revelar">
+                            <div class="impacto-video-marco">
+                                <video
+                                    controls
+                                    preload="metadata"
+                                    playsinline
+                                    poster="img/nuestro-trabajo/poster-proceso-organico.jpg"
+                                    aria-label="Video del proceso orgánico y compostaje de Re Orgánico"
+                                >
+                                    <source src="videos/nuestro-trabajo/proceso-organico-web.mp4" type="video/mp4">
+                                    Tu navegador no permite reproducir este video.
+                                </video>
+                                <span>Proceso</span>
+                            </div>
+                            <div class="impacto-video-info">
+                                <h3>Proceso orgánico y compostaje</h3>
+                                <p>Una mirada al trabajo con material orgánico y a su retorno responsable a la tierra.</p>
+                            </div>
+                        </article>
+
+                        <article class="impacto-video revelar">
+                            <div class="impacto-video-marco">
+                                <video
+                                    controls
+                                    preload="metadata"
+                                    playsinline
+                                    poster="img/nuestro-trabajo/poster-compostando.jpg"
+                                    aria-label="Video de bolsa Re Orgánico durante el compostaje"
+                                >
+                                    <source src="videos/nuestro-trabajo/bolsa-re-organico-compostando-web.mp4" type="video/mp4">
+                                    Tu navegador no permite reproducir este video.
+                                </video>
+                                <span>Compostabilidad</span>
+                            </div>
+                            <div class="impacto-video-info">
+                                <h3>Bolsa Re Orgánico compostando</h3>
+                                <p>Contenido audiovisual del producto dentro de un proceso de compostaje.</p>
+                            </div>
+                        </article>
+                    </div>
+
+                    <aside class="impacto-ruta revelar" aria-label="Etapas del enfoque Re Orgánico">
+                        <span class="impacto-ruta-kicker">Un ciclo más consciente</span>
+                        <h3>Reducir el residuo es solo el comienzo</h3>
+
+                        <div class="impacto-pasos">
+                            <div class="impacto-paso">
+                                <span class="impacto-numero">01</span>
+                                <div>
+                                    <strong>Elegir mejor</strong>
+                                    <p>Preferir alternativas compostables cuando el uso de una bolsa sea necesario.</p>
+                                </div>
+                            </div>
+
+                            <div class="impacto-paso">
+                                <span class="impacto-numero">02</span>
+                                <div>
+                                    <strong>Separar correctamente</strong>
+                                    <p>Gestionar los residuos orgánicos de forma diferenciada para facilitar su aprovechamiento.</p>
+                                </div>
+                            </div>
+
+                            <div class="impacto-paso">
+                                <span class="impacto-numero">03</span>
+                                <div>
+                                    <strong>Volver a la tierra</strong>
+                                    <p>El compostaje permite transformar materia orgánica en un recurso útil para el suelo.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="#productos" class="boton boton-claro impacto-cta">Conocer productos</a>
+                    </aside>
                 </div>
             </div>
         </section>
@@ -263,11 +587,51 @@
 
                     <article class="pregunta revelar">
                         <button class="pregunta-boton" type="button" aria-expanded="false">
-                            <span>¿Los datos se actualizan desde cualquier computador?</span>
+                            <span>¿Cuántas bolsas vienen en un pack?</span>
                             <span class="pregunta-icono">+</span>
                         </button>
                         <div class="pregunta-respuesta">
-                            <p>Por ahora el panel guarda los cambios en este navegador. Para sincronizar varios dispositivos se conectará una base de datos.</p>
+                            <p>Cuando un producto se vende por pack, 1 pack contiene 100 bolsas y la compra mínima es 1 pack. Los rollos y cajas muestran su cantidad exacta de bolsas en la descripción del producto.</p>
+                        </div>
+                    </article>
+
+                    <article class="pregunta revelar">
+                        <button class="pregunta-boton" type="button" aria-expanded="false">
+                            <span>¿Realizan despachos a regiones?</span>
+                            <span class="pregunta-icono">+</span>
+                        </button>
+                        <div class="pregunta-respuesta">
+                            <p>Sí. Realizamos despachos a todo Chile mediante Starken, Blue Express o CorreosChile.</p>
+                        </div>
+                    </article>
+
+                    <article class="pregunta revelar">
+                        <button class="pregunta-boton" type="button" aria-expanded="false">
+                            <span>¿Cuánto cuesta el despacho?</span>
+                            <span class="pregunta-icono">+</span>
+                        </button>
+                        <div class="pregunta-respuesta">
+                            <p>El costo depende de la región, comuna, peso y tamaño del pedido. El valor final se confirma por WhatsApp antes de coordinar el envío.</p>
+                        </div>
+                    </article>
+
+                    <article class="pregunta revelar">
+                        <button class="pregunta-boton" type="button" aria-expanded="false">
+                            <span>¿Tienen rutas de entrega?</span>
+                            <span class="pregunta-icono">+</span>
+                        </button>
+                        <div class="pregunta-respuesta">
+                            <p>Sí. Contamos con rutas programadas por Llay Llay, Catemu, San Felipe, Los Andes, La Ligua, Petorca y otras localidades indicadas en la sección de despachos.</p>
+                        </div>
+                    </article>
+
+                    <article class="pregunta revelar">
+                        <button class="pregunta-boton" type="button" aria-expanded="false">
+                            <span>¿Qué formas de pago aceptan?</span>
+                            <span class="pregunta-icono">+</span>
+                        </button>
+                        <div class="pregunta-respuesta">
+                            <p>En las rutas Re Orgánico aceptamos efectivo o transferencia. Para despachos por Starken, Blue Express o CorreosChile, el pago es únicamente por transferencia.</p>
                         </div>
                     </article>
                 </div>
@@ -291,18 +655,32 @@
 
                 <div class="contacto-informacion revelar">
                     <div class="contacto-item">
-                        <div class="contacto-icono">📍</div>
+                        <div class="contacto-icono">📱</div>
                         <div>
-                            <span>Ubicación</span>
-                            <strong id="dato-direccion">Dirección por confirmar</strong>
+                            <span>WhatsApp principal</span>
+                            <a id="enlace-whatsapp-dato" href="#" target="_blank" rel="noopener noreferrer">
+                                <strong id="dato-whatsapp">+56 9 3930 3727</strong>
+                            </a>
                         </div>
                     </div>
 
                     <div class="contacto-item">
                         <div class="contacto-icono">📱</div>
                         <div>
-                            <span>WhatsApp</span>
-                            <strong id="dato-whatsapp">+56 9 0000 0000</strong>
+                            <span>WhatsApp secundario</span>
+                            <a id="enlace-whatsapp-secundario" href="#" target="_blank" rel="noopener noreferrer">
+                                <strong id="dato-whatsapp-secundario">+56 9 7929 1371</strong>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="contacto-item">
+                        <div class="contacto-icono">✉️</div>
+                        <div>
+                            <span>Correo</span>
+                            <a id="enlace-correo-contacto" href="mailto:Contacto.reorganico@gmail.com">
+                                <strong id="dato-correo">Contacto.reorganico@gmail.com</strong>
+                            </a>
                         </div>
                     </div>
 
@@ -310,15 +688,25 @@
                         <div class="contacto-icono">📸</div>
                         <div>
                             <span>Instagram</span>
-                            <strong id="dato-instagram">@reorganico</strong>
+                            <a id="enlace-instagram-contacto" href="#" target="_blank" rel="noopener noreferrer">
+                                <strong id="dato-instagram">@reorganico</strong>
+                            </a>
                         </div>
                     </div>
 
                     <div class="contacto-item">
-                        <div class="contacto-icono">🕒</div>
+                        <div class="contacto-icono">🚚</div>
                         <div>
-                            <span>Horario</span>
-                            <strong id="dato-horario">Horario por confirmar</strong>
+                            <span>Entregas y despachos</span>
+                            <strong id="dato-despachos">Rutas Re Orgánico + envíos a todo Chile</strong>
+                        </div>
+                    </div>
+
+                    <div class="contacto-item">
+                        <div class="contacto-icono">💳</div>
+                        <div>
+                            <span>Formas de pago</span>
+                            <strong id="dato-pagos">Rutas: efectivo o transferencia · Despachos: transferencia</strong>
                         </div>
                     </div>
                 </div>
@@ -334,7 +722,91 @@
                 <form class="formulario-consulta" id="formulario-consulta">
                     <div class="campo-formulario">
                         <label for="nombre-cliente">Nombre</label>
-                        <input id="nombre-cliente" type="text" placeholder="Escribe tu nombre" required>
+                        <input id="nombre-cliente" type="text" placeholder="Escribe tu nombre" autocomplete="name" required>
+                    </div>
+
+                    <div class="campo-formulario">
+                        <label for="tipo-entrega">Forma de entrega</label>
+                        <select id="tipo-entrega" required>
+                            <option value="ruta">Ruta Re Orgánico</option>
+                            <option value="despacho">Despacho por transportista</option>
+                        </select>
+                    </div>
+
+                    <div class="campo-formulario" id="campo-ruta-entrega">
+                        <label for="ruta-entrega">Localidad de la ruta</label>
+                        <select id="ruta-entrega" required>
+                            <option value="">Selecciona tu localidad</option>
+                            <option>Llay Llay</option>
+                            <option>Catemu</option>
+                            <option>San Felipe</option>
+                            <option>Panquehue</option>
+                            <option>Putaendo</option>
+                            <option>Santa María</option>
+                            <option>Los Andes</option>
+                            <option>Rinconada</option>
+                            <option>Calle Larga</option>
+                            <option>San Esteban</option>
+                            <option>Ocoa</option>
+                            <option>Hijuelas</option>
+                            <option>Romeral</option>
+                            <option>El Melón</option>
+                            <option>Puchuncaví</option>
+                            <option>Maitencillo</option>
+                            <option>Laguna Zapallar</option>
+                            <option>Catapilco</option>
+                            <option>Papudo</option>
+                            <option>Pullally</option>
+                            <option>La Ligua</option>
+                            <option>Petorca</option>
+                        </select>
+                    </div>
+
+                    <div class="campo-formulario" id="campo-region">
+                        <label for="region-cliente">Región</label>
+                        <select id="region-cliente">
+                            <option value="">Selecciona tu región</option>
+                            <option>Arica y Parinacota</option>
+                            <option>Tarapacá</option>
+                            <option>Antofagasta</option>
+                            <option>Atacama</option>
+                            <option>Coquimbo</option>
+                            <option>Valparaíso</option>
+                            <option>Metropolitana de Santiago</option>
+                            <option>O'Higgins</option>
+                            <option>Maule</option>
+                            <option>Ñuble</option>
+                            <option>Biobío</option>
+                            <option>La Araucanía</option>
+                            <option>Los Ríos</option>
+                            <option>Los Lagos</option>
+                            <option>Aysén</option>
+                            <option>Magallanes y de la Antártica Chilena</option>
+                        </select>
+                    </div>
+
+                    <div class="campo-formulario" id="campo-comuna">
+                        <label for="comuna-cliente">Comuna</label>
+                        <input id="comuna-cliente" type="text" placeholder="Ejemplo: Viña del Mar" autocomplete="address-level2">
+                    </div>
+
+                    <div class="campo-formulario" id="campo-empresa-envio">
+                        <label for="empresa-envio">Empresa de envío</label>
+                        <select id="empresa-envio">
+                            <option value="Por coordinar">Por coordinar</option>
+                            <option value="Starken">Starken</option>
+                            <option value="Blue Express">Blue Express</option>
+                            <option value="CorreosChile">CorreosChile</option>
+                        </select>
+                    </div>
+
+                    <div class="campo-formulario">
+                        <label for="pago-consulta">Forma de pago preferida</label>
+                        <select id="pago-consulta">
+                            <option value="transferencia">Transferencia</option>
+                            <option value="efectivo">Efectivo</option>
+                        </select>
+                        <small class="ayuda-pago">En despachos por transportista el pago es solo por transferencia.</small>
                     </div>
 
                     <div class="campo-formulario">
@@ -345,9 +817,13 @@
                     </div>
 
                     <div class="campo-formulario campo-completo">
-                        <label for="mensaje-consulta">Mensaje</label>
-                        <textarea id="mensaje-consulta" rows="4" placeholder="Quisiera conocer la disponibilidad y forma de entrega."></textarea>
+                        <label for="mensaje-consulta">Mensaje adicional</label>
+                        <textarea id="mensaje-consulta" rows="4" placeholder="Escribe aquí cualquier detalle de tu consulta."></textarea>
                     </div>
+
+                    <p class="nota-despacho campo-completo">
+                        El costo del despacho se confirma según la comuna, el peso y el tamaño del pedido.
+                    </p>
 
                     <button class="boton-enviar-consulta" type="submit">💬 Enviar consulta por WhatsApp</button>
                 </form>
@@ -358,21 +834,25 @@
     <footer class="pie-pagina">
         <div class="contenedor pie-contenido">
             <div>
-                <a href="#inicio" class="logo logo-pie">Re <span>Orgánico</span></a>
+                <a href="#inicio" class="logo logo-pie" aria-label="Ir al inicio de Re Orgánico">
+                    <img src="assets/logo-re-organico.png" alt="Re Orgánico">
+                </a>
                 <p>Productos naturales para una vida más consciente.</p>
             </div>
 
             <div class="pie-enlaces">
                 <a href="#inicio">Inicio</a>
                 <a href="#productos">Productos</a>
-                <a href="#nosotros">Nosotros</a>
-                <a href="#contacto">Contacto</a>
+                <a href="#envios">Despachos</a>
+                <a id="enlace-instagram-pie" href="#" target="_blank" rel="noopener noreferrer">Instagram</a>
+                <a id="enlace-whatsapp-pie" href="#" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                <a href="admin/index.html" class="acceso-admin-pie">🔒 Acceso administrador</a>
             </div>
         </div>
 
         <div class="contenedor pie-final">
             <p>© 2026 Re Orgánico. Todos los derechos reservados.</p>
-            <p>Vitrina digital con cotización por WhatsApp.</p>
+            <p>Tienda digital con pedidos registrados y atención por WhatsApp.</p>
         </div>
     </footer>
 
@@ -391,9 +871,173 @@
                 <span class="modal-categoria" id="modal-producto-categoria"></span>
                 <h2 id="modal-producto-titulo"></h2>
                 <p id="modal-producto-descripcion"></p>
+                <p class="modal-producto-datos" id="modal-producto-datos"></p>
+
+                <p class="modal-presentacion-label" id="modal-presentacion-label">Elige cómo quieres comprarlo</p>
+                <div class="modal-presentacion-opciones" id="modal-presentacion" role="radiogroup" aria-labelledby="modal-presentacion-label"></div>
+                <div class="modal-presentacion-resumen" id="modal-presentacion-resumen"></div>
+
+                <div class="modal-cantidad-compra" id="modal-cantidad-compra">
+                    <div class="modal-cantidad-texto">
+                        <strong id="modal-cantidad-label">Cantidad</strong>
+                        <span id="modal-cantidad-ayuda">Elige cuántos quieres comprar.</span>
+                    </div>
+                    <div class="modal-cantidad-control" aria-label="Cantidad a comprar">
+                        <button type="button" id="modal-cantidad-restar" aria-label="Restar cantidad">−</button>
+                        <strong id="modal-cantidad-valor">1</strong>
+                        <button type="button" id="modal-cantidad-sumar" aria-label="Sumar cantidad">+</button>
+                    </div>
+                </div>
+                <div class="modal-cantidad-total" id="modal-cantidad-total"></div>
+
                 <div class="modal-producto-precio" id="modal-producto-precio"></div>
                 <button class="boton boton-principal" id="modal-agregar-carrito" type="button">Agregar a la cotización</button>
             </div>
+        </section>
+    </div>
+
+
+
+    <div class="modal" id="modal-pedido" aria-hidden="true">
+        <button class="modal-fondo" type="button" data-cerrar-modal="pedido" aria-label="Cerrar pedido"></button>
+        <section class="modal-contenido modal-pedido-contenido" role="dialog" aria-modal="true" aria-labelledby="modal-pedido-titulo">
+            <button class="modal-cerrar" type="button" data-cerrar-modal="pedido" aria-label="Cerrar">×</button>
+
+            <div class="pedido-modal-encabezado">
+                <span class="modal-categoria">Finalizar cotización</span>
+                <h2 id="modal-pedido-titulo">Completa tus datos</h2>
+                <p>
+                    Guardaremos la cotización en Re Orgánico y después se abrirá WhatsApp
+                    con el mensaje preparado para que lo envíes.
+                </p>
+            </div>
+
+            <div class="pedido-resumen-mini" id="pedido-resumen-mini"></div>
+
+            <form id="formulario-pedido" class="formulario-pedido">
+                <div class="campo-formulario">
+                    <label for="pedido-nombre">Nombre completo</label>
+                    <input id="pedido-nombre" type="text" maxlength="100" autocomplete="name" required>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="pedido-telefono">Teléfono</label>
+                    <input id="pedido-telefono" type="tel" maxlength="25" placeholder="Ejemplo: 9 1234 5678" autocomplete="tel" required>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="pedido-tipo-entrega">Forma de entrega</label>
+                    <select id="pedido-tipo-entrega" required>
+                        <option value="ruta">Ruta Re Orgánico</option>
+                        <option value="despacho">Despacho por transportista</option>
+                    </select>
+                </div>
+
+                <div class="campo-formulario" id="pedido-campo-ruta">
+                    <label for="pedido-ruta">Localidad de la ruta</label>
+                    <select id="pedido-ruta" required>
+                        <option value="">Selecciona tu localidad</option>
+                        <option>Llay Llay</option>
+                        <option>Catemu</option>
+                        <option>San Felipe</option>
+                        <option>Panquehue</option>
+                        <option>Putaendo</option>
+                        <option>Santa María</option>
+                        <option>Los Andes</option>
+                        <option>Rinconada</option>
+                        <option>Calle Larga</option>
+                        <option>San Esteban</option>
+                        <option>Ocoa</option>
+                        <option>Hijuelas</option>
+                        <option>Romeral</option>
+                        <option>El Melón</option>
+                        <option>Puchuncaví</option>
+                        <option>Maitencillo</option>
+                        <option>Laguna Zapallar</option>
+                        <option>Catapilco</option>
+                        <option>Papudo</option>
+                        <option>Pullally</option>
+                        <option>La Ligua</option>
+                        <option>Petorca</option>
+                    </select>
+                </div>
+
+                <div class="campo-formulario" id="pedido-campo-region">
+                    <label for="pedido-region">Región</label>
+                    <select id="pedido-region">
+                        <option value="">Selecciona tu región</option>
+                        <option>Arica y Parinacota</option>
+                        <option>Tarapacá</option>
+                        <option>Antofagasta</option>
+                        <option>Atacama</option>
+                        <option>Coquimbo</option>
+                        <option>Valparaíso</option>
+                        <option>Metropolitana de Santiago</option>
+                        <option>O'Higgins</option>
+                        <option>Maule</option>
+                        <option>Ñuble</option>
+                        <option>Biobío</option>
+                        <option>La Araucanía</option>
+                        <option>Los Ríos</option>
+                        <option>Los Lagos</option>
+                        <option>Aysén</option>
+                        <option>Magallanes y de la Antártica Chilena</option>
+                    </select>
+                </div>
+
+                <div class="campo-formulario" id="pedido-campo-comuna">
+                    <label for="pedido-comuna">Comuna</label>
+                    <input id="pedido-comuna" type="text" maxlength="100" autocomplete="address-level2">
+                </div>
+
+                <div class="campo-formulario" id="pedido-campo-direccion">
+                    <label for="pedido-direccion">Dirección o sucursal de destino</label>
+                    <input id="pedido-direccion" type="text" maxlength="180" placeholder="Dirección de entrega o sucursal de transporte" autocomplete="street-address" required>
+                </div>
+
+                <div class="campo-formulario" id="pedido-campo-empresa">
+                    <label for="pedido-empresa">Empresa de envío</label>
+                    <select id="pedido-empresa">
+                        <option value="Por coordinar">Por coordinar</option>
+                        <option value="Starken">Starken</option>
+                        <option value="Blue Express">Blue Express</option>
+                        <option value="CorreosChile">CorreosChile</option>
+                    </select>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="pedido-pago">Forma de pago preferida</label>
+                    <select id="pedido-pago" required>
+                        <option value="transferencia">Transferencia</option>
+                        <option value="efectivo">Efectivo</option>
+                    </select>
+                    <small class="ayuda-pago">En despachos por transportista el pago es solo por transferencia.</small>
+                </div>
+
+                <div class="campo-formulario campo-completo">
+                    <label for="pedido-observaciones">Observaciones</label>
+                    <textarea id="pedido-observaciones" rows="3" maxlength="500" placeholder="Detalles opcionales del pedido o entrega."></textarea>
+                </div>
+
+                <p class="nota-despacho campo-completo">
+                    El total mostrado es referencial. Confirmaremos stock, costo de despacho y forma de pago por WhatsApp.
+                </p>
+
+                <div class="campo-completo" aria-label="Verificación de seguridad">
+                    <div
+                        class="cf-turnstile"
+                        data-sitekey="0x4AAAAAAELhoXb-jSDpM-X3"
+                        data-theme="light"
+                        data-language="es"
+                    ></div>
+                </div>
+
+                <p class="mensaje-pedido campo-completo" id="mensaje-pedido" role="status" aria-live="polite"></p>
+
+                <button class="boton-enviar-pedido campo-completo" id="confirmar-pedido" type="submit">
+                    Guardar cotización y abrir WhatsApp
+                </button>
+            </form>
         </section>
     </div>
 
@@ -422,7 +1066,7 @@
                     <strong id="carrito-total">$0</strong>
                 </div>
                 <button class="boton-enviar-pedido" id="enviar-pedido" type="button">
-                    💬 Enviar por WhatsApp
+                    Continuar pedido
                 </button>
                 <button class="boton-vaciar-carrito" id="vaciar-carrito" type="button">Vaciar cotización</button>
             </footer>
@@ -431,7 +1075,8 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.2"></script>
     <script src="supabase-config.js"></script>
     <script src="script.js"></script>
 </body>

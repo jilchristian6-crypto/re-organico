@@ -3,16 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; media-src 'self' https://bkhpkiwbwdzlnjysdzqw.supabase.co; connect-src 'self' https://bkhpkiwbwdzlnjysdzqw.supabase.co wss://bkhpkiwbwdzlnjysdzqw.supabase.co; frame-src 'none'; form-action 'self'; upgrade-insecure-requests">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="robots" content="noindex, nofollow">
     <meta name="theme-color" content="#1f4d3a">
     <title>Administración | Re Orgánico</title>
+    <link rel="icon" type="image/png" href="../assets/favicon.png">
     <link rel="stylesheet" href="admin.css">
 </head>
 <body>
     <main class="admin-pagina">
         <section class="acceso" id="vista-acceso">
             <div class="acceso-marca">
-                <a href="../index.html" class="logo">Re <span>Orgánico</span></a>
+                <a href="../index.html" class="logo logo-admin-acceso" aria-label="Volver a Re Orgánico"><img src="../assets/logo-re-organico.png" alt="Re Orgánico"></a>
                 <span class="insignia">Panel privado</span>
             </div>
 
@@ -46,7 +49,7 @@
                             id="nueva-password"
                             type="password"
                             autocomplete="new-password"
-                            minlength="8"
+                            minlength="12"
                             required
                         >
                     </div>
@@ -57,7 +60,7 @@
                             id="repetir-password"
                             type="password"
                             autocomplete="new-password"
-                            minlength="8"
+                            minlength="12"
                             required
                         >
                     </div>
@@ -65,6 +68,18 @@
                     <button class="boton-principal" id="boton-recuperacion" type="submit">
                         Guardar nueva contraseña
                     </button>
+                </form>
+
+                <form id="formulario-mfa" class="formulario-login" hidden autocomplete="off">
+                    <div id="mfa-configuracion" hidden>
+                        <p><strong>Activa la verificación en dos pasos.</strong></p>
+                        <p>Escanea este QR con tu aplicación autenticadora.</p>
+                        <img id="mfa-qr" class="mfa-qr" alt="Código QR para configurar autenticación en dos pasos">
+                        <p class="mfa-secreto-wrap">Clave manual: <code id="mfa-secreto"></code></p>
+                    </div>
+                    <label for="mfa-codigo">Código de 6 dígitos</label>
+                    <input id="mfa-codigo" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required>
+                    <button class="boton-principal" id="boton-mfa" type="submit">Verificar código</button>
                 </form>
 
                 <p class="mensaje" id="mensaje-login" role="status" aria-live="polite"></p>
@@ -75,7 +90,7 @@
         <section class="panel" id="vista-panel" hidden>
             <header class="barra-panel">
                 <div>
-                    <a href="../index.html" class="logo logo-claro">Re <span>Orgánico</span></a>
+                    <a href="../index.html" class="logo logo-claro" aria-label="Ver tienda Re Orgánico"><img src="../assets/logo-re-organico.png" alt="Re Orgánico"></a>
                     <p>Administración segura del catálogo</p>
                 </div>
 
@@ -92,8 +107,8 @@
                         <span>Panel administrativo</span>
                         <h1>Productos de Re Orgánico</h1>
                         <p>
-                            Agrega, edita o elimina productos. Los cambios quedan guardados
-                            en la base de datos y se muestran en la página pública.
+                            Administra el catálogo y revisa las cotizaciones y pedidos guardados por los clientes.
+                            Los cambios se sincronizan con la base de datos de Re Orgánico.
                         </p>
                     </div>
 
@@ -102,6 +117,19 @@
                     </button>
                 </section>
 
+                <nav class="panel-pestanas" aria-label="Secciones del panel">
+                    <button class="pestana activa" type="button" data-seccion-panel="productos">
+                        Productos
+                    </button>
+                    <button class="pestana" type="button" data-seccion-panel="pedidos">
+                        Cotizaciones y pedidos <span id="contador-pedidos-pestana">0</span>
+                    </button>
+                    <button class="pestana" type="button" data-seccion-panel="galeria">
+                        📸 Fotos y videos <span id="contador-galeria-pestana">0</span>
+                    </button>
+                </nav>
+
+                <section id="seccion-productos">
                 <div class="panel-grid">
                     <section class="tarjeta-formulario">
                         <div class="titulo-bloque">
@@ -118,16 +146,82 @@
                             </div>
 
                             <div class="campo">
-                                <label for="producto-precio">Precio en pesos</label>
+                                <label for="producto-precio">Precio base / presentación mínima</label>
                                 <input id="producto-precio" type="number" min="0" step="1" required>
+                            </div>
+
+                            <div class="campo">
+                                <label for="producto-medida">Medida</label>
+                                <input id="producto-medida" type="text" maxlength="40" placeholder="42 × 50 cm">
+                            </div>
+
+                            <div class="campo">
+                                <label for="producto-micras">Micras</label>
+                                <input id="producto-micras" type="number" min="1" step="1" placeholder="14">
+                            </div>
+
+                            <div class="campo campo-completo bloque-presentaciones-admin">
+                                <h3>Presentación principal</h3>
+                                <p>Ejemplo: Pack · 100 bolsas · $6.969</p>
+                            </div>
+                            <div class="campo">
+                                <label for="producto-p1-nombre">Nombre</label>
+                                <input id="producto-p1-nombre" type="text" placeholder="Pack / Rollo / Caja 10 kg">
+                            </div>
+                            <div class="campo">
+                                <label for="producto-p1-unidades">Cantidad de unidades</label>
+                                <input id="producto-p1-unidades" type="number" min="1" step="1" placeholder="100">
+                            </div>
+                            <div class="campo">
+                                <label for="producto-p1-unidad">Cómo llamar a las unidades</label>
+                                <input id="producto-p1-unidad" type="text" placeholder="bolsas">
+                            </div>
+                            <div class="campo">
+                                <label for="producto-p1-precio">Precio presentación principal</label>
+                                <input id="producto-p1-precio" type="number" min="0" step="1">
+                            </div>
+                            <div class="campo campo-completo">
+                                <label for="producto-p1-detalle">Texto claro para el cliente</label>
+                                <input id="producto-p1-detalle" type="text" placeholder="1 pack = 100 bolsas">
+                            </div>
+
+                            <div class="campo campo-completo bloque-presentaciones-admin">
+                                <h3>Presentación alternativa (opcional)</h3>
+                                <p>Ejemplo: Caja completa · 500 bolsas · $32.667</p>
+                            </div>
+                            <div class="campo">
+                                <label for="producto-p2-nombre">Nombre</label>
+                                <input id="producto-p2-nombre" type="text" placeholder="Caja completa">
+                            </div>
+                            <div class="campo">
+                                <label for="producto-p2-unidades">Cantidad de unidades</label>
+                                <input id="producto-p2-unidades" type="number" min="1" step="1">
+                            </div>
+                            <div class="campo">
+                                <label for="producto-p2-unidad">Cómo llamar a las unidades</label>
+                                <input id="producto-p2-unidad" type="text" placeholder="bolsas">
+                            </div>
+                            <div class="campo">
+                                <label for="producto-p2-precio">Precio presentación alternativa</label>
+                                <input id="producto-p2-precio" type="number" min="0" step="1">
+                            </div>
+                            <div class="campo campo-completo">
+                                <label for="producto-p2-detalle">Texto claro para el cliente</label>
+                                <input id="producto-p2-detalle" type="text" placeholder="1 caja = 500 bolsas">
                             </div>
 
                             <div class="campo">
                                 <label for="producto-categoria">Categoría</label>
                                 <select id="producto-categoria" required>
-                                    <option value="alimentos">Alimentos</option>
-                                    <option value="cuidado">Cuidado personal</option>
-                                    <option value="hogar">Hogar</option>
+                                    <option value="bolsas">Bolsas compostables</option>
+                                    <option value="rollos">Bolsas en rollo</option>
+                                    <option value="papel">Papel compost</option>
+                                    <option value="contenedores">Contenedores compostables</option>
+                                    <option value="vasos">Vasos compostables</option>
+                                    <option value="tapas">Tapas compostables</option>
+                                    <option value="heladeria">Heladería</option>
+                                    <option value="cubiertos">Cubiertos y sets</option>
+                                    <option value="bombillas">Bombillas compostables</option>
                                 </select>
                             </div>
 
@@ -187,13 +281,140 @@
                         <div class="lista-admin" id="lista-admin"></div>
                     </section>
                 </div>
+                </section>
+
+                <section class="seccion-pedidos" id="seccion-pedidos" hidden>
+                    <div class="resumen-pedidos">
+                        <article>
+                            <span>Total registrados</span>
+                            <strong id="resumen-total-pedidos">0</strong>
+                        </article>
+                        <article>
+                            <span>Por gestionar</span>
+                            <strong id="resumen-pedidos-pendientes">0</strong>
+                        </article>
+                        <article>
+                            <span>Pagos confirmados</span>
+                            <strong id="resumen-pagos-confirmados">0</strong>
+                        </article>
+                        <article>
+                            <span>Entregados</span>
+                            <strong id="resumen-pedidos-entregados">0</strong>
+                        </article>
+                    </div>
+
+                    <section class="tarjeta-listado tarjeta-pedidos">
+                        <div class="listado-cabecera">
+                            <div>
+                                <span>Registro comercial</span>
+                                <h2>Cotizaciones y pedidos</h2>
+                            </div>
+                            <button id="actualizar-pedidos" type="button" aria-label="Actualizar pedidos">↻ Actualizar</button>
+                        </div>
+
+                        <div class="estado-carga" id="estado-pedidos">Cargando pedidos...</div>
+                        <div class="lista-pedidos" id="lista-pedidos"></div>
+                    </section>
+
+                </section>
+
+                <section class="seccion-galeria" id="seccion-galeria" hidden>
+                    <div class="galeria-admin-encabezado">
+                        <div>
+                            <span>Contenido multimedia</span>
+                            <h2>Fotos y videos</h2>
+                            <p>Sube contenido que después podrá mostrarse en la sección “Nuestro trabajo”.</p>
+                        </div>
+                        <button class="boton-galeria-nuevo" id="nuevo-contenido" type="button">
+                            + Agregar contenido
+                        </button>
+                    </div>
+
+                    <div class="galeria-admin-grid">
+                        <section class="tarjeta-formulario">
+                            <div class="titulo-bloque">
+                                <span id="modo-galeria">Nuevo contenido</span>
+                                <h2 id="titulo-formulario-galeria">Publicar foto o video</h2>
+                            </div>
+
+                            <form id="formulario-galeria" class="formulario-galeria">
+                                <input id="galeria-id" type="hidden">
+                                <input id="galeria-path-actual" type="hidden">
+
+                                <div class="campo">
+                                    <label for="galeria-titulo">Título</label>
+                                    <input id="galeria-titulo" type="text" maxlength="100" required
+                                           placeholder="Ej: Proceso de compostaje">
+                                </div>
+
+                                <div class="campo">
+                                    <label for="galeria-descripcion">Descripción opcional</label>
+                                    <textarea id="galeria-descripcion" rows="4" maxlength="300"
+                                              placeholder="Una descripción corta del contenido"></textarea>
+                                </div>
+
+                                <div class="campo">
+                                    <label for="galeria-archivo">Foto o video</label>
+                                    <input id="galeria-archivo" type="file"
+                                           accept="image/jpeg,image/png,image/webp,video/mp4,video/webm">
+                                    <small class="ayuda-campo">
+                                        JPG, PNG, WEBP, MP4 o WEBM. Máximo 50 MB.
+                                        Al editar, puedes dejar este campo vacío para conservar el archivo actual.
+                                    </small>
+                                </div>
+
+                                <div class="galeria-vista-previa" id="galeria-vista-previa" hidden></div>
+
+                                <div class="formulario-galeria-doble">
+                                    <div class="campo">
+                                        <label for="galeria-orden">Orden</label>
+                                        <input id="galeria-orden" type="number" min="0" step="1" value="1" required>
+                                    </div>
+
+                                    <div class="campo campo-check">
+                                        <label for="galeria-activo">
+                                            <input id="galeria-activo" type="checkbox" checked>
+                                            Mostrar en la página
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="acciones-formulario">
+                                    <button class="boton-principal" id="guardar-contenido" type="submit">
+                                        Publicar contenido
+                                    </button>
+                                    <button class="boton-cancelar" id="cancelar-contenido" type="button">
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </form>
+
+                            <p class="mensaje" id="mensaje-galeria" role="status" aria-live="polite"></p>
+                        </section>
+
+                        <section class="tarjeta-listado">
+                            <div class="listado-cabecera">
+                                <div>
+                                    <span>Biblioteca</span>
+                                    <h2>Contenido guardado</h2>
+                                </div>
+                                <button id="actualizar-galeria" type="button" aria-label="Actualizar galería">
+                                    ↻ Actualizar
+                                </button>
+                            </div>
+
+                            <div class="estado-carga" id="estado-galeria">Cargando contenido...</div>
+                            <div class="lista-galeria-admin" id="lista-galeria-admin"></div>
+                        </section>
+                    </div>
+                </section>
             </div>
         </section>
     </main>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.2"></script>
     <script src="../supabase-config.js"></script>
     <script src="admin.js"></script>
 </body>

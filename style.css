@@ -2994,7 +2994,7 @@ img {
 
 .nosotros-visual {
     position: relative;
-    min-height: 520px;
+    min-height: 560px;
     display: grid;
     place-items: center;
     isolation: isolate;
@@ -3004,8 +3004,8 @@ img {
 /* Fondo orgánico detrás de la tarjeta */
 .nosotros-fondo {
     position: absolute;
-    width: 430px;
-    height: 430px;
+    width: 470px;
+    height: 470px;
 
     border-radius: 48% 52% 57% 43% / 45% 48% 52% 55%;
 
@@ -3025,7 +3025,7 @@ img {
     box-shadow:
         0 35px 80px rgba(31, 77, 58, 0.18);
 
-    transform: rotate(-5deg);
+    transform: translate(-18px, 8px) rotate(-7deg);
 }
 
 
@@ -3241,12 +3241,13 @@ img {
 @media (max-width: 650px) {
 
     .nosotros-visual {
-        min-height: 440px;
+        min-height: 460px;
     }
 
     .nosotros-fondo {
-        width: 310px;
-        height: 310px;
+        width: 350px;
+        height: 350px;
+        transform: translate(-8px, 4px) rotate(-7deg);
     }
 
     .nosotros-tarjeta {
@@ -3278,8 +3279,9 @@ img {
 ========================================= */
 
 .nosotros-tarjeta {
-    width: min(380px, 90%);
-    min-height: 280px;
+    width: min(370px, 88%);
+    min-height: 0;
+    aspect-ratio: 4 / 5;
 
     display: flex;
     align-items: center;
@@ -3287,11 +3289,14 @@ img {
 
     padding: 0;
 
-    border-radius: 34px;
+    border: 9px solid rgba(255, 255, 255, 0.96);
+    border-radius: 38px;
 
     background: rgba(255, 255, 255, 0.95);
 
-    box-shadow: 0 30px 70px rgba(31, 77, 58, 0.20);
+    box-shadow:
+        0 35px 80px rgba(31, 77, 58, 0.24),
+        0 8px 24px rgba(31, 77, 58, 0.12);
 
     transform: none;
 }
@@ -3301,10 +3306,10 @@ img {
     z-index: 2;
     display: block;
     width: 100%;
-    height: 280px;
-    border-radius: inherit;
+    height: 100%;
+    border-radius: 29px;
     object-fit: cover;
-    object-position: center 35%;
+    object-position: center;
 }
 
 /* Sacamos la hoja 🌿 y ponemos el logo */
@@ -3340,12 +3345,16 @@ img {
 @media (max-width: 650px) {
 
     .nosotros-tarjeta {
-        min-height: 230px;
+        width: min(315px, 86vw);
+        min-height: 0;
         padding: 0;
+        border-width: 7px;
+        border-radius: 32px;
     }
 
     .nosotros-foto {
-        height: 260px;
+        height: 100%;
+        border-radius: 24px;
     }
 
     .nosotros-icono {

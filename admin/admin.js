@@ -68,7 +68,7 @@ let productoFotoPreferidoId = "";
 let temporizadorInactividadAdmin = null;
 let cierreSesionEnCurso = false;
 
-const TIEMPO_INACTIVIDAD_ADMIN_MS = 30 * 60 * 1000;
+const TIEMPO_INACTIVIDAD_ADMIN_MS = 15 * 60 * 1000;
 const MAX_INTENTOS_LOGIN_LOCAL = 5;
 const VENTANA_INTENTOS_LOGIN_MS = 15 * 60 * 1000;
 const BLOQUEO_LOGIN_LOCAL_MS = 15 * 60 * 1000;
@@ -206,7 +206,17 @@ async function inicializar() {
 
     clienteSupabase = window.supabase.createClient(
         configuracion.url,
-        configuracion.anonKey
+        configuracion.anonKey,
+        {
+            auth: {
+                storage: window.sessionStorage,
+                storageKey: "reorganico-admin-auth-v1",
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: true,
+                flowType: "pkce"
+            }
+        }
     );
 
     if (!clienteSupabase || !clienteSupabase.auth) {
@@ -611,6 +621,7 @@ async function autorizarYMostrarPanel(usuario) {
 }
 
 async function mostrarPanelAutorizado() {
+    limpiarDatosMfaSensibles();
     elementos.correoAdmin.textContent = usuarioActual?.email || "Administrador";
     elementos.vistaAcceso.hidden = true;
     elementos.vistaPanel.hidden = false;
@@ -701,6 +712,14 @@ async function verificarCodigoMfa(evento) {
     await mostrarPanelAutorizado();
 }
 
+function limpiarDatosMfaSensibles() {
+    mfaFactorId = null;
+    elementos.mfaQr.removeAttribute("src");
+    elementos.mfaSecreto.textContent = "";
+    elementos.mfaCodigo.value = "";
+    elementos.mfaConfiguracion.hidden = true;
+}
+
 function passwordFuerte(password) {
     return typeof password === "string" &&
         password.length >= 12 &&
@@ -727,6 +746,7 @@ async function verificarAdministrador(userId) {
 
 function mostrarVistaAcceso() {
     detenerTemporizadorInactividad();
+    limpiarDatosMfaSensibles();
     elementos.vistaPanel.hidden = true;
     elementos.vistaAcceso.hidden = false;
     elementos.formularioRecuperacion.hidden = true;
@@ -780,7 +800,7 @@ async function cerrarSesionPorInactividad() {
         mostrarVistaAcceso();
         mostrarMensaje(
             elementos.mensajeLogin,
-            "La sesión se cerró automáticamente después de 30 minutos sin actividad."
+            "La sesión se cerró automáticamente después de 15 minutos sin actividad."
         );
         cierreSesionEnCurso = false;
     }

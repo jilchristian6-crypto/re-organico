@@ -34,7 +34,7 @@ type PedidoValidado = {
 };
 
 function origenPermitido(origen: string | null) {
-  return !origen || ORIGENES_PERMITIDOS.has(origen);
+  return Boolean(origen && ORIGENES_PERMITIDOS.has(origen));
 }
 
 function encabezadosCors(req: Request) {
@@ -66,7 +66,10 @@ function responder(
       ...headersExtra,
       "Content-Type": "application/json; charset=utf-8",
       "Cache-Control": "no-store",
+      "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'",
       "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "DENY",
+      "Referrer-Policy": "no-referrer",
     },
   });
 }
@@ -306,6 +309,14 @@ Deno.serve(async (req: Request) => {
     return responder(req, { success: false, error: "Método no permitido." }, 405, {
       Allow: "POST, OPTIONS",
     });
+  }
+
+  const tipoContenido = req.headers.get("content-type")?.toLowerCase() || "";
+  if (!tipoContenido.startsWith("application/json")) {
+    return responder(req, {
+      success: false,
+      error: "El tipo de contenido no es válido.",
+    }, 415);
   }
 
   try {

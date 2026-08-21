@@ -8,7 +8,6 @@ supabase/
 
 # Copias históricas y archivos auxiliares que no forman parte del sitio activo.
 re-organico-datos-reales/
-admin.js
 assets/index.html
 assets/style.css
 assets/img/

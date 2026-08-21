@@ -2121,6 +2121,7 @@ inicializar();
 async function inicializar() {
     aplicarDatosTienda();
     actualizarCamposEntrega();
+    inicializarCarruselPortada();
     inicializarEventos();
     inicializarAnimaciones();
     actualizarNavegacion();
@@ -2133,6 +2134,97 @@ async function inicializar() {
     if (clienteSupabase) {
         await cargarProductosDesdeSupabase();
     }
+}
+
+function inicializarCarruselPortada() {
+    const carrusel = document.getElementById("hero-carrusel");
+    if (!carrusel) return;
+
+    const diapositivas = [...carrusel.querySelectorAll("[data-hero-diapositiva]")];
+    const indicadores = [...carrusel.querySelectorAll("[data-hero-indice]")];
+    const anterior = carrusel.querySelector("[data-hero-anterior]");
+    const siguiente = carrusel.querySelector("[data-hero-siguiente]");
+    const estado = document.getElementById("hero-carrusel-estado");
+    const movimientoReducido = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let indiceActual = 0;
+    let temporizador = null;
+    let toqueInicialX = null;
+
+    function mostrarDiapositiva(indice, anunciar = true) {
+        indiceActual = (indice + diapositivas.length) % diapositivas.length;
+
+        diapositivas.forEach((diapositiva, posicion) => {
+            const activa = posicion === indiceActual;
+            diapositiva.classList.toggle("activa", activa);
+            diapositiva.setAttribute("aria-hidden", activa ? "false" : "true");
+        });
+
+        indicadores.forEach((indicador, posicion) => {
+            indicador.setAttribute("aria-current", posicion === indiceActual ? "true" : "false");
+        });
+
+        if (estado && anunciar) {
+            estado.textContent = `Foto ${indiceActual + 1} de ${diapositivas.length}`;
+        }
+    }
+
+    function detenerReproduccion() {
+        window.clearInterval(temporizador);
+        temporizador = null;
+    }
+
+    function iniciarReproduccion() {
+        detenerReproduccion();
+        if (movimientoReducido.matches || document.hidden) return;
+
+        temporizador = window.setInterval(() => {
+            mostrarDiapositiva(indiceActual + 1, false);
+        }, 5000);
+    }
+
+    function cambiarManual(indice) {
+        mostrarDiapositiva(indice);
+        iniciarReproduccion();
+    }
+
+    anterior?.addEventListener("click", () => cambiarManual(indiceActual - 1));
+    siguiente?.addEventListener("click", () => cambiarManual(indiceActual + 1));
+
+    indicadores.forEach((indicador) => {
+        indicador.addEventListener("click", () => cambiarManual(Number(indicador.dataset.heroIndice)));
+    });
+
+    carrusel.addEventListener("mouseenter", detenerReproduccion);
+    carrusel.addEventListener("mouseleave", iniciarReproduccion);
+    carrusel.addEventListener("focusin", detenerReproduccion);
+    carrusel.addEventListener("focusout", () => {
+        window.setTimeout(() => {
+            if (!carrusel.contains(document.activeElement)) iniciarReproduccion();
+        }, 0);
+    });
+
+    carrusel.addEventListener("touchstart", (evento) => {
+        toqueInicialX = evento.changedTouches[0]?.clientX ?? null;
+    }, { passive: true });
+
+    carrusel.addEventListener("touchend", (evento) => {
+        if (toqueInicialX === null) return;
+        const toqueFinalX = evento.changedTouches[0]?.clientX ?? toqueInicialX;
+        const desplazamiento = toqueFinalX - toqueInicialX;
+        toqueInicialX = null;
+
+        if (Math.abs(desplazamiento) < 45) return;
+        cambiarManual(indiceActual + (desplazamiento < 0 ? 1 : -1));
+    }, { passive: true });
+
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) detenerReproduccion();
+        else iniciarReproduccion();
+    });
+
+    movimientoReducido.addEventListener?.("change", iniciarReproduccion);
+    mostrarDiapositiva(0, false);
+    iniciarReproduccion();
 }
 
 function crearClienteSupabase() {

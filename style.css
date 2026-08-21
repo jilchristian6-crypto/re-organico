@@ -3285,7 +3285,7 @@ img {
     align-items: center;
     justify-content: center;
 
-    padding: 45px;
+    padding: 0;
 
     border-radius: 34px;
 
@@ -3294,6 +3294,17 @@ img {
     box-shadow: 0 30px 70px rgba(31, 77, 58, 0.20);
 
     transform: none;
+}
+
+.nosotros-foto {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: 100%;
+    height: 280px;
+    border-radius: inherit;
+    object-fit: cover;
+    object-position: center 35%;
 }
 
 /* Sacamos la hoja 🌿 y ponemos el logo */
@@ -3330,7 +3341,11 @@ img {
 
     .nosotros-tarjeta {
         min-height: 230px;
-        padding: 30px;
+        padding: 0;
+    }
+
+    .nosotros-foto {
+        height: 260px;
     }
 
     .nosotros-icono {

@@ -1,6 +1,7 @@
 "use strict";
 
 const CATEGORIAS = {
+    compostaje: "Compostaje",
     bolsas: "Bolsas compostables",
     rollos: "Bolsas en rollo",
     papel: "Papel compost",

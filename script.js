@@ -1952,8 +1952,35 @@ const PRODUCTOS_RESPALDO = [
                 "detalle": "1 caja: 400 contenedores"
             }
         ]
+    },
+    {
+        "id": "vermicompostera-4-niveles",
+        "nombre": "Vermicompostera de 4 niveles",
+        "precio": 21000,
+        "categoria": "compostaje",
+        "descripcion": "Casa para lombrices californianas, diseñada para producir humus de lombriz a partir de residuos orgánicos.",
+        "emoji": "🪱",
+        "etiqueta": "4 niveles",
+        "estado": "disponible",
+        "orden": 0,
+        "medida": "4 niveles",
+        "micras": null,
+        "presentaciones": [
+            {
+                "id": "unidad",
+                "nombre": "Unidad",
+                "unidades": 1,
+                "unidad": "vermicompostera",
+                "precio": 21000,
+                "detalle": "1 unidad: vermicompostera de 4 niveles"
+            }
+        ]
     }
 ];
+
+const PRODUCTOS_EXCLUSIVOS_SITIO = new Set([
+    "vermicompostera-4-niveles"
+]);
 
 const CORRECCIONES_PRODUCTOS = {
     "bolsa-taco-25x35-my14": {
@@ -1980,6 +2007,7 @@ function normalizarProducto(producto) {
 }
 
 const CATEGORIAS = {
+    compostaje: "Compostaje",
     bolsas: "Bolsas Compostables Tipo Camiseta",
     rollos: "Bolsas Compostables En Rollo",
     papel: "Papel Compostable",
@@ -1999,6 +2027,7 @@ const ESTADOS = {
 };
 
 const FONDOS = {
+    compostaje: "linear-gradient(145deg, #eaf4e4, #b8d2a9)",
     bolsas: "linear-gradient(145deg, #e8f5e9, #a8d5aa)",
     rollos: "linear-gradient(145deg, #edf4e6, #bed3a4)",
     papel: "linear-gradient(145deg, #f5efe3, #d7c9aa)",
@@ -2010,7 +2039,12 @@ const FONDOS = {
     bombillas: "linear-gradient(145deg, #edf7f0, #b9d7c2)"
 };
 
-let productos = PRODUCTOS_RESPALDO.map((producto) => normalizarProducto({ ...producto }));
+let productos = PRODUCTOS_RESPALDO
+    .map((producto) => normalizarProducto({ ...producto }))
+    .sort((a, b) => {
+        const porOrden = (Number(a.orden) || 0) - (Number(b.orden) || 0);
+        return porOrden || a.nombre.localeCompare(b.nombre, "es");
+    });
 let carrito = cargarCarrito();
 let categoriaActiva = "todos";
 const PRODUCTOS_POR_PAGINA = 6;
@@ -2133,7 +2167,16 @@ async function cargarProductosDesdeSupabase() {
     }
 
     if (Array.isArray(data) && data.length > 0) {
-        productos = data.map((producto) => normalizarProducto(producto));
+        const productosRemotos = data.map((producto) => normalizarProducto(producto));
+        const idsRemotos = new Set(productosRemotos.map((producto) => producto.id));
+        const productosLocales = PRODUCTOS_RESPALDO
+            .filter((producto) => PRODUCTOS_EXCLUSIVOS_SITIO.has(producto.id) && !idsRemotos.has(producto.id))
+            .map((producto) => normalizarProducto({ ...producto }));
+
+        productos = [...productosRemotos, ...productosLocales].sort((a, b) => {
+            const porOrden = (Number(a.orden) || 0) - (Number(b.orden) || 0);
+            return porOrden || a.nombre.localeCompare(b.nombre, "es");
+        });
         limpiarCarritoDesactualizado();
         renderizarCatalogo();
         renderizarCarrito();

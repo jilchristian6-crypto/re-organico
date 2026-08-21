@@ -15,7 +15,7 @@
     <main class="admin-pagina">
         <section class="acceso" id="vista-acceso">
             <div class="acceso-marca">
-                <a href="../index.html" class="logo logo-admin-acceso" aria-label="Volver a Re Orgánico"><img src="../assets/logo-re-organico.png" alt="Re Orgánico"></a>
+                <a href="../index.html" class="logo logo-admin-acceso" aria-label="Volver a Re Orgánico"><img src="../assets/logo-re-organico.svg" alt="Re Orgánico"></a>
                 <span class="insignia">Panel privado</span>
             </div>
 
@@ -29,11 +29,11 @@
 
                 <form id="formulario-login" class="formulario-login">
                     <label for="login-email">Correo electrónico</label>
-                    <input id="login-email" type="email" autocomplete="username" required>
+                    <input id="login-email" type="email" autocomplete="username" maxlength="254" required>
 
                     <label for="login-password">Contraseña</label>
                     <div class="campo-password">
-                        <input id="login-password" type="password" autocomplete="current-password" required>
+                        <input id="login-password" type="password" autocomplete="current-password" maxlength="128" required>
                         <button id="mostrar-password" type="button" aria-label="Mostrar u ocultar contraseña">👁️</button>
                     </div>
 
@@ -50,6 +50,7 @@
                             type="password"
                             autocomplete="new-password"
                             minlength="12"
+                            maxlength="128"
                             required
                         >
                     </div>
@@ -61,6 +62,7 @@
                             type="password"
                             autocomplete="new-password"
                             minlength="12"
+                            maxlength="128"
                             required
                         >
                     </div>
@@ -90,7 +92,7 @@
         <section class="panel" id="vista-panel" hidden>
             <header class="barra-panel">
                 <div>
-                    <a href="../index.html" class="logo logo-claro" aria-label="Ver tienda Re Orgánico"><img src="../assets/logo-re-organico.png" alt="Re Orgánico"></a>
+                    <a href="../index.html" class="logo logo-claro" aria-label="Ver tienda Re Orgánico"><img src="../assets/logo-re-organico.svg" alt="Re Orgánico"></a>
                     <p>Administración segura del catálogo</p>
                 </div>
 
@@ -130,6 +132,45 @@
                 </nav>
 
                 <section id="seccion-productos">
+                <section class="carga-fotos-productos" aria-labelledby="titulo-carga-fotos-productos">
+                    <div class="carga-fotos-encabezado">
+                        <div>
+                            <span>Fotos del catálogo</span>
+                            <h2 id="titulo-carga-fotos-productos">Subir varias fotos de una vez</h2>
+                            <p>
+                                Selecciona las imágenes, revisa el producto asignado y presiona “Subir todas”.
+                                La página las optimiza automáticamente para que carguen rápido.
+                            </p>
+                        </div>
+                        <span class="insignia-carga-fotos">Hasta 50 fotos</span>
+                    </div>
+
+                    <label class="zona-carga-fotos" id="zona-carga-fotos" for="fotos-productos-archivos">
+                        <input
+                            id="fotos-productos-archivos"
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            multiple
+                        >
+                        <span class="zona-carga-fotos-icono" aria-hidden="true">📷</span>
+                        <strong>Haz clic o arrastra aquí las fotos</strong>
+                        <small>JPG, PNG o WEBP · máximo 10 MB por foto</small>
+                    </label>
+
+                    <div class="lista-fotos-productos" id="lista-fotos-productos" hidden></div>
+
+                    <div class="acciones-carga-fotos">
+                        <button class="boton-principal" id="subir-fotos-productos" type="button" disabled>
+                            Subir todas las fotos
+                        </button>
+                        <button class="boton-cancelar" id="limpiar-fotos-productos" type="button" disabled>
+                            Limpiar selección
+                        </button>
+                    </div>
+
+                    <p class="mensaje" id="mensaje-fotos-productos" role="status" aria-live="polite"></p>
+                </section>
+
                 <div class="panel-grid">
                     <section class="tarjeta-formulario">
                         <div class="titulo-bloque">

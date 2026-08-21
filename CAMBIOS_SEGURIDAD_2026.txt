@@ -1,0 +1,21 @@
+REFUERZO DE SEGURIDAD — RE ORGÁNICO
+
+Cambios incluidos:
+
+1. Los pedidos ahora se verifican y se guardan en un único proceso seguro del servidor.
+2. Turnstile valida dominio, acción, antigüedad del token e IP cuando está disponible.
+3. Límite automático de intentos por IP y de cotizaciones por teléfono.
+4. El servidor rechaza solicitudes demasiado grandes o con datos inválidos.
+5. El panel administrador cierra la sesión después de 30 minutos sin actividad.
+6. El acceso administrador pausa nuevos intentos después de cinco errores seguidos.
+7. Las contraseñas nuevas requieren 12 caracteres, mayúscula, minúscula, número y símbolo.
+8. La función de autorización administrativa fue movida fuera del área pública de la API.
+9. Las políticas de Supabase conservan el acceso solamente con cuenta administradora y MFA.
+10. Vercel aplicará cabeceras contra inyección de código, páginas incrustadas y caché del panel.
+
+Archivos principales:
+- vercel.json
+- SEGURIDAD_REFORZADA.sql
+- supabase/functions/verificar-turnstile/index.ts
+
+La migración y la función segura ya fueron aplicadas al proyecto Supabase de Re Orgánico.

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; media-src 'self' https://bkhpkiwbwdzlnjysdzqw.supabase.co; connect-src 'self' https://bkhpkiwbwdzlnjysdzqw.supabase.co wss://bkhpkiwbwdzlnjysdzqw.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; form-action 'self'; upgrade-insecure-requests">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; media-src 'self'; connect-src 'self' https://bkhpkiwbwdzlnjysdzqw.supabase.co wss://bkhpkiwbwdzlnjysdzqw.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; form-action 'self'; upgrade-insecure-requests">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="description" content="Re Orgánico: productos naturales con entregas en rutas programadas y despachos a todo Chile por Starken, Blue Express o CorreosChile. Cotiza por WhatsApp.">
     <meta name="theme-color" content="#1f4d3a">
@@ -15,40 +15,302 @@
     <title>Re Orgánico | Productos naturales</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link rel="stylesheet" href="style.css">
-
     <style>
-        .galeria-dinamica-item video {
-            position: absolute;
-            inset: 0;
+        /* =========================================
+           PORTADA NUEVA RE ORGÁNICO
+           Solo modifica el HERO / inicio
+        ========================================= */
+
+        .hero-portada-nueva {
+            min-height: 100vh;
+            padding: 145px 0 70px;
+            background:
+                radial-gradient(circle at 77% 42%, rgba(115, 167, 121, 0.18), transparent 31%),
+                linear-gradient(115deg, #fbfaf5 0%, #f8f8f2 50%, #eef5ee 100%);
+        }
+
+        .hero-portada-nueva .hero-contenido-nuevo {
+            width: min(1450px, 91%);
+            grid-template-columns: minmax(0, 0.92fr) minmax(520px, 1.08fr);
+            gap: clamp(55px, 6vw, 105px);
+            align-items: center;
+        }
+
+        .hero-portada-nueva .hero-texto-nuevo {
+            position: relative;
+            z-index: 3;
+        }
+
+        .hero-portada-nueva .hero-titulo-nuevo {
+            max-width: 650px;
+            margin: 0;
+            letter-spacing: -2px;
+            line-height: 0.98;
+        }
+
+        .hero-portada-nueva .hero-titulo-nuevo span,
+        .hero-portada-nueva .hero-titulo-nuevo strong {
+            display: block;
+            font-family: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
+            font-weight: 600;
+        }
+
+        .hero-portada-nueva .hero-titulo-nuevo span {
+            color: #27853e;
+            font-size: clamp(48px, 4.7vw, 78px);
+        }
+
+        .hero-portada-nueva .hero-titulo-nuevo strong {
+            margin-top: 7px;
+            color: #8a4d2b;
+            font-size: clamp(55px, 5.3vw, 88px);
+            text-transform: uppercase;
+        }
+
+        .hero-portada-nueva .hero-texto-nuevo > p {
+            max-width: 560px;
+            margin-top: 30px;
+            color: #5f625f;
+            font-size: clamp(18px, 1.5vw, 24px);
+            line-height: 1.55;
+        }
+
+        .hero-portada-nueva .hero-botones-nuevos {
+            margin-top: 35px;
+            gap: 20px;
+        }
+
+        .hero-portada-nueva .hero-botones-nuevos .boton {
+            min-width: 205px;
+            min-height: 54px;
+            border-radius: 999px;
+            font-size: 15px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .hero-portada-nueva .hero-botones-nuevos .boton-principal {
+            background: #278b34;
+            border-color: #278b34;
+        }
+
+        .hero-portada-nueva .hero-botones-nuevos .boton-secundario {
+            background: rgba(255,255,255,0.65);
+            border: 2px solid #2c8b38;
+            color: #247a31;
+        }
+
+        .hero-portada-nueva .beneficios-nuevos {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 28px;
+            max-width: 620px;
+            margin-top: 48px;
+        }
+
+        .hero-portada-nueva .beneficio-nuevo {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            min-width: 0;
+            padding: 0;
+            border: 0;
+            background: transparent;
+        }
+
+        .hero-portada-nueva .beneficio-icono-nuevo {
+            width: 70px;
+            height: 70px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 14px;
+            border-radius: 50%;
+            background: rgba(222, 238, 221, 0.85);
+        }
+
+        .hero-portada-nueva .beneficio-icono-nuevo svg {
+            width: 38px;
+            height: 38px;
+            fill: none;
+            stroke: #65a669;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .hero-portada-nueva .beneficio-nuevo strong {
+            color: #287f34;
+            font-size: 15px;
+            text-transform: uppercase;
+        }
+
+        .hero-portada-nueva .beneficio-nuevo span {
+            max-width: 150px;
+            margin-top: 8px;
+            color: #666965;
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        /* FOTO GRANDE A LA DERECHA - SIN MARCO BLANCO */
+        .hero-portada-nueva .hero-imagen-nueva {
+            position: relative;
+            min-height: 650px;
+            display: grid;
+            place-items: center;
+        }
+
+        .hero-portada-nueva .circulo-decorativo-nuevo {
+            width: min(610px, 90%);
+            height: min(610px, 90%);
+            border-radius: 50%;
+            background: linear-gradient(
+                145deg,
+                rgba(176, 218, 175, 0.76),
+                rgba(119, 169, 126, 0.63)
+            );
+            filter: none;
+        }
+
+        .hero-portada-nueva .hero-foto-nueva {
+            position: relative;
+            z-index: 2;
+            width: min(690px, 100%);
+            height: 625px;
+            overflow: hidden;
+            border: 0;
+            border-radius: 48px;
+            background: transparent;
+            box-shadow: 0 22px 55px rgba(31, 77, 58, 0.14);
+            transform: none;
+        }
+
+        .hero-portada-nueva .hero-foto-nueva img {
+            display: block;
             width: 100%;
             height: 100%;
+            max-width: none;
             object-fit: cover;
-            background: #102d22;
+            object-position: center 42%;
+            border: 0;
+            border-radius: inherit;
         }
 
-        .galeria-dinamica-item .caso-overlay {
-            pointer-events: none;
+        @media (max-width: 1180px) {
+            .hero-portada-nueva .hero-contenido-nuevo {
+                grid-template-columns: 0.95fr 1.05fr;
+                gap: 42px;
+            }
+
+            .hero-portada-nueva .hero-foto-nueva {
+                height: 560px;
+            }
+
+            .hero-portada-nueva .hero-imagen-nueva {
+                min-height: 590px;
+            }
         }
 
-        .galeria-dinamica-item.es-video .caso-contenido {
-            pointer-events: none;
-            padding-bottom: 64px;
+        @media (max-width: 900px) {
+            .hero-portada-nueva {
+                min-height: auto;
+                padding: 125px 0 65px;
+            }
+
+            .hero-portada-nueva .hero-contenido-nuevo {
+                grid-template-columns: 1fr;
+                gap: 50px;
+                text-align: center;
+            }
+
+            .hero-portada-nueva .hero-titulo-nuevo,
+            .hero-portada-nueva .hero-texto-nuevo > p {
+                margin-inline: auto;
+            }
+
+            .hero-portada-nueva .hero-botones-nuevos {
+                justify-content: center;
+            }
+
+            .hero-portada-nueva .beneficios-nuevos {
+                margin-inline: auto;
+            }
+
+            .hero-portada-nueva .beneficio-nuevo {
+                align-items: center;
+                text-align: center;
+            }
+
+            .hero-portada-nueva .hero-imagen-nueva {
+                min-height: 560px;
+            }
+
+            .hero-portada-nueva .hero-foto-nueva {
+                width: min(620px, 94%);
+                height: 540px;
+            }
         }
 
-        .galeria-dinamica-item.es-video video {
-            z-index: 0;
-        }
+        @media (max-width: 600px) {
+            .hero-portada-nueva .hero-titulo-nuevo span {
+                font-size: 42px;
+            }
 
-        .galeria-dinamica-item .caso-contenido > span {
-            max-width: max-content;
+            .hero-portada-nueva .hero-titulo-nuevo strong {
+                font-size: 49px;
+            }
+
+            .hero-portada-nueva .hero-texto-nuevo > p {
+                font-size: 17px;
+            }
+
+            .hero-portada-nueva .hero-botones-nuevos {
+                flex-direction: column;
+            }
+
+            .hero-portada-nueva .hero-botones-nuevos .boton {
+                width: 100%;
+            }
+
+            .hero-portada-nueva .beneficios-nuevos {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+
+            .hero-portada-nueva .beneficio-icono-nuevo {
+                width: 58px;
+                height: 58px;
+            }
+
+            .hero-portada-nueva .beneficio-icono-nuevo svg {
+                width: 30px;
+                height: 30px;
+            }
+
+            .hero-portada-nueva .hero-imagen-nueva {
+                min-height: 430px;
+            }
+
+            .hero-portada-nueva .hero-foto-nueva {
+                width: 100%;
+                height: 410px;
+                border-radius: 30px;
+            }
+
+            .hero-portada-nueva .circulo-decorativo-nuevo {
+                width: 360px;
+                height: 360px;
+            }
         }
     </style>
+
 </head>
 <body>
     <header class="encabezado" id="encabezado">
         <nav class="contenedor navegacion" aria-label="Navegación principal">
             <a href="#inicio" class="logo logo-principal" aria-label="Ir al inicio de Re Orgánico">
-                <img src="assets/logo-re-organico.png" alt="Re Orgánico">
+                <img src="assets/logo-re-organico.svg" alt="Re Orgánico">
             </a>
 
             <button class="boton-menu" id="boton-menu" type="button" aria-label="Abrir menú" aria-expanded="false">
@@ -59,7 +321,7 @@
                 <li><a href="#inicio">Inicio</a></li>
                 <li><a href="#productos">Productos</a></li>
                 <li><a href="#envios">Despachos</a></li>
-                <li><a href="#trabajo">Nuestro trabajo</a></li>
+                <li><a href="#trabajo">En Tu Trabajo</a></li>
                 <li><a href="#nosotros">Nosotros</a></li>
                 <li><a href="#preguntas">Preguntas</a></li>
                 <li><a href="#contacto">Contacto</a></li>
@@ -76,70 +338,88 @@
     </header>
 
     <main>
-        <section class="hero" id="inicio">
-            <div class="contenedor hero-contenido">
-                <div class="hero-texto revelar">
-                    <span class="etiqueta">🌿 Productos naturales y conscientes</span>
+        <!-- PORTADA CORREGIDA SOBRE ZIP REAL -->
+        <section class="hero hero-portada-nueva" id="inicio">
+            <div class="contenedor hero-contenido hero-contenido-nuevo">
 
-                    <h1>
-                        Vuelve a lo natural con
-                        <strong>Re Orgánico</strong>
+                <div class="hero-texto hero-texto-nuevo">
+
+                    <h1 class="hero-titulo-nuevo">
+                        <span>Pequeñas Acciones,</span>
+                        <strong>Grandes Cambios</strong>
                     </h1>
 
                     <p>
-                        Descubre productos seleccionados para cuidar tu bienestar,
-                        tu hogar y el medioambiente.
+                        Productos Ecológicos Y Compostables Para Un Estilo
+                        De Vida Consciente Y Sustentable.
                     </p>
 
-                    <div class="hero-botones">
-                        <a href="#productos" class="boton boton-principal">Ver productos</a>
-                        <button class="boton boton-secundario" id="hero-abrir-carrito" type="button">
-                            Armar mi pedido
-                        </button>
+                    <div class="hero-botones hero-botones-nuevos">
+                        <a href="#productos" class="boton boton-principal">
+                            Ver Productos
+                        </a>
+
+                        <a href="#nosotros" class="boton boton-secundario">
+                            Conoce Más
+                        </a>
                     </div>
 
-                    <div class="beneficios">
-                        <div class="beneficio">
-                            <strong>Selección</strong>
-                            <span>Natural y responsable</span>
-                        </div>
-                        <div class="beneficio">
-                            <strong>Pedido</strong>
-                            <span>Fácil por WhatsApp</span>
-                        </div>
-                        <div class="beneficio">
-                            <strong>Despachos</strong>
-                            <span>A todo Chile</span>
-                        </div>
-                    </div>
-                </div>
+                    <div class="beneficios beneficios-nuevos">
 
-                <div class="hero-imagen revelar">
-                    <div class="circulo-decorativo"></div>
-
-                    <div class="tarjeta-portada">
-                        <div class="hojas-portada" aria-hidden="true">
-                            <span>🌿</span>
-                            <span>🍃</span>
-                            <span>🌱</span>
-                        </div>
-
-                        <span class="mini-etiqueta">Re Orgánico</span>
-                        <h2>Una vitrina natural, cercana y moderna</h2>
-                        <p>
-                            Explora el catálogo, revisa la disponibilidad y reúne
-                            varios productos en una sola cotización.
-                        </p>
-
-                        <div class="producto-destacado">
-                            <span>♻️</span>
-                            <div>
-                                <strong>Compra consciente</strong>
-                                <small>Elige lo que realmente necesitas</small>
+                        <div class="beneficio beneficio-nuevo">
+                            <div class="beneficio-icono-nuevo" aria-hidden="true">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M7 19H4v-3"/>
+                                    <path d="M4 19l4-4"/>
+                                    <path d="M17 5h3v3"/>
+                                    <path d="M20 5l-4 4"/>
+                                    <path d="M5 9a8 8 0 0 1 12-4"/>
+                                    <path d="M19 15a8 8 0 0 1-12 4"/>
+                                </svg>
                             </div>
+                            <strong>Recicla</strong>
+                            <span>Composta Tus Residuos.</span>
                         </div>
+
+                        <div class="beneficio beneficio-nuevo">
+                            <div class="beneficio-icono-nuevo" aria-hidden="true">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 21V10"/>
+                                    <path d="M12 14c-5 0-7-3-7-7 5 0 7 3 7 7Z"/>
+                                    <path d="M12 11c0-4 2-7 7-7 0 5-3 7-7 7Z"/>
+                                </svg>
+                            </div>
+                            <strong>Reduce</strong>
+                            <span>Menos Plástico, Más Conciencia.</span>
+                        </div>
+
+                        <div class="beneficio beneficio-nuevo">
+                            <div class="beneficio-icono-nuevo" aria-hidden="true">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M20 7v5h-5"/>
+                                    <path d="M4 17v-5h5"/>
+                                    <path d="M6.1 8a7 7 0 0 1 11.7-1L20 12"/>
+                                    <path d="M17.9 16a7 7 0 0 1-11.7 1L4 12"/>
+                                </svg>
+                            </div>
+                            <strong>Reutiliza</strong>
+                            <span>Úsalos Más De Una Vez.</span>
+                        </div>
+
                     </div>
                 </div>
+
+                <div class="hero-imagen hero-imagen-nueva">
+                    <div class="circulo-decorativo circulo-decorativo-nuevo"></div>
+
+                    <div class="hero-foto-nueva">
+                        <img
+                            src="img/hero-reorganico-web.webp"
+                            alt="Re Orgánico"
+                        >
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -206,24 +486,46 @@
                 </div>
 
                 <div class="filtros-productos revelar" id="filtros-productos">
+                    <span class="filtros-etiqueta">Filtrar Por Categoría:</span>
                     <button class="filtro activo" type="button" data-categoria="todos">Todos</button>
-                    <button class="filtro" type="button" data-categoria="bolsas">Bolsas compostables</button>
-                    <button class="filtro" type="button" data-categoria="rollos">Bolsas en rollo</button>
-                    <button class="filtro" type="button" data-categoria="papel">Papel compost</button>
-                    <button class="filtro" type="button" data-categoria="contenedores">Contenedores</button>
-                    <button class="filtro" type="button" data-categoria="vasos">Vasos</button>
-                    <button class="filtro" type="button" data-categoria="tapas">Tapas</button>
-                    <button class="filtro" type="button" data-categoria="heladeria">Heladería</button>
-                    <button class="filtro" type="button" data-categoria="cubiertos">Cubiertos</button>
-                    <button class="filtro" type="button" data-categoria="bombillas">Bombillas</button>
+                    <button class="filtro" type="button" data-categoria="bolsas">Bolsas Compostables Tipo Camiseta</button>
+                    <button class="filtro" type="button" data-categoria="rollos">Bolsas Compostables En Rollo</button>
+                    <button class="filtro" type="button" data-categoria="papel">Papel Compostable</button>
+                    <button class="filtro" type="button" data-categoria="contenedores">Contenedores Compostables</button>
+                    <button class="filtro" type="button" data-categoria="vasos">Vasos Compostables</button>
+                    <button class="filtro" type="button" data-categoria="tapas">Tapas Compostables</button>
+                    <button class="filtro" type="button" data-categoria="heladeria">Heladería Compostable</button>
+                    <button class="filtro" type="button" data-categoria="cubiertos">Cubiertos Compostables</button>
+                    <button class="filtro" type="button" data-categoria="bombillas">Bombillas Compostables</button>
                 </div>
 
                 <div class="aviso-venta-minima revelar">
                     <strong>📦 Importante sobre las cantidades</strong>
-                    <span>En las bolsas por pack, <b>1 pack = 100 bolsas</b>. La compra mínima es 1 pack (100 unidades). En rollos y cajas, cada producto indica claramente cuántas bolsas contiene.</span>
+                    <span>En las bolsas por pack, <b>1 pack: 100 bolsas</b>. La compra mínima es 1 pack (100 unidades). En rollos y cajas, cada producto indica claramente cuántas bolsas contiene.</span>
                 </div>
 
                 <div class="lista-productos" id="lista-productos"></div>
+
+                <div class="acciones-catalogo" id="acciones-catalogo" hidden>
+                    <button
+                        class="boton-ver-mas"
+                        id="ver-menos-productos"
+                        type="button"
+                        aria-controls="lista-productos"
+                        hidden
+                    >
+                        Ver Menos Productos
+                    </button>
+
+                    <button
+                        class="boton-ver-mas"
+                        id="ver-mas-productos"
+                        type="button"
+                        aria-controls="lista-productos"
+                    >
+                        Ver Más Productos
+                    </button>
+                </div>
 
                 <div class="sin-resultados" id="sin-resultados" hidden>
                     <span>🌿</span>
@@ -238,27 +540,102 @@
                 <div class="titulo-seccion revelar">
                     <span>Nuestra esencia</span>
                     <h2>Elegir mejor también puede ser sencillo</h2>
-                    <p>Una experiencia pensada para informar, orientar y facilitar cada consulta.</p>
+                    <p>
+                        En Re Orgánico Te Ayudamos A Reciclar Compostando,
+                        A Reducir El Plástico Y A Reutilizar Productos Compostables.
+                    </p>
                 </div>
 
                 <div class="lista-ventajas">
+
                     <article class="tarjeta-ventaja revelar">
-                        <div class="ventaja-icono">🌱</div>
-                        <h3>Selección consciente</h3>
-                        <p>Productos organizados por categoría, precio y disponibilidad.</p>
+                        <div class="ventaja-icono">
+                            <svg width="46" height="46" viewBox="0 0 24 24"
+                                 fill="none" stroke="#1f6b4b" stroke-width="1.8"
+                                 stroke-linecap="round" stroke-linejoin="round"
+                                 aria-hidden="true">
+                                <path d="M12 21V10"/>
+                                <path d="M12 14c-5 0-7-3-7-7 5 0 7 3 7 7Z"/>
+                                <path d="M12 11c0-4 2-7 7-7 0 5-3 7-7 7Z"/>
+                                <path d="M5 21h14"/>
+                            </svg>
+                        </div>
+
+                        <h3>Recicla Compostando</h3>
+
+                        <p>
+                            Puedes Convertir Los Desechos Orgánicos De La Cocina Y El Jardín
+                            En Abono Compost Y Humus De Lombriz.
+                            Aprende Más En Nuestro Blog.
+                        </p>
+
+                        <a href="#impacto"
+                           class="boton boton-principal"
+                           style="margin-top:20px;">
+                            Ver Mi Compostaje
+                        </a>
                     </article>
 
                     <article class="tarjeta-ventaja revelar">
-                        <div class="ventaja-icono">🛒</div>
-                        <h3>Cotización simple</h3>
-                        <p>Agrega varios productos, ajusta cantidades y envía un solo mensaje.</p>
+                        <div class="ventaja-icono">
+                            <svg width="46" height="46" viewBox="0 0 24 24"
+                                 fill="none" stroke="#1f6b4b" stroke-width="1.8"
+                                 stroke-linecap="round" stroke-linejoin="round"
+                                 aria-hidden="true">
+                                <path d="M7 19H4v-3"/>
+                                <path d="M4 19l4-4"/>
+                                <path d="M17 5h3v3"/>
+                                <path d="M20 5l-4 4"/>
+                                <path d="M5 9a8 8 0 0 1 12-4"/>
+                                <path d="M19 15a8 8 0 0 1-12 4"/>
+                            </svg>
+                        </div>
+
+                        <h3>Reducir El Plástico</h3>
+
+                        <p>
+                            ¿Sabías Que Una Bolsa Plástica Puede Tardar Hasta 500 Años
+                            En Degradarse En Micropartículas De Petróleo?
+                            Nuestras Bolsas Y Productos Compostables Demoran Aproximadamente
+                            3 Meses En Convertirse En Abono Para La Tierra, Ya Que Están
+                            Hechos Con Almidones Como Papa Y Maíz.
+                        </p>
+
+                        <a href="#productos"
+                           class="boton boton-principal"
+                           style="margin-top:20px;">
+                            Comprar Productos
+                        </a>
                     </article>
 
                     <article class="tarjeta-ventaja revelar">
-                        <div class="ventaja-icono">🤝</div>
-                        <h3>Atención cercana</h3>
-                        <p>La compra se confirma personalmente por WhatsApp antes de coordinar.</p>
+                        <div class="ventaja-icono">
+                            <svg width="46" height="46" viewBox="0 0 24 24"
+                                 fill="none" stroke="#1f6b4b" stroke-width="1.8"
+                                 stroke-linecap="round" stroke-linejoin="round"
+                                 aria-hidden="true">
+                                <path d="M20 7v5h-5"/>
+                                <path d="M4 17v-5h5"/>
+                                <path d="M6.1 8a7 7 0 0 1 11.7-1L20 12"/>
+                                <path d="M17.9 16a7 7 0 0 1-11.7 1L4 12"/>
+                            </svg>
+                        </div>
+
+                        <h3>Reutiliza Productos Compostables</h3>
+
+                        <p>
+                            Nuestros Productos Son Resistentes Al Agua Lluvia Y Al Microondas,
+                            Por Lo Que Puedes Ponerlos A Prueba Más De Una Vez Y Reutilizarlos
+                            Hasta Finalmente Agregarlos Al Compostaje.
+                        </p>
+
+                        <a href="#impacto"
+                           class="boton boton-principal"
+                           style="margin-top:20px;">
+                            Ver Mi Compostaje
+                        </a>
                     </article>
+
                 </div>
             </div>
         </section>
@@ -292,7 +669,14 @@
                         </p>
                     </div>
 
-                    <a href="#contacto" class="boton boton-principal">Consultar mi despacho</a>
+                    <a
+                        href="https://wa.me/56939303727?text=Hola%20Re%20Org%C3%A1nico%2C%20quiero%20consultar%20por%20un%20despacho."
+                        class="boton boton-principal"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Consultar Mi Despacho
+                    </a>
                 </div>
 
                 <div class="envios-pasos revelar">
@@ -335,11 +719,11 @@
             <div class="contenedor">
                 <div class="casos-encabezado revelar">
                     <div class="casos-copy">
-                        <span class="subtitulo">Nuestro trabajo</span>
-                        <h2>Una solución compostable para distintos momentos del día</h2>
+                        <span class="subtitulo">En Tu Trabajo</span>
+                        <h2>Una Solución Compostable Para Tu Día A Día</h2>
                         <p>
-                            Seleccionamos cuatro aplicaciones para mostrar de forma clara, limpia y cercana
-                            cómo las bolsas Re Orgánico pueden integrarse en compras cotidianas y distintos tipos de comercio.
+                            Lleva Nuestras Bolsas A Tus Clientes O A Tus Compras Cotidianas
+                            En Cualquier Tipo De Comercio. Camina Consciente.
                         </p>
                     </div>
 
@@ -353,10 +737,10 @@
                     </a>
                 </div>
 
-                <div class="casos-grid" id="casos-grid-publico" aria-label="Aplicaciones y contenido de Re Orgánico">
+                <div class="casos-grid" aria-label="Aplicaciones de bolsas compostables Re Orgánico">
                     <article class="caso-card caso-card-familia revelar">
                         <img
-                            src="img/nuestro-trabajo/hogar_03.png"
+                            src="img/nuestro-trabajo/hogar_03-web.webp"
                             alt="Uso cotidiano de bolsas compostables Re Orgánico en el hogar"
                             loading="lazy"
                         >
@@ -370,7 +754,7 @@
 
                     <article class="caso-card revelar">
                         <img
-                            src="img/nuestro-trabajo/verduleria_feria.png"
+                            src="img/nuestro-trabajo/verduleria_feria-web.webp"
                             alt="Uso de bolsa compostable en feria y mercado"
                             loading="lazy"
                         >
@@ -384,7 +768,7 @@
 
                     <article class="caso-card revelar">
                         <img
-                            src="img/nuestro-trabajo/carniceria_pago.png"
+                            src="img/nuestro-trabajo/carniceria_pago-web.webp"
                             alt="Uso cotidiano de bolsa compostable en atención de local"
                             loading="lazy"
                         >
@@ -398,7 +782,7 @@
 
                     <article class="caso-card revelar">
                         <img
-                            src="img/nuestro-trabajo/tienda_lana.png"
+                            src="img/nuestro-trabajo/tienda_lana-web.webp"
                             alt="Uso de bolsa compostable en tienda de lana"
                             loading="lazy"
                         >
@@ -412,7 +796,7 @@
                 </div>
 
                 <p class="casos-nota revelar">
-                    Las aplicaciones iniciales son imágenes referenciales. El contenido adicional es publicado por Re Orgánico.
+                    Imágenes referenciales de aplicaciones de uso de bolsas compostables Re Orgánico.
                 </p>
             </div>
         </section>
@@ -420,11 +804,11 @@
         <section class="seccion-impacto" id="impacto">
             <div class="contenedor">
                 <div class="impacto-encabezado revelar">
-                    <span class="subtitulo subtitulo-claro">Nuestro impacto</span>
+                    <span class="subtitulo subtitulo-claro">Nuestro Blog</span>
                     <h2>Del uso al compostaje</h2>
                     <p>
-                        Nuestro propósito va más allá de reemplazar una bolsa convencional: buscamos acercar
-                        alternativas compostables y promover una gestión más consciente de los residuos orgánicos.
+                        Nuestro propósito va más allá de reemplazar una bolsa o envase plástico,
+                        buscamos acercar alternativas compostables y promover una gestión más consciente de nuestros desechos.
                     </p>
                 </div>
 
@@ -436,10 +820,10 @@
                                     controls
                                     preload="metadata"
                                     playsinline
-                                    poster="img/nuestro-trabajo/poster-proceso-organico.jpg"
+                                    poster="img/nuestro-trabajo/poster-proceso-organico.webp"
                                     aria-label="Video del proceso orgánico y compostaje de Re Orgánico"
                                 >
-                                    <source src="videos/nuestro-trabajo/proceso-organico-web.mp4" type="video/mp4">
+                                    <source src="videos/nuestro-trabajo/proceso-organico-lite.mp4" type="video/mp4">
                                     Tu navegador no permite reproducir este video.
                                 </video>
                                 <span>Proceso</span>
@@ -456,10 +840,10 @@
                                     controls
                                     preload="metadata"
                                     playsinline
-                                    poster="img/nuestro-trabajo/poster-compostando.jpg"
+                                    poster="img/nuestro-trabajo/poster-compostando.webp"
                                     aria-label="Video de bolsa Re Orgánico durante el compostaje"
                                 >
-                                    <source src="videos/nuestro-trabajo/bolsa-re-organico-compostando-web.mp4" type="video/mp4">
+                                    <source src="videos/nuestro-trabajo/bolsa-re-organico-compostando-lite.mp4" type="video/mp4">
                                     Tu navegador no permite reproducir este video.
                                 </video>
                                 <span>Compostabilidad</span>
@@ -473,7 +857,7 @@
 
                     <aside class="impacto-ruta revelar" aria-label="Etapas del enfoque Re Orgánico">
                         <span class="impacto-ruta-kicker">Un ciclo más consciente</span>
-                        <h3>Reducir el residuo es solo el comienzo</h3>
+                        <h3>Reducir el residuo es la meta de Re Orgánico</h3>
 
                         <div class="impacto-pasos">
                             <div class="impacto-paso">
@@ -520,10 +904,9 @@
 
                 <div class="nosotros-texto revelar">
                     <span class="subtitulo">Sobre nosotros</span>
-                    <h2>Una tienda creada para volver a lo esencial</h2>
+                    <h2>Una tienda creada para transformar</h2>
                     <p>
-                        En Re Orgánico creemos que cada elección puede aportar al bienestar
-                        personal y al cuidado del medioambiente.
+                        En Re Orgánico creemos que cada elección puede aportar al bienestar de nuestra tierra.
                     </p>
                     <p>
                         Por eso reunimos productos naturales, responsables y cuidadosamente
@@ -835,7 +1218,7 @@
         <div class="contenedor pie-contenido">
             <div>
                 <a href="#inicio" class="logo logo-pie" aria-label="Ir al inicio de Re Orgánico">
-                    <img src="assets/logo-re-organico.png" alt="Re Orgánico">
+                    <img src="assets/logo-re-organico.svg" alt="Re Orgánico">
                 </a>
                 <p>Productos naturales para una vida más consciente.</p>
             </div>
@@ -1027,8 +1410,10 @@
                     <div
                         class="cf-turnstile"
                         data-sitekey="0x4AAAAAAELhoXb-jSDpM-X3"
+                        data-action="pedido"
                         data-theme="light"
                         data-language="es"
+                        data-refresh-expired="auto"
                     ></div>
                 </div>
 

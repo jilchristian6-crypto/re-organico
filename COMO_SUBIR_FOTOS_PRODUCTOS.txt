@@ -1,0 +1,20 @@
+RE ORGÁNICO - CARGA DE FOTOS DE PRODUCTOS
+
+1. Entra al panel administrador e inicia sesión con la verificación en dos pasos.
+2. Abre la pestaña Productos.
+3. En "Subir varias fotos de una vez", selecciona o arrastra las imágenes.
+4. Revisa el producto asignado debajo de cada foto.
+5. Presiona "Subir todas las fotos".
+
+La página convierte las imágenes a WEBP y reduce su tamaño automáticamente.
+Se admite una foto principal por producto en cada lote.
+
+Formatos aceptados: JPG, PNG y WEBP.
+Máximo: 10 MB por imagen y 50 imágenes por lote.
+
+Consejo: si el nombre del archivo se parece al nombre del producto,
+el panel intentará asignarlo automáticamente. Por ejemplo:
+bolsa-pequena-36x40-my14.jpg
+
+La configuración necesaria de Supabase ya fue aplicada al proyecto Re Orgánico.
+El archivo ACTUALIZACION_FOTOS_PRODUCTOS.sql queda incluido como respaldo.

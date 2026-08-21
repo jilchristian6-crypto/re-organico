@@ -62,6 +62,26 @@ let usuarioActual = null;
 let temporizadorToast = null;
 let modoRecuperacion = false;
 let mfaFactorId = null;
+let fotosProductoPendientes = [];
+let cargaFotosProductoEnCurso = false;
+let productoFotoPreferidoId = "";
+let temporizadorInactividadAdmin = null;
+let cierreSesionEnCurso = false;
+
+const TIEMPO_INACTIVIDAD_ADMIN_MS = 30 * 60 * 1000;
+const MAX_INTENTOS_LOGIN_LOCAL = 5;
+const VENTANA_INTENTOS_LOGIN_MS = 15 * 60 * 1000;
+const BLOQUEO_LOGIN_LOCAL_MS = 15 * 60 * 1000;
+const CLAVE_PROTECCION_LOGIN = "reorganico_admin_login_guard_v1";
+
+const MIME_FOTOS_PRODUCTO_PERMITIDOS = new Set([
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+]);
+const MAX_FOTO_PRODUCTO = 10 * 1024 * 1024;
+const MAX_FOTOS_PRODUCTO_POR_LOTE = 50;
+const MAX_LADO_FOTO_PRODUCTO = 1600;
 
 const elementos = {
     vistaAcceso: document.getElementById("vista-acceso"),
@@ -117,6 +137,12 @@ const elementos = {
     mensajeProducto: document.getElementById("mensaje-producto"),
     estadoCarga: document.getElementById("estado-carga"),
     listaAdmin: document.getElementById("lista-admin"),
+    zonaCargaFotos: document.getElementById("zona-carga-fotos"),
+    fotosProductosArchivos: document.getElementById("fotos-productos-archivos"),
+    listaFotosProductos: document.getElementById("lista-fotos-productos"),
+    subirFotosProductos: document.getElementById("subir-fotos-productos"),
+    limpiarFotosProductos: document.getElementById("limpiar-fotos-productos"),
+    mensajeFotosProductos: document.getElementById("mensaje-fotos-productos"),
     pestanasPanel: document.querySelectorAll("[data-seccion-panel]"),
     seccionProductos: document.getElementById("seccion-productos"),
     seccionPedidos: document.getElementById("seccion-pedidos"),
@@ -203,6 +229,7 @@ async function inicializar() {
 
             if (evento === "SIGNED_OUT") {
                 usuarioActual = null;
+                detenerTemporizadorInactividad();
 
                 if (!modoRecuperacion) {
                     mostrarVistaAcceso();
@@ -216,6 +243,7 @@ async function inicializar() {
                 sessionActual?.user
             ) {
                 usuarioActual = sessionActual.user;
+                registrarActividadAdministrador();
             }
         }
     );
@@ -320,7 +348,7 @@ function registrarEventos() {
     elementos.formularioRecuperacion.addEventListener("submit", guardarNuevaPassword);
     elementos.formularioMfa.addEventListener("submit", verificarCodigoMfa);
     elementos.mostrarPassword.addEventListener("click", alternarPassword);
-    elementos.cerrarSesion.addEventListener("click", cerrarSesion);
+    elementos.cerrarSesion.addEventListener("click", () => cerrarSesion());
     elementos.formularioProducto.addEventListener("submit", guardarProducto);
     elementos.cancelarEdicion.addEventListener("click", limpiarFormulario);
     elementos.nuevoProducto.addEventListener("click", () => {
@@ -328,6 +356,40 @@ function registrarEventos() {
         elementos.productoNombre.focus();
     });
     elementos.actualizarListado.addEventListener("click", cargarProductos);
+    elementos.fotosProductosArchivos.addEventListener("change", (evento) => {
+        seleccionarFotosProducto(evento.target.files);
+    });
+    elementos.subirFotosProductos.addEventListener("click", subirFotosProductoEnLote);
+    elementos.limpiarFotosProductos.addEventListener("click", limpiarFotosProductoPendientes);
+    elementos.listaFotosProductos.addEventListener("change", (evento) => {
+        const selector = evento.target.closest("[data-foto-producto-indice]");
+        if (!selector) return;
+
+        const indice = Number(selector.dataset.fotoProductoIndice);
+        if (!fotosProductoPendientes[indice]) return;
+        fotosProductoPendientes[indice].productoId = selector.value;
+        fotosProductoPendientes[indice].estado = "pendiente";
+        fotosProductoPendientes[indice].mensaje = "Lista para subir";
+        renderizarFotosProductoPendientes();
+    });
+
+    ["dragenter", "dragover"].forEach((tipoEvento) => {
+        elementos.zonaCargaFotos.addEventListener(tipoEvento, (evento) => {
+            evento.preventDefault();
+            elementos.zonaCargaFotos.classList.add("arrastrando");
+        });
+    });
+
+    ["dragleave", "drop"].forEach((tipoEvento) => {
+        elementos.zonaCargaFotos.addEventListener(tipoEvento, (evento) => {
+            evento.preventDefault();
+            elementos.zonaCargaFotos.classList.remove("arrastrando");
+        });
+    });
+
+    elementos.zonaCargaFotos.addEventListener("drop", (evento) => {
+        seleccionarFotosProducto(evento.dataTransfer?.files);
+    });
     elementos.actualizarPedidos.addEventListener("click", cargarPedidos);
     elementos.actualizarGaleria.addEventListener("click", cargarGaleria);
     elementos.nuevoContenido.addEventListener("click", () => {
@@ -364,7 +426,18 @@ function registrarEventos() {
 
         const { accion, id } = boton.dataset;
         if (accion === "editar") editarProducto(id);
+        if (accion === "foto") enfocarCargaFotoProducto(id);
         if (accion === "eliminar") eliminarProducto(id);
+    });
+
+    ["pointerdown", "keydown", "scroll", "touchstart"].forEach((tipoEvento) => {
+        document.addEventListener(tipoEvento, registrarActividadAdministrador, {
+            passive: true
+        });
+    });
+
+    document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) registrarActividadAdministrador();
     });
 }
 
@@ -398,7 +471,7 @@ async function guardarNuevaPassword(evento) {
     if (!passwordFuerte(nuevaPassword)) {
         mostrarMensaje(
             elementos.mensajeLogin,
-            "Usa al menos 12 caracteres, con mayúscula, minúscula y número."
+            "Usa al menos 12 caracteres, con mayúscula, minúscula, número y símbolo."
         );
         return;
     }
@@ -457,6 +530,17 @@ async function iniciarSesion(evento) {
     evento.preventDefault();
     limpiarMensaje(elementos.mensajeLogin);
 
+    const bloqueo = obtenerBloqueoLoginActivo();
+
+    if (bloqueo.activo) {
+        mostrarMensaje(
+            elementos.mensajeLogin,
+            `Demasiados intentos. Espera ${bloqueo.minutos} minuto${bloqueo.minutos === 1 ? "" : "s"} antes de volver a intentar.`
+        );
+        elementos.password.value = "";
+        return;
+    }
+
     const email = elementos.email.value.trim();
     const password = elementos.password.value;
 
@@ -473,7 +557,9 @@ async function iniciarSesion(evento) {
     });
 
     if (error || !data?.user) {
-        console.error("Error real de Supabase:", error);
+        console.warn("Inicio de sesión rechazado:", error?.code || error?.status || "credenciales_invalidas");
+
+        const proteccionLocal = registrarIntentoLoginFallido();
 
         cambiarEstadoBoton(
             elementos.botonLogin,
@@ -484,13 +570,19 @@ async function iniciarSesion(evento) {
         const limite = error?.status === 429 || error?.code === "over_request_rate_limit";
         mostrarMensaje(
             elementos.mensajeLogin,
-            limite
+            proteccionLocal.activo
+                ? `Demasiados intentos. El acceso quedó pausado por ${proteccionLocal.minutos} minutos.`
+                : limite
                 ? "Demasiados intentos. Espera un momento antes de volver a intentar."
                 : "Correo, contraseña o verificación no válidos."
         );
 
+        elementos.password.value = "";
+
         return;
     }
+
+    limpiarProteccionLogin();
 
     const autorizado = await autorizarYMostrarPanel(data.user);
 
@@ -524,6 +616,7 @@ async function mostrarPanelAutorizado() {
     elementos.vistaPanel.hidden = false;
     elementos.formularioMfa.hidden = true;
     limpiarMensaje(elementos.mensajeLogin);
+    registrarActividadAdministrador();
     await Promise.all([cargarProductos(), cargarPedidos(), cargarGaleria()]);
 }
 
@@ -609,7 +702,12 @@ async function verificarCodigoMfa(evento) {
 }
 
 function passwordFuerte(password) {
-    return typeof password === "string" && password.length >= 12 && /[A-ZÁÉÍÓÚÑ]/.test(password) && /[a-záéíóúñ]/.test(password) && /\d/.test(password);
+    return typeof password === "string" &&
+        password.length >= 12 &&
+        /[A-ZÁÉÍÓÚÑ]/.test(password) &&
+        /[a-záéíóúñ]/.test(password) &&
+        /\d/.test(password) &&
+        /[^A-Za-zÁÉÍÓÚÑáéíóúñ0-9]/.test(password);
 }
 
 async function verificarAdministrador(userId) {
@@ -628,6 +726,7 @@ async function verificarAdministrador(userId) {
 }
 
 function mostrarVistaAcceso() {
+    detenerTemporizadorInactividad();
     elementos.vistaPanel.hidden = true;
     elementos.vistaAcceso.hidden = false;
     elementos.formularioRecuperacion.hidden = true;
@@ -640,9 +739,112 @@ function mostrarVistaAcceso() {
 }
 
 async function cerrarSesion() {
-    await clienteSupabase.auth.signOut();
-    mostrarVistaAcceso();
-    mostrarToast("Sesión cerrada");
+    if (cierreSesionEnCurso) return;
+    cierreSesionEnCurso = true;
+    detenerTemporizadorInactividad();
+
+    try {
+        await clienteSupabase.auth.signOut();
+        mostrarVistaAcceso();
+        mostrarToast("Sesión cerrada");
+    } finally {
+        cierreSesionEnCurso = false;
+    }
+}
+
+function registrarActividadAdministrador() {
+    if (!usuarioActual || elementos.vistaPanel.hidden || cierreSesionEnCurso) return;
+
+    clearTimeout(temporizadorInactividadAdmin);
+    temporizadorInactividadAdmin = setTimeout(
+        cerrarSesionPorInactividad,
+        TIEMPO_INACTIVIDAD_ADMIN_MS
+    );
+}
+
+function detenerTemporizadorInactividad() {
+    clearTimeout(temporizadorInactividadAdmin);
+    temporizadorInactividadAdmin = null;
+}
+
+async function cerrarSesionPorInactividad() {
+    if (!usuarioActual || cierreSesionEnCurso) return;
+
+    cierreSesionEnCurso = true;
+    detenerTemporizadorInactividad();
+
+    try {
+        await clienteSupabase.auth.signOut({ scope: "local" });
+    } finally {
+        usuarioActual = null;
+        mostrarVistaAcceso();
+        mostrarMensaje(
+            elementos.mensajeLogin,
+            "La sesión se cerró automáticamente después de 30 minutos sin actividad."
+        );
+        cierreSesionEnCurso = false;
+    }
+}
+
+function leerProteccionLogin() {
+    try {
+        const datos = JSON.parse(localStorage.getItem(CLAVE_PROTECCION_LOGIN) || "null");
+        return datos && typeof datos === "object"
+            ? datos
+            : { intentos: [], bloqueadoHasta: 0 };
+    } catch (_) {
+        return { intentos: [], bloqueadoHasta: 0 };
+    }
+}
+
+function guardarProteccionLogin(datos) {
+    try {
+        localStorage.setItem(CLAVE_PROTECCION_LOGIN, JSON.stringify(datos));
+    } catch (_) {
+        // El acceso puede continuar aunque el navegador bloquee el almacenamiento local.
+    }
+}
+
+function obtenerBloqueoLoginActivo() {
+    const ahora = Date.now();
+    const datos = leerProteccionLogin();
+
+    if (Number(datos.bloqueadoHasta) > ahora) {
+        return {
+            activo: true,
+            minutos: Math.max(1, Math.ceil((datos.bloqueadoHasta - ahora) / 60000))
+        };
+    }
+
+    if (Number(datos.bloqueadoHasta) > 0) limpiarProteccionLogin();
+    return { activo: false, minutos: 0 };
+}
+
+function registrarIntentoLoginFallido() {
+    const ahora = Date.now();
+    const datos = leerProteccionLogin();
+    const intentos = Array.isArray(datos.intentos)
+        ? datos.intentos.filter((instante) => ahora - Number(instante) < VENTANA_INTENTOS_LOGIN_MS)
+        : [];
+
+    intentos.push(ahora);
+
+    if (intentos.length >= MAX_INTENTOS_LOGIN_LOCAL) {
+        const bloqueadoHasta = ahora + BLOQUEO_LOGIN_LOCAL_MS;
+        guardarProteccionLogin({ intentos: [], bloqueadoHasta });
+        return { activo: true, minutos: Math.ceil(BLOQUEO_LOGIN_LOCAL_MS / 60000) };
+    }
+
+    guardarProteccionLogin({ intentos, bloqueadoHasta: 0 });
+    return { activo: false, minutos: 0 };
+}
+
+function limpiarProteccionLogin() {
+    try {
+        localStorage.removeItem(CLAVE_PROTECCION_LOGIN);
+    } catch (_) {
+        // No se guardan credenciales ni datos sensibles en esta protección local.
+    }
 }
 
 async function cargarProductos() {
@@ -652,7 +854,7 @@ async function cargarProductos() {
 
     const { data, error } = await clienteSupabase
         .from("productos")
-        .select("id,nombre,precio,categoria,descripcion,emoji,etiqueta,estado,orden,medida,micras,presentaciones")
+        .select("id,nombre,precio,categoria,descripcion,emoji,etiqueta,estado,orden,medida,micras,presentaciones,imagen_path")
         .order("orden", { ascending: true })
         .order("nombre", { ascending: true });
 
@@ -665,6 +867,7 @@ async function cargarProductos() {
 
     productos = Array.isArray(data) ? data.map((producto) => normalizarProducto(producto)) : [];
     renderizarProductos();
+    if (fotosProductoPendientes.length > 0) renderizarFotosProductoPendientes();
 }
 
 function renderizarProductos() {
@@ -678,11 +881,16 @@ function renderizarProductos() {
     }
 
     elementos.listaAdmin.innerHTML = productos
-        .map(
-            (producto) => `
+        .map((producto) => {
+            const urlImagen = obtenerUrlPublicaProducto(producto.imagen_path);
+            const visual = urlImagen
+                ? `<img src="${escaparAtributo(urlImagen)}" alt="${escaparAtributo(producto.nombre)}" loading="lazy">`
+                : escaparHTML(producto.emoji);
+
+            return `
                 <article class="producto-admin">
                     <div class="producto-admin-icono" aria-hidden="true">
-                        ${escaparHTML(producto.emoji)}
+                        ${visual}
                     </div>
 
                     <div class="producto-admin-info">
@@ -698,6 +906,9 @@ function renderizarProductos() {
                     </div>
 
                     <div class="producto-admin-acciones">
+                        <button type="button" data-accion="foto" data-id="${escaparHTML(producto.id)}">
+                            ${producto.imagen_path ? "Cambiar foto" : "Agregar foto"}
+                        </button>
                         <button type="button" data-accion="editar" data-id="${escaparHTML(producto.id)}">
                             Editar
                         </button>
@@ -706,9 +917,389 @@ function renderizarProductos() {
                         </button>
                     </div>
                 </article>
-            `
-        )
+            `;
+        })
         .join("");
+}
+
+function obtenerUrlPublicaProducto(path) {
+    if (!path || !clienteSupabase) return "";
+
+    const { data } = clienteSupabase.storage
+        .from("productos")
+        .getPublicUrl(path);
+
+    return data?.publicUrl || "";
+}
+
+function enfocarCargaFotoProducto(id) {
+    if (!productos.some((producto) => producto.id === id)) return;
+
+    productoFotoPreferidoId = id;
+    elementos.zonaCargaFotos.scrollIntoView({ behavior: "smooth", block: "center" });
+    elementos.fotosProductosArchivos.click();
+}
+
+function seleccionarFotosProducto(listaArchivos) {
+    if (cargaFotosProductoEnCurso) return;
+
+    const archivos = Array.from(listaArchivos || []);
+    if (archivos.length === 0) return;
+
+    limpiarMensaje(elementos.mensajeFotosProductos);
+
+    const cuposDisponibles = Math.max(
+        0,
+        MAX_FOTOS_PRODUCTO_POR_LOTE - fotosProductoPendientes.length
+    );
+    const archivosConCupo = archivos.slice(0, cuposDisponibles);
+    let rechazados = archivos.length - archivosConCupo.length;
+
+    archivosConCupo.forEach((archivo, indice) => {
+        if (
+            !MIME_FOTOS_PRODUCTO_PERMITIDOS.has(archivo.type) ||
+            archivo.size > MAX_FOTO_PRODUCTO
+        ) {
+            rechazados += 1;
+            return;
+        }
+
+        const usarPreferido = archivosConCupo.length === 1 && productoFotoPreferidoId;
+        const productoId = usarPreferido
+            ? productoFotoPreferidoId
+            : sugerirProductoParaFoto(archivo.name);
+
+        fotosProductoPendientes.push({
+            archivo,
+            urlTemporal: URL.createObjectURL(archivo),
+            productoId,
+            estado: "pendiente",
+            mensaje: productoId ? "Lista para subir" : "Elige el producto"
+        });
+    });
+
+    productoFotoPreferidoId = "";
+    elementos.fotosProductosArchivos.value = "";
+    renderizarFotosProductoPendientes();
+
+    if (rechazados > 0) {
+        mostrarMensaje(
+            elementos.mensajeFotosProductos,
+            `${rechazados} archivo${rechazados === 1 ? " no fue aceptado" : "s no fueron aceptados"}. Usa JPG, PNG o WEBP de máximo 10 MB.`
+        );
+    }
+}
+
+function renderizarFotosProductoPendientes() {
+    const hayFotos = fotosProductoPendientes.length > 0;
+    elementos.listaFotosProductos.hidden = !hayFotos;
+
+    if (!hayFotos) {
+        elementos.listaFotosProductos.innerHTML = "";
+        elementos.subirFotosProductos.disabled = true;
+        elementos.limpiarFotosProductos.disabled = true;
+        elementos.subirFotosProductos.textContent = "Subir todas las fotos";
+        return;
+    }
+
+    const opcionesProductos = productos.map((producto) => ({
+        id: producto.id,
+        nombre: producto.nombre
+    }));
+
+    elementos.listaFotosProductos.innerHTML = fotosProductoPendientes
+        .map((foto, indice) => {
+            const opciones = opcionesProductos
+                .map(
+                    (producto) => `
+                        <option value="${escaparAtributo(producto.id)}" ${foto.productoId === producto.id ? "selected" : ""}>
+                            ${escaparHTML(producto.nombre)}
+                        </option>
+                    `
+                )
+                .join("");
+            const selectorDeshabilitado = cargaFotosProductoEnCurso || foto.estado === "subida";
+
+            return `
+                <article class="foto-producto-pendiente ${escaparAtributo(foto.estado)}">
+                    <img src="${escaparAtributo(foto.urlTemporal)}" alt="Vista previa de ${escaparAtributo(foto.archivo.name)}">
+                    <div class="foto-producto-pendiente-info">
+                        <strong title="${escaparAtributo(foto.archivo.name)}">${escaparHTML(foto.archivo.name)}</strong>
+                        <select
+                            data-foto-producto-indice="${indice}"
+                            aria-label="Producto para ${escaparAtributo(foto.archivo.name)}"
+                            ${selectorDeshabilitado ? "disabled" : ""}
+                        >
+                            <option value="">Selecciona el producto</option>
+                            ${opciones}
+                        </select>
+                        <span class="estado-foto-pendiente">${escaparHTML(foto.mensaje)}</span>
+                    </div>
+                </article>
+            `;
+        })
+        .join("");
+
+    const hayPendientes = fotosProductoPendientes.some((foto) => foto.estado !== "subida");
+    elementos.subirFotosProductos.disabled = cargaFotosProductoEnCurso || !hayPendientes;
+    elementos.limpiarFotosProductos.disabled = cargaFotosProductoEnCurso;
+
+    if (!cargaFotosProductoEnCurso) {
+        elementos.subirFotosProductos.textContent = hayPendientes
+            ? "Subir todas las fotos"
+            : "Fotos subidas correctamente";
+    }
+}
+
+function sugerirProductoParaFoto(nombreArchivo) {
+    const nombreNormalizado = normalizarNombreFoto(nombreArchivo.replace(/\.[^.]+$/, ""));
+    if (!nombreNormalizado) return "";
+
+    const coincidenciaDirecta = productos.find((producto) => {
+        const id = normalizarNombreFoto(producto.id);
+        return nombreNormalizado === id || nombreNormalizado.includes(id);
+    });
+
+    if (coincidenciaDirecta) return coincidenciaDirecta.id;
+
+    const tokensArchivo = new Set(tokensUtilesFoto(nombreNormalizado));
+    let mejorProducto = null;
+    let mejorPuntaje = 0;
+    let mejoresCoincidencias = 0;
+
+    productos.forEach((producto) => {
+        const tokensProducto = tokensUtilesFoto(
+            normalizarNombreFoto(`${producto.id} ${producto.nombre}`)
+        );
+        const coincidencias = tokensProducto.filter((token) => tokensArchivo.has(token)).length;
+        const puntaje = tokensProducto.length > 0 ? coincidencias / tokensProducto.length : 0;
+
+        if (
+            coincidencias > mejoresCoincidencias ||
+            (coincidencias === mejoresCoincidencias && puntaje > mejorPuntaje)
+        ) {
+            mejorProducto = producto;
+            mejorPuntaje = puntaje;
+            mejoresCoincidencias = coincidencias;
+        }
+    });
+
+    return mejorProducto && (mejoresCoincidencias >= 2 || mejorPuntaje >= 0.65)
+        ? mejorProducto.id
+        : "";
+}
+
+function normalizarNombreFoto(texto) {
+    return String(texto || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
+}
+
+function tokensUtilesFoto(texto) {
+    const ignorar = new Set([
+        "foto", "fotos", "img", "image", "imagen", "producto", "productos",
+        "whatsapp", "jpg", "jpeg", "png", "webp", "compostable", "compostables"
+    ]);
+
+    return String(texto || "")
+        .split("-")
+        .filter((token) => token.length > 1 && !ignorar.has(token));
+}
+
+async function subirFotosProductoEnLote() {
+    if (cargaFotosProductoEnCurso) return;
+
+    limpiarMensaje(elementos.mensajeFotosProductos);
+    const porSubir = fotosProductoPendientes.filter((foto) => foto.estado !== "subida");
+    const idsAsignados = porSubir.map((foto) => foto.productoId).filter(Boolean);
+    const idsDuplicados = new Set(
+        idsAsignados.filter((id, indice) => idsAsignados.indexOf(id) !== indice)
+    );
+
+    let hayErrorAsignacion = false;
+    porSubir.forEach((foto) => {
+        if (!foto.productoId) {
+            foto.estado = "error";
+            foto.mensaje = "Selecciona un producto";
+            hayErrorAsignacion = true;
+        } else if (idsDuplicados.has(foto.productoId)) {
+            foto.estado = "error";
+            foto.mensaje = "Producto repetido en este lote";
+            hayErrorAsignacion = true;
+        }
+    });
+
+    if (hayErrorAsignacion) {
+        renderizarFotosProductoPendientes();
+        mostrarMensaje(
+            elementos.mensajeFotosProductos,
+            "Revisa las asignaciones. En cada lote debe ir una foto principal por producto."
+        );
+        return;
+    }
+
+    cargaFotosProductoEnCurso = true;
+    let subidas = 0;
+    let fallidas = 0;
+    renderizarFotosProductoPendientes();
+
+    for (let indice = 0; indice < porSubir.length; indice += 1) {
+        const foto = porSubir[indice];
+        const producto = productos.find((item) => item.id === foto.productoId);
+
+        foto.estado = "subiendo";
+        foto.mensaje = `Optimizando ${indice + 1} de ${porSubir.length}...`;
+        elementos.subirFotosProductos.textContent = `Subiendo ${indice + 1} de ${porSubir.length}...`;
+        renderizarFotosProductoPendientes();
+
+        let nuevoPath = "";
+
+        try {
+            if (!producto) throw new Error("El producto ya no existe.");
+
+            const imagenOptimizada = await optimizarFotoProducto(foto.archivo);
+            nuevoPath = crearPathFotoProducto(producto.id, imagenOptimizada.extension);
+
+            foto.mensaje = `Subiendo ${indice + 1} de ${porSubir.length}...`;
+            renderizarFotosProductoPendientes();
+
+            const { error: errorSubida } = await clienteSupabase.storage
+                .from("productos")
+                .upload(nuevoPath, imagenOptimizada.blob, {
+                    cacheControl: "31536000",
+                    upsert: false,
+                    contentType: imagenOptimizada.contentType
+                });
+
+            if (errorSubida) throw errorSubida;
+
+            const { error: errorProducto } = await clienteSupabase
+                .from("productos")
+                .update({ imagen_path: nuevoPath })
+                .eq("id", producto.id);
+
+            if (errorProducto) {
+                await clienteSupabase.storage.from("productos").remove([nuevoPath]);
+                throw errorProducto;
+            }
+
+            const pathAnterior = producto.imagen_path;
+            producto.imagen_path = nuevoPath;
+
+            if (pathAnterior && pathAnterior !== nuevoPath) {
+                const { error: errorBorrado } = await clienteSupabase.storage
+                    .from("productos")
+                    .remove([pathAnterior]);
+
+                if (errorBorrado) {
+                    console.warn("La foto anterior quedó pendiente de limpieza:", errorBorrado);
+                }
+            }
+
+            foto.estado = "subida";
+            foto.mensaje = "Foto publicada";
+            subidas += 1;
+        } catch (error) {
+            console.error("No se pudo subir la foto del producto:", error);
+            foto.estado = "error";
+            foto.mensaje = "No se pudo subir. Intenta nuevamente";
+            fallidas += 1;
+        }
+
+        renderizarFotosProductoPendientes();
+    }
+
+    cargaFotosProductoEnCurso = false;
+    await cargarProductos();
+    renderizarFotosProductoPendientes();
+
+    if (fallidas === 0) {
+        mostrarMensaje(
+            elementos.mensajeFotosProductos,
+            `${subidas} foto${subidas === 1 ? " publicada" : "s publicadas"} correctamente.`,
+            true
+        );
+        mostrarToast("Fotos de productos actualizadas");
+    } else {
+        mostrarMensaje(
+            elementos.mensajeFotosProductos,
+            `${subidas} subida${subidas === 1 ? "" : "s"} y ${fallidas} pendiente${fallidas === 1 ? "" : "s"}. Puedes intentar nuevamente.`
+        );
+    }
+}
+
+async function optimizarFotoProducto(archivo) {
+    const imagen = await cargarImagenParaOptimizar(archivo);
+    const anchoOriginal = imagen.width;
+    const altoOriginal = imagen.height;
+    const escala = Math.min(1, MAX_LADO_FOTO_PRODUCTO / Math.max(anchoOriginal, altoOriginal));
+    const ancho = Math.max(1, Math.round(anchoOriginal * escala));
+    const alto = Math.max(1, Math.round(altoOriginal * escala));
+    const canvas = document.createElement("canvas");
+    canvas.width = ancho;
+    canvas.height = alto;
+
+    const contexto = canvas.getContext("2d", { alpha: true });
+    if (!contexto) {
+        if (typeof imagen.close === "function") imagen.close();
+        throw new Error("No se pudo preparar la imagen.");
+    }
+
+    contexto.drawImage(imagen, 0, 0, ancho, alto);
+    if (typeof imagen.close === "function") imagen.close();
+
+    const webp = await new Promise((resolver) => {
+        canvas.toBlob(resolver, "image/webp", 0.82);
+    });
+
+    if (webp) {
+        return { blob: webp, extension: "webp", contentType: "image/webp" };
+    }
+
+    const extension = archivo.type === "image/png" ? "png" : archivo.type === "image/webp" ? "webp" : "jpg";
+    return { blob: archivo, extension, contentType: archivo.type };
+}
+
+async function cargarImagenParaOptimizar(archivo) {
+    if (typeof createImageBitmap === "function") {
+        return createImageBitmap(archivo);
+    }
+
+    return new Promise((resolver, rechazar) => {
+        const url = URL.createObjectURL(archivo);
+        const imagen = new Image();
+        imagen.onload = () => {
+            URL.revokeObjectURL(url);
+            resolver(imagen);
+        };
+        imagen.onerror = () => {
+            URL.revokeObjectURL(url);
+            rechazar(new Error("No se pudo leer la imagen."));
+        };
+        imagen.src = url;
+    });
+}
+
+function crearPathFotoProducto(productoId, extension) {
+    const idSeguro = normalizarNombreFoto(productoId) || "producto";
+    const aleatorio = crypto.randomUUID
+        ? crypto.randomUUID()
+        : Math.random().toString(36).slice(2);
+    return `${idSeguro}/${Date.now()}-${aleatorio}.${extension}`;
+}
+
+function limpiarFotosProductoPendientes() {
+    if (cargaFotosProductoEnCurso) return;
+
+    fotosProductoPendientes.forEach((foto) => URL.revokeObjectURL(foto.urlTemporal));
+    fotosProductoPendientes = [];
+    productoFotoPreferidoId = "";
+    elementos.fotosProductosArchivos.value = "";
+    limpiarMensaje(elementos.mensajeFotosProductos);
+    renderizarFotosProductoPendientes();
 }
 
 function leerPresentacionesFormulario() {
@@ -893,6 +1484,16 @@ async function eliminarProducto(id) {
 
     if (elementos.productoId.value === id) {
         limpiarFormulario();
+    }
+
+    if (producto.imagen_path) {
+        const { error: errorImagen } = await clienteSupabase.storage
+            .from("productos")
+            .remove([producto.imagen_path]);
+
+        if (errorImagen) {
+            console.warn("El producto se eliminó, pero su foto quedó pendiente de limpieza:", errorImagen);
+        }
     }
 
     mostrarToast("Producto eliminado");

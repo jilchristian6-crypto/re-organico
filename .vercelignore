@@ -1,0 +1,33 @@
+.git
+*.sql
+*.md
+*.txt
+
+# Fuentes del backend: se despliegan en Supabase, no como archivos públicos.
+supabase/
+
+# Copias históricas y archivos auxiliares que no forman parte del sitio activo.
+re-organico-datos-reales/
+admin.js
+assets/index.html
+assets/style.css
+assets/img/
+img/index.html
+img/script.js
+img/admin.js
+img/img/
+videos/index.html
+videos/script.js
+
+# Versiones originales pesadas; el sitio usa WebP y MP4 "-lite".
+img/nuestro-trabajo/hogar_03.png
+img/nuestro-trabajo/verduleria_feria.png
+img/nuestro-trabajo/carniceria_pago.png
+img/nuestro-trabajo/tienda_lana.png
+img/hero-reorganico.jpeg
+img/nuestro-trabajo/poster-proceso-organico.jpg
+img/nuestro-trabajo/poster-compostando.jpg
+assets/logo-re-organico.png
+videos/nuestro-trabajo/proceso-organico-web.mp4
+videos/nuestro-trabajo/bolsa-re-organico-compostando-web.mp4
+videos/nuestro-trabajo/bolsa-re-organico-compostando.mp4

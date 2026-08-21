@@ -40,7 +40,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 100,
                 "unidad": "bolsas",
                 "precio": 6969,
-                "detalle": "1 pack = 100 bolsas"
+                "detalle": "1 pack: 100 bolsas"
             },
             {
                 "id": "caja",
@@ -48,7 +48,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 500,
                 "unidad": "bolsas",
                 "precio": 32667,
-                "detalle": "1 caja = 500 bolsas"
+                "detalle": "1 caja: 500 bolsas"
             }
         ]
     },
@@ -71,7 +71,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 100,
                 "unidad": "bolsas",
                 "precio": 10627,
-                "detalle": "1 pack = 100 bolsas"
+                "detalle": "1 pack: 100 bolsas"
             },
             {
                 "id": "caja",
@@ -79,7 +79,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 500,
                 "unidad": "bolsas",
                 "precio": 49813,
-                "detalle": "1 caja = 500 bolsas"
+                "detalle": "1 caja: 500 bolsas"
             }
         ]
     },
@@ -102,7 +102,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 100,
                 "unidad": "bolsas",
                 "precio": 15939,
-                "detalle": "1 pack = 100 bolsas"
+                "detalle": "1 pack: 100 bolsas"
             },
             {
                 "id": "caja",
@@ -110,7 +110,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 500,
                 "unidad": "bolsas",
                 "precio": 76463,
-                "detalle": "1 caja = 500 bolsas"
+                "detalle": "1 caja: 500 bolsas"
             }
         ]
     },
@@ -133,7 +133,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 100,
                 "unidad": "bolsas",
                 "precio": 20799,
-                "detalle": "1 pack = 100 bolsas"
+                "detalle": "1 pack: 100 bolsas"
             },
             {
                 "id": "caja",
@@ -141,7 +141,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 500,
                 "unidad": "bolsas",
                 "precio": 100525,
-                "detalle": "1 caja = 500 bolsas"
+                "detalle": "1 caja: 500 bolsas"
             }
         ]
     },
@@ -164,7 +164,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 100,
                 "unidad": "bolsas",
                 "precio": 21239,
-                "detalle": "1 pack = 100 bolsas"
+                "detalle": "1 pack: 100 bolsas"
             },
             {
                 "id": "caja",
@@ -172,7 +172,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 500,
                 "unidad": "bolsas",
                 "precio": 102655,
-                "detalle": "1 caja = 500 bolsas"
+                "detalle": "1 caja: 500 bolsas"
             }
         ]
     },
@@ -195,7 +195,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 100,
                 "unidad": "bolsas",
                 "precio": 32104,
-                "detalle": "1 pack = 100 bolsas"
+                "detalle": "1 pack: 100 bolsas"
             },
             {
                 "id": "caja",
@@ -203,7 +203,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 300,
                 "unidad": "bolsas",
                 "precio": 93098,
-                "detalle": "1 caja = 300 bolsas"
+                "detalle": "1 caja: 300 bolsas"
             }
         ]
     },
@@ -226,7 +226,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 100,
                 "unidad": "bolsas",
                 "precio": 6055,
-                "detalle": "1 pack = 100 bolsas"
+                "detalle": "1 pack: 100 bolsas"
             },
             {
                 "id": "caja",
@@ -234,7 +234,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 2700,
                 "unidad": "bolsas",
                 "precio": 155220,
-                "detalle": "1 caja = 2.700 bolsas"
+                "detalle": "1 caja: 2.700 bolsas"
             }
         ]
     },
@@ -257,7 +257,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 25,
                 "unidad": "bolsas",
                 "precio": 4486,
-                "detalle": "1 rollo = 25 bolsas"
+                "detalle": "1 rollo: 25 bolsas"
             },
             {
                 "id": "caja",
@@ -265,7 +265,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 600,
                 "unidad": "bolsas",
                 "precio": 104073,
-                "detalle": "1 caja = 24 rollos = 600 bolsas",
+                "detalle": "1 caja: 24 rollos: 600 bolsas",
                 "rollos": 24
             }
         ]
@@ -289,7 +289,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 20,
                 "unidad": "bolsas",
                 "precio": 9903,
-                "detalle": "1 rollo = 20 bolsas"
+                "detalle": "1 rollo: 20 bolsas"
             },
             {
                 "id": "caja",
@@ -297,7 +297,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 200,
                 "unidad": "bolsas",
                 "precio": 95736,
-                "detalle": "1 caja = 10 rollos = 200 bolsas",
+                "detalle": "1 caja: 10 rollos: 200 bolsas",
                 "rollos": 10
             }
         ]
@@ -321,7 +321,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 200,
                 "unidad": "bolsas",
                 "precio": 17148,
-                "detalle": "1 rollo = 200 bolsas"
+                "detalle": "1 rollo: 200 bolsas"
             },
             {
                 "id": "caja",
@@ -329,7 +329,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 1200,
                 "unidad": "bolsas",
                 "precio": 99446,
-                "detalle": "1 caja = 6 rollos = 1.200 bolsas",
+                "detalle": "1 caja: 6 rollos: 1.200 bolsas",
                 "rollos": 6
             }
         ]
@@ -422,7 +422,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 25,
                 "unidad": "contenedores",
                 "precio": 6817,
-                "detalle": "1 pack = 25 contenedores"
+                "detalle": "1 pack: 25 contenedores"
             },
             {
                 "id": "caja",
@@ -430,7 +430,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 500,
                 "unidad": "contenedores",
                 "precio": 123560,
-                "detalle": "1 caja = 500 contenedores"
+                "detalle": "1 caja: 500 contenedores"
             }
         ]
     },
@@ -453,7 +453,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "contenedores",
                 "precio": 20557,
-                "detalle": "1 pack = 50 contenedores"
+                "detalle": "1 pack: 50 contenedores"
             },
             {
                 "id": "caja",
@@ -461,7 +461,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 500,
                 "unidad": "contenedores",
                 "precio": 186302,
-                "detalle": "1 caja = 500 contenedores"
+                "detalle": "1 caja: 500 contenedores"
             }
         ]
     },
@@ -484,7 +484,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "contenedores",
                 "precio": 21880,
-                "detalle": "1 pack = 50 contenedores"
+                "detalle": "1 pack: 50 contenedores"
             },
             {
                 "id": "caja",
@@ -492,7 +492,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 250,
                 "unidad": "contenedores",
                 "precio": 99144,
-                "detalle": "1 caja = 250 contenedores"
+                "detalle": "1 caja: 250 contenedores"
             }
         ]
     },
@@ -515,7 +515,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 25,
                 "unidad": "contenedores",
                 "precio": 7754,
-                "detalle": "1 pack = 25 contenedores"
+                "detalle": "1 pack: 25 contenedores"
             },
             {
                 "id": "caja",
@@ -523,7 +523,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 500,
                 "unidad": "contenedores",
                 "precio": 140542,
-                "detalle": "1 caja = 500 contenedores"
+                "detalle": "1 caja: 500 contenedores"
             }
         ]
     },
@@ -546,7 +546,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "contenedores",
                 "precio": 12220,
-                "detalle": "1 pack = 50 contenedores"
+                "detalle": "1 pack: 50 contenedores"
             },
             {
                 "id": "caja",
@@ -554,7 +554,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 1000,
                 "unidad": "contenedores",
                 "precio": 221485,
-                "detalle": "1 caja = 1.000 contenedores"
+                "detalle": "1 caja: 1.000 contenedores"
             }
         ]
     },
@@ -577,7 +577,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "contenedores",
                 "precio": 12220,
-                "detalle": "1 pack = 50 contenedores"
+                "detalle": "1 pack: 50 contenedores"
             },
             {
                 "id": "caja",
@@ -585,7 +585,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 500,
                 "unidad": "contenedores",
                 "precio": 110743,
-                "detalle": "1 caja = 500 contenedores"
+                "detalle": "1 caja: 500 contenedores"
             }
         ]
     },
@@ -608,7 +608,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "contenedores",
                 "precio": 25858,
-                "detalle": "1 pack = 50 contenedores"
+                "detalle": "1 pack: 50 contenedores"
             },
             {
                 "id": "caja",
@@ -616,7 +616,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 250,
                 "unidad": "contenedores",
                 "precio": 117170,
-                "detalle": "1 caja = 250 contenedores"
+                "detalle": "1 caja: 250 contenedores"
             }
         ]
     },
@@ -639,7 +639,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "potes",
                 "precio": 34540,
-                "detalle": "1 pack = 50 potes"
+                "detalle": "1 pack: 50 potes"
             },
             {
                 "id": "caja",
@@ -647,7 +647,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 300,
                 "unidad": "potes",
                 "precio": 187814,
-                "detalle": "1 caja = 300 potes"
+                "detalle": "1 caja: 300 potes"
             }
         ]
     },
@@ -670,7 +670,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "tapas",
                 "precio": 23449,
-                "detalle": "1 pack = 50 tapas"
+                "detalle": "1 pack: 50 tapas"
             },
             {
                 "id": "caja",
@@ -678,7 +678,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 300,
                 "unidad": "tapas",
                 "precio": 127502,
-                "detalle": "1 caja = 300 tapas"
+                "detalle": "1 caja: 300 tapas"
             }
         ]
     },
@@ -701,7 +701,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "potes",
                 "precio": 23946,
-                "detalle": "1 pack = 50 potes"
+                "detalle": "1 pack: 50 potes"
             },
             {
                 "id": "caja",
@@ -709,7 +709,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 300,
                 "unidad": "potes",
                 "precio": 130205,
-                "detalle": "1 caja = 300 potes"
+                "detalle": "1 caja: 300 potes"
             }
         ]
     },
@@ -732,7 +732,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "tapas",
                 "precio": 17667,
-                "detalle": "1 pack = 50 tapas"
+                "detalle": "1 pack: 50 tapas"
             },
             {
                 "id": "caja",
@@ -740,7 +740,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 300,
                 "unidad": "tapas",
                 "precio": 96065,
-                "detalle": "1 caja = 300 tapas"
+                "detalle": "1 caja: 300 tapas"
             }
         ]
     },
@@ -763,7 +763,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 25,
                 "unidad": "potes",
                 "precio": 10764,
-                "detalle": "1 pack = 25 potes"
+                "detalle": "1 pack: 25 potes"
             },
             {
                 "id": "caja",
@@ -771,7 +771,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 500,
                 "unidad": "potes",
                 "precio": 195105,
-                "detalle": "1 caja = 500 potes"
+                "detalle": "1 caja: 500 potes"
             }
         ]
     },
@@ -794,7 +794,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 25,
                 "unidad": "tapas",
                 "precio": 10064,
-                "detalle": "1 pack = 25 tapas"
+                "detalle": "1 pack: 25 tapas"
             },
             {
                 "id": "caja",
@@ -802,7 +802,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 500,
                 "unidad": "tapas",
                 "precio": 182417,
-                "detalle": "1 caja = 500 tapas"
+                "detalle": "1 caja: 500 tapas"
             }
         ]
     },
@@ -825,7 +825,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "vasos",
                 "precio": 8033,
-                "detalle": "1 pack = 50 vasos"
+                "detalle": "1 pack: 50 vasos"
             },
             {
                 "id": "caja",
@@ -833,7 +833,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 1250,
                 "unidad": "vasos",
                 "precio": 183733,
-                "detalle": "1 caja = 1.250 vasos"
+                "detalle": "1 caja: 1.250 vasos"
             }
         ]
     },
@@ -856,7 +856,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "vasos",
                 "precio": 9954,
-                "detalle": "1 pack = 50 vasos"
+                "detalle": "1 pack: 50 vasos"
             },
             {
                 "id": "caja",
@@ -864,7 +864,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 1000,
                 "unidad": "vasos",
                 "precio": 180418,
-                "detalle": "1 caja = 1.000 vasos"
+                "detalle": "1 caja: 1.000 vasos"
             }
         ]
     },
@@ -887,7 +887,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "vasos",
                 "precio": 11946,
-                "detalle": "1 pack = 50 vasos"
+                "detalle": "1 pack: 50 vasos"
             },
             {
                 "id": "caja",
@@ -895,7 +895,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 800,
                 "unidad": "vasos",
                 "precio": 173210,
-                "detalle": "1 caja = 800 vasos"
+                "detalle": "1 caja: 800 vasos"
             }
         ]
     },
@@ -918,7 +918,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "tapas",
                 "precio": 7925,
-                "detalle": "1 pack = 50 tapas"
+                "detalle": "1 pack: 50 tapas"
             },
             {
                 "id": "caja",
@@ -926,7 +926,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 600,
                 "unidad": "tapas",
                 "precio": 86189,
-                "detalle": "1 caja = 600 tapas"
+                "detalle": "1 caja: 600 tapas"
             }
         ]
     },
@@ -949,7 +949,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "tapas",
                 "precio": 7660,
-                "detalle": "1 pack = 50 tapas"
+                "detalle": "1 pack: 50 tapas"
             },
             {
                 "id": "caja",
@@ -957,7 +957,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 800,
                 "unidad": "tapas",
                 "precio": 111067,
-                "detalle": "1 caja = 800 tapas"
+                "detalle": "1 caja: 800 tapas"
             }
         ]
     },
@@ -980,7 +980,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "tapas",
                 "precio": 8936,
-                "detalle": "1 pack = 50 tapas"
+                "detalle": "1 pack: 50 tapas"
             },
             {
                 "id": "caja",
@@ -988,7 +988,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 800,
                 "unidad": "tapas",
                 "precio": 129578,
-                "detalle": "1 caja = 800 tapas"
+                "detalle": "1 caja: 800 tapas"
             }
         ]
     },
@@ -1011,7 +1011,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "tapas",
                 "precio": 8722,
-                "detalle": "1 pack = 50 tapas"
+                "detalle": "1 pack: 50 tapas"
             },
             {
                 "id": "caja",
@@ -1019,7 +1019,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 800,
                 "unidad": "tapas",
                 "precio": 126472,
-                "detalle": "1 caja = 800 tapas"
+                "detalle": "1 caja: 800 tapas"
             }
         ]
     },
@@ -1042,7 +1042,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 100,
                 "unidad": "vasos",
                 "precio": 7214,
-                "detalle": "1 pack = 100 vasos"
+                "detalle": "1 pack: 100 vasos"
             },
             {
                 "id": "caja",
@@ -1050,7 +1050,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 2000,
                 "unidad": "vasos",
                 "precio": 130758,
-                "detalle": "1 caja = 2.000 vasos"
+                "detalle": "1 caja: 2.000 vasos"
             }
         ]
     },
@@ -1073,7 +1073,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "vasos",
                 "precio": 4337,
-                "detalle": "1 pack = 50 vasos"
+                "detalle": "1 pack: 50 vasos"
             },
             {
                 "id": "caja",
@@ -1081,7 +1081,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 2000,
                 "unidad": "vasos",
                 "precio": 157221,
-                "detalle": "1 caja = 2.000 vasos"
+                "detalle": "1 caja: 2.000 vasos"
             }
         ]
     },
@@ -1104,7 +1104,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "vasos",
                 "precio": 5607,
-                "detalle": "1 pack = 50 vasos"
+                "detalle": "1 pack: 50 vasos"
             },
             {
                 "id": "caja",
@@ -1112,7 +1112,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 2000,
                 "unidad": "vasos",
                 "precio": 203264,
-                "detalle": "1 caja = 2.000 vasos"
+                "detalle": "1 caja: 2.000 vasos"
             }
         ]
     },
@@ -1135,7 +1135,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "vasos",
                 "precio": 6764,
-                "detalle": "1 pack = 50 vasos"
+                "detalle": "1 pack: 50 vasos"
             },
             {
                 "id": "caja",
@@ -1143,7 +1143,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 1000,
                 "unidad": "vasos",
                 "precio": 122590,
-                "detalle": "1 caja = 1.000 vasos"
+                "detalle": "1 caja: 1.000 vasos"
             }
         ]
     },
@@ -1166,7 +1166,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "vasos",
                 "precio": 9742,
-                "detalle": "1 pack = 50 vasos"
+                "detalle": "1 pack: 50 vasos"
             },
             {
                 "id": "caja",
@@ -1174,7 +1174,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 1000,
                 "unidad": "vasos",
                 "precio": 176570,
-                "detalle": "1 caja = 1.000 vasos"
+                "detalle": "1 caja: 1.000 vasos"
             }
         ]
     },
@@ -1197,7 +1197,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "vasos",
                 "precio": 10745,
-                "detalle": "1 pack = 50 vasos"
+                "detalle": "1 pack: 50 vasos"
             },
             {
                 "id": "caja",
@@ -1205,7 +1205,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 1000,
                 "unidad": "vasos",
                 "precio": 187113,
-                "detalle": "1 caja = 1.000 vasos"
+                "detalle": "1 caja: 1.000 vasos"
             }
         ]
     },
@@ -1228,7 +1228,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "vasos",
                 "precio": 13356,
-                "detalle": "1 pack = 50 vasos"
+                "detalle": "1 pack: 50 vasos"
             },
             {
                 "id": "caja",
@@ -1236,7 +1236,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 1000,
                 "unidad": "vasos",
                 "precio": 242074,
-                "detalle": "1 caja = 1.000 vasos"
+                "detalle": "1 caja: 1.000 vasos"
             }
         ]
     },
@@ -1259,7 +1259,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 100,
                 "unidad": "tapas",
                 "precio": 12733,
-                "detalle": "1 pack = 100 tapas"
+                "detalle": "1 pack: 100 tapas"
             },
             {
                 "id": "caja",
@@ -1267,7 +1267,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 1000,
                 "unidad": "tapas",
                 "precio": 125616,
-                "detalle": "1 caja = 1.000 tapas"
+                "detalle": "1 caja: 1.000 tapas"
             }
         ]
     },
@@ -1290,7 +1290,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 100,
                 "unidad": "tapas",
                 "precio": 13090,
-                "detalle": "1 pack = 100 tapas"
+                "detalle": "1 pack: 100 tapas"
             },
             {
                 "id": "caja",
@@ -1298,7 +1298,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 1000,
                 "unidad": "tapas",
                 "precio": 129413,
-                "detalle": "1 caja = 1.000 tapas"
+                "detalle": "1 caja: 1.000 tapas"
             }
         ]
     },
@@ -1321,7 +1321,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 200,
                 "unidad": "potes",
                 "precio": 36446,
-                "detalle": "1 pack = 200 potes"
+                "detalle": "1 pack: 200 potes"
             },
             {
                 "id": "caja",
@@ -1329,7 +1329,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 1400,
                 "unidad": "potes",
                 "precio": 231207,
-                "detalle": "1 caja = 1.400 potes"
+                "detalle": "1 caja: 1.400 potes"
             }
         ]
     },
@@ -1352,7 +1352,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 250,
                 "unidad": "potes",
                 "precio": 43260,
-                "detalle": "1 pack = 250 potes"
+                "detalle": "1 pack: 250 potes"
             },
             {
                 "id": "caja",
@@ -1360,7 +1360,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 2250,
                 "unidad": "potes",
                 "precio": 352838,
-                "detalle": "1 caja = 2.250 potes"
+                "detalle": "1 caja: 2.250 potes"
             }
         ]
     },
@@ -1383,7 +1383,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 250,
                 "unidad": "potes",
                 "precio": 46644,
-                "detalle": "1 pack = 250 potes"
+                "detalle": "1 pack: 250 potes"
             },
             {
                 "id": "caja",
@@ -1391,7 +1391,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 2000,
                 "unidad": "potes",
                 "precio": 338170,
-                "detalle": "1 caja = 2.000 potes"
+                "detalle": "1 caja: 2.000 potes"
             }
         ]
     },
@@ -1414,7 +1414,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 200,
                 "unidad": "potes",
                 "precio": 42490,
-                "detalle": "1 pack = 200 potes"
+                "detalle": "1 pack: 200 potes"
             },
             {
                 "id": "caja",
@@ -1422,7 +1422,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 1400,
                 "unidad": "potes",
                 "precio": 269544,
-                "detalle": "1 caja = 1.400 potes"
+                "detalle": "1 caja: 1.400 potes"
             }
         ]
     },
@@ -1445,7 +1445,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 200,
                 "unidad": "potes",
                 "precio": 42935,
-                "detalle": "1 pack = 200 potes"
+                "detalle": "1 pack: 200 potes"
             },
             {
                 "id": "caja",
@@ -1453,7 +1453,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 1400,
                 "unidad": "potes",
                 "precio": 269092,
-                "detalle": "1 caja = 1.400 potes"
+                "detalle": "1 caja: 1.400 potes"
             }
         ]
     },
@@ -1476,7 +1476,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 180,
                 "unidad": "potes",
                 "precio": 46034,
-                "detalle": "1 pack = 180 potes"
+                "detalle": "1 pack: 180 potes"
             },
             {
                 "id": "caja",
@@ -1484,7 +1484,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 1260,
                 "unidad": "potes",
                 "precio": 292029,
-                "detalle": "1 caja = 1.260 potes"
+                "detalle": "1 caja: 1.260 potes"
             }
         ]
     },
@@ -1507,7 +1507,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "tenedores",
                 "precio": 5457,
-                "detalle": "1 pack = 50 tenedores"
+                "detalle": "1 pack: 50 tenedores"
             },
             {
                 "id": "caja",
@@ -1515,7 +1515,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 1000,
                 "unidad": "tenedores",
                 "precio": 98907,
-                "detalle": "1 caja = 1.000 tenedores"
+                "detalle": "1 caja: 1.000 tenedores"
             }
         ]
     },
@@ -1538,7 +1538,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "cuchillos",
                 "precio": 5457,
-                "detalle": "1 pack = 50 cuchillos"
+                "detalle": "1 pack: 50 cuchillos"
             },
             {
                 "id": "caja",
@@ -1546,7 +1546,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 1000,
                 "unidad": "cuchillos",
                 "precio": 98907,
-                "detalle": "1 caja = 1.000 cuchillos"
+                "detalle": "1 caja: 1.000 cuchillos"
             }
         ]
     },
@@ -1569,7 +1569,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "cucharas",
                 "precio": 5457,
-                "detalle": "1 pack = 50 cucharas"
+                "detalle": "1 pack: 50 cucharas"
             },
             {
                 "id": "caja",
@@ -1577,7 +1577,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 1000,
                 "unidad": "cucharas",
                 "precio": 98907,
-                "detalle": "1 caja = 1.000 cucharas"
+                "detalle": "1 caja: 1.000 cucharas"
             }
         ]
     },
@@ -1600,7 +1600,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 25,
                 "unidad": "sets",
                 "precio": 5955,
-                "detalle": "1 pack = 25 sets"
+                "detalle": "1 pack: 25 sets"
             },
             {
                 "id": "caja",
@@ -1608,7 +1608,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 500,
                 "unidad": "sets",
                 "precio": 107938,
-                "detalle": "1 caja = 500 sets"
+                "detalle": "1 caja: 500 sets"
             }
         ]
     },
@@ -1631,7 +1631,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 25,
                 "unidad": "sets",
                 "precio": 9156,
-                "detalle": "1 pack = 25 sets"
+                "detalle": "1 pack: 25 sets"
             },
             {
                 "id": "caja",
@@ -1639,7 +1639,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 250,
                 "unidad": "sets",
                 "precio": 82978,
-                "detalle": "1 caja = 250 sets"
+                "detalle": "1 caja: 250 sets"
             }
         ]
     },
@@ -1662,7 +1662,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 25,
                 "unidad": "sets",
                 "precio": 13736,
-                "detalle": "1 pack = 25 sets"
+                "detalle": "1 pack: 25 sets"
             },
             {
                 "id": "caja",
@@ -1670,7 +1670,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 250,
                 "unidad": "sets",
                 "precio": 124481,
-                "detalle": "1 caja = 250 sets"
+                "detalle": "1 caja: 250 sets"
             }
         ]
     },
@@ -1693,7 +1693,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 500,
                 "unidad": "paletitas",
                 "precio": 24607,
-                "detalle": "1 pack = 500 paletitas"
+                "detalle": "1 pack: 500 paletitas"
             },
             {
                 "id": "caja",
@@ -1701,7 +1701,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 5000,
                 "unidad": "paletitas",
                 "precio": 223004,
-                "detalle": "1 caja = 5.000 paletitas"
+                "detalle": "1 caja: 5.000 paletitas"
             }
         ]
     },
@@ -1724,7 +1724,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 100,
                 "unidad": "cucharitas",
                 "precio": 5979,
-                "detalle": "1 pack = 100 cucharitas"
+                "detalle": "1 pack: 100 cucharitas"
             },
             {
                 "id": "caja",
@@ -1732,7 +1732,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 2000,
                 "unidad": "cucharitas",
                 "precio": 108365,
-                "detalle": "1 caja = 2.000 cucharitas"
+                "detalle": "1 caja: 2.000 cucharitas"
             }
         ]
     },
@@ -1755,7 +1755,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 150,
                 "unidad": "bombillas",
                 "precio": 3619,
-                "detalle": "1 pack = 150 bombillas"
+                "detalle": "1 pack: 150 bombillas"
             },
             {
                 "id": "caja",
@@ -1763,7 +1763,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 3450,
                 "unidad": "bombillas",
                 "precio": 75436,
-                "detalle": "1 caja = 3.450 bombillas"
+                "detalle": "1 caja: 3.450 bombillas"
             }
         ]
     },
@@ -1786,7 +1786,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 150,
                 "unidad": "bombillas",
                 "precio": 3969,
-                "detalle": "1 pack = 150 bombillas"
+                "detalle": "1 pack: 150 bombillas"
             },
             {
                 "id": "caja",
@@ -1794,7 +1794,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 3450,
                 "unidad": "bombillas",
                 "precio": 82723,
-                "detalle": "1 caja = 3.450 bombillas"
+                "detalle": "1 caja: 3.450 bombillas"
             }
         ]
     },
@@ -1817,7 +1817,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "contenedores",
                 "precio": 18098,
-                "detalle": "1 pack = 50 contenedores"
+                "detalle": "1 pack: 50 contenedores"
             },
             {
                 "id": "caja",
@@ -1825,7 +1825,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 700,
                 "unidad": "contenedores",
                 "precio": 229624,
-                "detalle": "1 caja = 700 contenedores"
+                "detalle": "1 caja: 700 contenedores"
             }
         ]
     },
@@ -1848,7 +1848,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "contenedores",
                 "precio": 18415,
-                "detalle": "1 pack = 50 contenedores"
+                "detalle": "1 pack: 50 contenedores"
             },
             {
                 "id": "caja",
@@ -1856,7 +1856,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 700,
                 "unidad": "contenedores",
                 "precio": 233647,
-                "detalle": "1 caja = 700 contenedores"
+                "detalle": "1 caja: 700 contenedores"
             }
         ]
     },
@@ -1879,7 +1879,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "contenedores",
                 "precio": 19215,
-                "detalle": "1 pack = 50 contenedores"
+                "detalle": "1 pack: 50 contenedores"
             },
             {
                 "id": "caja",
@@ -1887,7 +1887,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 600,
                 "unidad": "contenedores",
                 "precio": 208959,
-                "detalle": "1 caja = 600 contenedores"
+                "detalle": "1 caja: 600 contenedores"
             }
         ]
     },
@@ -1910,7 +1910,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "contenedores",
                 "precio": 28712,
-                "detalle": "1 pack = 50 contenedores"
+                "detalle": "1 pack: 50 contenedores"
             },
             {
                 "id": "caja",
@@ -1918,7 +1918,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 400,
                 "unidad": "contenedores",
                 "precio": 208164,
-                "detalle": "1 caja = 400 contenedores"
+                "detalle": "1 caja: 400 contenedores"
             }
         ]
     },
@@ -1941,7 +1941,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 50,
                 "unidad": "contenedores",
                 "precio": 34502,
-                "detalle": "1 pack = 50 contenedores"
+                "detalle": "1 pack: 50 contenedores"
             },
             {
                 "id": "caja",
@@ -1949,7 +1949,7 @@ const PRODUCTOS_RESPALDO = [
                 "unidades": 400,
                 "unidad": "contenedores",
                 "precio": 250142,
-                "detalle": "1 caja = 400 contenedores"
+                "detalle": "1 caja: 400 contenedores"
             }
         ]
     }
@@ -1980,15 +1980,15 @@ function normalizarProducto(producto) {
 }
 
 const CATEGORIAS = {
-    bolsas: "Bolsas compostables",
-    rollos: "Bolsas en rollo",
-    papel: "Papel compost",
-    contenedores: "Contenedores compostables",
-    vasos: "Vasos compostables",
-    tapas: "Tapas compostables",
-    heladeria: "Heladería",
-    cubiertos: "Cubiertos y sets",
-    bombillas: "Bombillas compostables"
+    bolsas: "Bolsas Compostables Tipo Camiseta",
+    rollos: "Bolsas Compostables En Rollo",
+    papel: "Papel Compostable",
+    contenedores: "Contenedores Compostables",
+    vasos: "Vasos Compostables",
+    tapas: "Tapas Compostables",
+    heladeria: "Heladería Compostable",
+    cubiertos: "Cubiertos Compostables",
+    bombillas: "Bombillas Compostables"
 };
 
 const ESTADOS = {
@@ -2013,6 +2013,8 @@ const FONDOS = {
 let productos = PRODUCTOS_RESPALDO.map((producto) => normalizarProducto({ ...producto }));
 let carrito = cargarCarrito();
 let categoriaActiva = "todos";
+const PRODUCTOS_POR_PAGINA = 6;
+let cantidadProductosVisibles = PRODUCTOS_POR_PAGINA;
 let productoModalId = null;
 let presentacionModalId = null;
 let cantidadModal = 1;
@@ -2027,6 +2029,9 @@ const elementos = {
     buscador: document.getElementById("buscador-productos"),
     limpiarBusqueda: document.getElementById("limpiar-busqueda"),
     contadorProductos: document.getElementById("contador-productos"),
+    accionesCatalogo: document.getElementById("acciones-catalogo"),
+    verMasProductos: document.getElementById("ver-mas-productos"),
+    verMenosProductos: document.getElementById("ver-menos-productos"),
     filtros: document.getElementById("filtros-productos"),
     sinResultados: document.getElementById("sin-resultados"),
     contadorCarrito: document.getElementById("contador-carrito"),
@@ -2092,109 +2097,8 @@ async function inicializar() {
     clienteSupabase = crearClienteSupabase();
 
     if (clienteSupabase) {
-        await Promise.all([
-            cargarProductosDesdeSupabase(),
-            cargarGaleriaPublicaDesdeSupabase()
-        ]);
+        await cargarProductosDesdeSupabase();
     }
-}
-
-
-async function cargarGaleriaPublicaDesdeSupabase() {
-    const grid = document.getElementById("casos-grid-publico");
-
-    if (!grid || !clienteSupabase) return;
-
-    grid.querySelectorAll("[data-galeria-dinamica='true']").forEach((elemento) => {
-        elemento.remove();
-    });
-
-    const { data, error } = await clienteSupabase
-        .from("contenido_galeria")
-        .select("id,tipo,titulo,descripcion,archivo_path,orden")
-        .eq("activo", true)
-        .order("orden", { ascending: true })
-        .order("created_at", { ascending: true });
-
-    if (error) {
-        console.error("No fue posible cargar la galería pública:", error);
-        return;
-    }
-
-    if (!Array.isArray(data) || data.length === 0) return;
-
-    const tarjetas = data
-        .map((item) => crearTarjetaGaleriaPublica(item))
-        .join("");
-
-    grid.insertAdjacentHTML("beforeend", tarjetas);
-}
-
-function crearTarjetaGaleriaPublica(item) {
-    const url = obtenerUrlPublicaGaleria(item.archivo_path);
-    if (!url) return "";
-
-    const titulo = escaparHTML(item.titulo || "Contenido Re Orgánico");
-    const descripcion = escaparHTML(
-        item.descripcion || (
-            item.tipo === "video"
-                ? "Video publicado por Re Orgánico."
-                : "Fotografía publicada por Re Orgánico."
-        )
-    );
-
-    const urlSegura = escaparAtributoGaleria(url);
-    const tituloAtributo = escaparAtributoGaleria(item.titulo || "Contenido Re Orgánico");
-    const esVideo = item.tipo === "video";
-
-    const multimedia = esVideo
-        ? `
-            <video
-                src="${urlSegura}"
-                controls
-                preload="metadata"
-                playsinline
-                aria-label="${tituloAtributo}"
-            ></video>
-        `
-        : `
-            <img
-                src="${urlSegura}"
-                alt="${tituloAtributo}"
-                loading="lazy"
-            >
-        `;
-
-    return `
-        <article
-            class="caso-card galeria-dinamica-item ${esVideo ? "es-video" : "es-foto"}"
-            data-galeria-dinamica="true"
-            data-galeria-id="${escaparAtributoGaleria(item.id || "")}"
-        >
-            ${multimedia}
-            <div class="caso-overlay"></div>
-            <div class="caso-contenido">
-                <span>${esVideo ? "Video" : "Foto"} · Re Orgánico</span>
-                <h3>${titulo}</h3>
-                <p>${descripcion}</p>
-            </div>
-        </article>
-    `;
-}
-
-function obtenerUrlPublicaGaleria(path) {
-    if (!path || !clienteSupabase) return "";
-
-    const { data } = clienteSupabase.storage
-        .from("galeria")
-        .getPublicUrl(path);
-
-    return data?.publicUrl || "";
-}
-
-function escaparAtributoGaleria(texto) {
-    return escaparHTML(String(texto ?? ""))
-        .replace(/`/g, "&#96;");
 }
 
 function crearClienteSupabase() {
@@ -2218,7 +2122,7 @@ function crearClienteSupabase() {
 async function cargarProductosDesdeSupabase() {
     const { data, error } = await clienteSupabase
         .from("productos")
-        .select("id,nombre,precio,categoria,descripcion,emoji,etiqueta,estado,orden,medida,micras,presentaciones")
+        .select("id,nombre,precio,categoria,descripcion,emoji,etiqueta,estado,orden,medida,micras,presentaciones,imagen_path")
         .order("orden", { ascending: true })
         .order("nombre", { ascending: true });
 
@@ -2280,6 +2184,28 @@ function escaparHTML(texto) {
 
 function fondoProducto(producto) {
     return FONDOS[producto.categoria] || FONDOS.bolsas;
+}
+
+function obtenerUrlPublicaProducto(path) {
+    if (!path || !clienteSupabase) return "";
+
+    const { data } = clienteSupabase.storage
+        .from("productos")
+        .getPublicUrl(path);
+
+    return data?.publicUrl || "";
+}
+
+function activarFallbackImagenesProductos(contenedor) {
+    contenedor.querySelectorAll("[data-producto-imagen]").forEach((imagen) => {
+        imagen.addEventListener("error", () => {
+            const emoji = document.createElement("span");
+            emoji.className = "producto-emoji";
+            emoji.setAttribute("aria-hidden", "true");
+            emoji.textContent = imagen.dataset.emoji || "🌿";
+            imagen.replaceWith(emoji);
+        }, { once: true });
+    });
 }
 
 function mostrarToast(mensaje) {
@@ -2381,7 +2307,7 @@ function obtenerPresentaciones(producto) {
             unidades: Number(presentacion.unidades) || 1,
             unidad: String(presentacion.unidad || "unidades"),
             precio: Number(presentacion.precio) || Number(producto.precio) || 0,
-            detalle: String(presentacion.detalle || ""),
+            detalle: String(presentacion.detalle || "").replace(/\s*=\s*/g, ": "),
             rollos: Number(presentacion.rollos) || null
         }));
     }
@@ -2425,21 +2351,40 @@ function resumenPresentacion(presentacion) {
 function resumenCantidadItem(item) {
     const cantidad = Number(item.cantidad) || 0;
     const unidades = unidadesTotales(item);
-    return `${cantidad} ${pluralPresentacion(item.presentacion.nombre, cantidad)} = ${new Intl.NumberFormat("es-CL").format(unidades)} ${item.presentacion.unidad}`;
+    return `${cantidad} ${pluralPresentacion(item.presentacion.nombre, cantidad)}: ${new Intl.NumberFormat("es-CL").format(unidades)} ${item.presentacion.unidad}`;
 }
 
 function renderizarCatalogo() {
-    const visibles = productosFiltrados();
+    const filtrados = productosFiltrados();
+    const visibles = filtrados.slice(0, cantidadProductosVisibles);
 
     elementos.listaProductos.innerHTML = visibles
         .map((producto) => crearTarjetaProducto(producto))
         .join("");
+    activarFallbackImagenesProductos(elementos.listaProductos);
 
-    elementos.sinResultados.hidden = visibles.length !== 0;
+    elementos.sinResultados.hidden = filtrados.length !== 0;
     elementos.contadorProductos.textContent =
-        visibles.length === 1
-            ? "1 producto encontrado"
-            : `${visibles.length} productos encontrados`;
+        filtrados.length === 1
+            ? "1 Producto Encontrado"
+            : `${filtrados.length} Productos Encontrados`;
+
+    if (elementos.accionesCatalogo && elementos.verMasProductos && elementos.verMenosProductos) {
+        const quedanProductos = visibles.length < filtrados.length;
+        const sePuedeMostrarMenos = cantidadProductosVisibles > PRODUCTOS_POR_PAGINA && filtrados.length > 0;
+
+        elementos.accionesCatalogo.hidden = !quedanProductos && !sePuedeMostrarMenos;
+        elementos.verMasProductos.hidden = !quedanProductos;
+        elementos.verMenosProductos.hidden = !sePuedeMostrarMenos;
+
+        if (quedanProductos) {
+            const restantes = filtrados.length - visibles.length;
+            elementos.verMasProductos.textContent =
+                restantes > PRODUCTOS_POR_PAGINA
+                    ? "Ver Más Productos"
+                    : `Ver ${restantes} Producto${restantes === 1 ? "" : "s"} Más`;
+        }
+    }
 
     actualizarBotonLimpiar();
 }
@@ -2455,13 +2400,25 @@ function crearTarjetaProducto(producto) {
         producto.micras ? `💪 MY${Number(producto.micras)}` : "",
         resumenPresentacion(principal)
     ].filter(Boolean).join(" · ");
+    const urlImagen = obtenerUrlPublicaProducto(producto.imagen_path);
+    const visual = urlImagen
+        ? `<img
+                class="producto-imagen"
+                src="${escaparHTML(urlImagen)}"
+                alt="${escaparHTML(producto.nombre)}"
+                data-producto-imagen
+                data-emoji="${escaparHTML(producto.emoji)}"
+                loading="lazy"
+                decoding="async"
+           >`
+        : `<span class="producto-emoji" aria-hidden="true">${escaparHTML(producto.emoji)}</span>`;
 
     return `
         <article class="producto revelar visible" data-id="${escaparHTML(producto.id)}">
             <div class="producto-visual" style="--fondo-producto: ${fondoProducto(producto)}">
                 ${etiqueta}
                 <span class="estado-producto ${escaparHTML(producto.estado)}">${ESTADOS[producto.estado] || "Disponible"}</span>
-                <span class="producto-emoji" aria-hidden="true">${escaparHTML(producto.emoji)}</span>
+                ${visual}
             </div>
 
             <div class="producto-informacion">
@@ -2495,10 +2452,11 @@ function actualizarBotonLimpiar() {
 
 function renderizarSelectorProductos() {
     const valorActual = elementos.productoConsulta.value;
+    const listaFiltrada = productosFiltrados();
 
     elementos.productoConsulta.innerHTML = `
-        <option value="">Selecciona un producto</option>
-        ${productos
+        <option value="">Selecciona Un Producto</option>
+        ${listaFiltrada
             .map(
                 (producto) =>
                     `<option value="${escaparHTML(producto.nombre)}">${escaparHTML(producto.nombre)}</option>`
@@ -2508,6 +2466,8 @@ function renderizarSelectorProductos() {
 
     if ([...elementos.productoConsulta.options].some((opcion) => opcion.value === valorActual)) {
         elementos.productoConsulta.value = valorActual;
+    } else {
+        elementos.productoConsulta.value = "";
     }
 }
 
@@ -2555,8 +2515,22 @@ function abrirDetalleProducto(id) {
     if (!producto) return;
 
     productoModalId = id;
-    elementos.modalProductoVisual.textContent = producto.emoji;
     elementos.modalProductoVisual.style.setProperty("--fondo-producto", fondoProducto(producto));
+    elementos.modalProductoVisual.replaceChildren();
+
+    const urlImagen = obtenerUrlPublicaProducto(producto.imagen_path);
+    if (urlImagen) {
+        const imagen = document.createElement("img");
+        imagen.className = "modal-producto-imagen";
+        imagen.src = urlImagen;
+        imagen.alt = producto.nombre;
+        imagen.addEventListener("error", () => {
+            elementos.modalProductoVisual.textContent = producto.emoji;
+        }, { once: true });
+        elementos.modalProductoVisual.append(imagen);
+    } else {
+        elementos.modalProductoVisual.textContent = producto.emoji;
+    }
     elementos.modalProductoCategoria.textContent = CATEGORIAS[producto.categoria] || "Producto";
     elementos.modalProductoTitulo.textContent = producto.nombre;
     elementos.modalProductoDescripcion.textContent = producto.descripcion;
@@ -2897,52 +2871,55 @@ async function guardarPedidoYWhatsApp(evento) {
     elementos.confirmarPedido.disabled = true;
     elementos.confirmarPedido.textContent = "Verificando seguridad...";
 
-    const { data: verificacionTurnstile, error: errorTurnstile } =
-        await clienteSupabase.functions.invoke("verificar-turnstile", {
-            body: { token: tokenTurnstile }
-        });
-
-    if (errorTurnstile || !verificacionTurnstile?.success) {
-        console.error("Turnstile rechazó la cotización:", errorTurnstile, verificacionTurnstile);
-        elementos.confirmarPedido.disabled = false;
-        elementos.confirmarPedido.textContent = "Guardar cotización y abrir WhatsApp";
-        elementos.mensajePedido.textContent = "No pudimos completar la verificación de seguridad. Inténtalo nuevamente.";
-        elementos.mensajePedido.classList.add("error");
-        window.turnstile.reset();
-        return;
-    }
-
-    elementos.confirmarPedido.textContent = "Guardando cotización...";
-
     const items = detalle.map((item) => ({
         producto_id: item.id,
         presentacion_id: item.presentacion.id,
         cantidad: item.cantidad
     }));
 
-    const { data, error } = await clienteSupabase.rpc("crear_pedido", {
-        p_nombre_cliente: nombre,
-        p_telefono: telefonoNormalizado,
-        p_tipo_entrega: tipoEntrega,
-        p_region: region || null,
-        p_comuna: comuna || null,
-        p_direccion: direccion || null,
-        p_empresa_envio: empresa || null,
-        p_forma_pago: formaPago,
-        p_observaciones: observaciones || null,
-        p_items: items
-    });
+    const pedidoProtegido = {
+        nombre,
+        telefono: telefonoNormalizado,
+        tipo_entrega: tipoEntrega,
+        region: region || null,
+        comuna: comuna || null,
+        direccion: direccion || null,
+        empresa_envio: empresa || null,
+        forma_pago: formaPago,
+        observaciones: observaciones || null,
+        items
+    };
+
+    const { data: verificacionTurnstile, error: errorTurnstile } =
+        await clienteSupabase.functions.invoke("verificar-turnstile", {
+            body: {
+                token: tokenTurnstile,
+                pedido: pedidoProtegido
+            }
+        });
+
+    if (errorTurnstile || !verificacionTurnstile?.success) {
+        console.error("Turnstile rechazó la cotización:", errorTurnstile, verificacionTurnstile);
+        elementos.confirmarPedido.disabled = false;
+        elementos.confirmarPedido.textContent = "Guardar cotización y abrir WhatsApp";
+        elementos.mensajePedido.textContent =
+            verificacionTurnstile?.error ||
+            "No pudimos completar la verificación de seguridad. Inténtalo nuevamente.";
+        elementos.mensajePedido.classList.add("error");
+        window.turnstile.reset();
+        return;
+    }
 
     elementos.confirmarPedido.disabled = false;
     elementos.confirmarPedido.textContent = "Guardar cotización y abrir WhatsApp";
 
-    const pedidoGuardado = Array.isArray(data) ? data[0] : data;
+    const pedidoGuardado = verificacionTurnstile.pedido;
 
-    if (error || !pedidoGuardado?.codigo) {
-        console.error("No se pudo guardar la cotización:", error);
-        elementos.mensajePedido.textContent =
-            "No se pudo guardar la cotización. Ejecuta ACTUALIZACION_DATOS_REORGANICO.sql en Supabase.";
+    if (!pedidoGuardado?.codigo) {
+        console.error("El servidor no devolvió el código de la cotización.");
+        elementos.mensajePedido.textContent = "No se pudo guardar la cotización. Inténtalo nuevamente.";
         elementos.mensajePedido.classList.add("error");
+        window.turnstile.reset();
         return;
     }
 
@@ -3054,12 +3031,18 @@ function inicializarEventos() {
         }
     });
 
-    elementos.buscador.addEventListener("input", renderizarCatalogo);
+    elementos.buscador.addEventListener("input", () => {
+        cantidadProductosVisibles = PRODUCTOS_POR_PAGINA;
+        renderizarCatalogo();
+        renderizarSelectorProductos();
+    });
 
     elementos.limpiarBusqueda.addEventListener("click", () => {
         elementos.buscador.value = "";
         elementos.buscador.focus();
+        cantidadProductosVisibles = PRODUCTOS_POR_PAGINA;
         renderizarCatalogo();
+        renderizarSelectorProductos();
     });
 
     elementos.filtros.addEventListener("click", (evento) => {
@@ -3067,11 +3050,35 @@ function inicializarEventos() {
         if (!boton) return;
 
         categoriaActiva = boton.dataset.categoria;
+        cantidadProductosVisibles = PRODUCTOS_POR_PAGINA;
         elementos.filtros.querySelectorAll(".filtro").forEach((filtro) => {
             filtro.classList.toggle("activo", filtro === boton);
         });
         renderizarCatalogo();
+        renderizarSelectorProductos();
     });
+
+    if (elementos.verMasProductos) {
+        elementos.verMasProductos.addEventListener("click", () => {
+            cantidadProductosVisibles += PRODUCTOS_POR_PAGINA;
+            renderizarCatalogo();
+        });
+    }
+
+    if (elementos.verMenosProductos) {
+        elementos.verMenosProductos.addEventListener("click", () => {
+            cantidadProductosVisibles = Math.max(
+                PRODUCTOS_POR_PAGINA,
+                cantidadProductosVisibles - PRODUCTOS_POR_PAGINA
+            );
+            renderizarCatalogo();
+
+            const seccionProductos = document.getElementById("productos");
+            if (seccionProductos) {
+                seccionProductos.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+        });
+    }
 
     elementos.listaProductos.addEventListener("click", (evento) => {
         const boton = evento.target.closest("[data-accion]");
@@ -3082,7 +3089,10 @@ function inicializarEventos() {
     });
 
     document.getElementById("abrir-carrito").addEventListener("click", abrirCarrito);
-    document.getElementById("hero-abrir-carrito").addEventListener("click", abrirCarrito);
+    const botonHeroCarrito = document.getElementById("hero-abrir-carrito");
+    if (botonHeroCarrito) {
+        botonHeroCarrito.addEventListener("click", abrirCarrito);
+    }
     document.getElementById("cerrar-carrito").addEventListener("click", cerrarCarrito);
     document.getElementById("cerrar-carrito-fondo").addEventListener("click", cerrarCarrito);
     document.getElementById("enviar-pedido").addEventListener("click", abrirFormularioPedido);

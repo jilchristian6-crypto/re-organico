@@ -305,3 +305,97 @@ window.REORGANICO_IMAGENES_PRODUCTOS = {
         corregirModalPedido();
     }
 })();
+
+/* Mejoras de calidad multimedia: usa los videos web y evita zoom/cortes innecesarios. */
+(() => {
+    const reemplazosVideo = new Map([
+        ["videos/nuestro-trabajo/proceso-organico-lite.mp4", "videos/nuestro-trabajo/proceso-organico-web.mp4"],
+        ["videos/nuestro-trabajo/bolsa-re-organico-compostando-lite.mp4", "videos/nuestro-trabajo/bolsa-re-organico-compostando-web.mp4"]
+    ]);
+
+    function mejorarVideos() {
+        document.querySelectorAll("video source[src]").forEach((source) => {
+            const srcOriginal = source.getAttribute("src") || "";
+            const srcNuevo = reemplazosVideo.get(srcOriginal);
+            if (!srcNuevo || source.dataset.calidadWeb === "1") return;
+
+            source.setAttribute("src", srcNuevo);
+            source.dataset.calidadWeb = "1";
+
+            const video = source.closest("video");
+            if (video) {
+                video.preload = "metadata";
+                video.dataset.calidadWeb = "1";
+                video.load();
+            }
+        });
+    }
+
+    function aplicarEstilosMultimedia() {
+        const estilo = document.createElement("style");
+        estilo.id = "reorganico-mejora-multimedia";
+        estilo.textContent = `
+          /* Videos: mostrar el cuadro completo sin agrandarlo/cortarlo artificialmente. */
+          .impacto-video-marco{
+            background:#081d15!important;
+          }
+          .impacto-video-marco video{
+            width:100%!important;
+            height:100%!important;
+            object-fit:contain!important;
+            object-position:center!important;
+            background:#081d15!important;
+            filter:none!important;
+            image-rendering:auto!important;
+          }
+
+          /* Catálogo: evita deformaciones y filtros que resten nitidez. */
+          .producto-visual .imagen-producto-escena{
+            width:100%!important;
+            height:100%!important;
+            object-position:center!important;
+            transform:none!important;
+            filter:none!important;
+            image-rendering:auto!important;
+          }
+
+          /* En el detalle del producto es más importante ver el producto completo que recortarlo. */
+          #modal-producto-visual .imagen-producto-escena{
+            object-fit:contain!important;
+            object-position:center!important;
+            background:#eef5e9!important;
+            filter:none!important;
+            image-rendering:auto!important;
+          }
+
+          /* Portada: mantener el encuadre sin filtros ni escalados extra. */
+          .hero-portada-nueva .hero-diapositiva img{
+            filter:none!important;
+            image-rendering:auto!important;
+          }
+
+          @media(max-width:700px){
+            .impacto-video-marco video{
+              object-fit:contain!important;
+            }
+          }
+        `;
+
+        document.getElementById(estilo.id)?.remove();
+        document.head.append(estilo);
+    }
+
+    function iniciarMejorasMultimedia() {
+        aplicarEstilosMultimedia();
+        mejorarVideos();
+
+        const observador = new MutationObserver(() => mejorarVideos());
+        observador.observe(document.body, { childList: true, subtree: true });
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", iniciarMejorasMultimedia, { once: true });
+    } else {
+        iniciarMejorasMultimedia();
+    }
+})();

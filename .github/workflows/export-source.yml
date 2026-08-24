@@ -1,9 +1,8 @@
 name: Export source
 
 on:
-  push:
-    paths:
-      - '.github/workflows/export-source.yml'
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:

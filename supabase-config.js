@@ -6,7 +6,7 @@ window.REORGANICO_SUPABASE = {
 };
 
 window.REORGANICO_IMAGENES_PRODUCTOS = {
-    "bolsa-pequena-36x40-my14": "img/productos/cambios-20260821/bolsa-36x40-my14.webp",
+    "bolsa-pequena-36x40-my14": "img/productos/actualizadas/bolsa-36x40-my14.webp",
     "bolsa-mediana-42x50-my14": "img/productos/actualizadas/bolsa-42x50-my14.webp",
     "bolsa-mediana-42x50-my21": "img/productos/actualizadas/bolsa-42x50-my21.webp",
     "bolsa-grande-48x55-my22": "img/productos/actualizadas/bolsa-48x55-my22.webp",
@@ -30,11 +30,11 @@ window.REORGANICO_IMAGENES_PRODUCTOS = {
     "bambu-tapa-cpla-1200-1bg056": "img/productos/cambios-20260821/tapa-cpla-1200-750.webp",
     "bambu-pote-ensalada-750-1bg052": "img/productos/actualizadas/pote-ensalada-750.webp",
     "bambu-tapa-cpla-750-1bg053": "img/productos/cambios-20260821/tapa-cpla-1200-750.webp",
-    "bambu-soup-bucket-500-1bg606": "img/productos/cambios-20260821/soup-bucket-500.webp",
+    "bambu-soup-bucket-500-1bg606": "img/productos/actualizadas/soup-bucket-500.webp",
     "bambu-tapa-soup-bucket-500-1bg607": "img/productos/cambios-20260821/tapa-soup-bucket-500.webp",
     "vaso-biopla-200-1vp185": "img/productos/actualizadas/vaso-biopla-200.webp",
     "vaso-biopla-400-1vp184": "img/productos/actualizadas/vaso-biopla-500.webp",
-    "vaso-biopla-500-1vp180": "img/productos/cambios-20260821/vaso-biopla-500.webp",
+    "vaso-biopla-500-1vp180": "img/productos/actualizadas/vaso-biopla-500.webp",
     "tapa-domo-biopla-400-1vp189": "img/productos/actualizadas/tapa-biopla-domo.webp",
     "tapa-plana-biopla-400-1vp191": "img/productos/actualizadas/tapa-biopla-plana.webp",
     "tapa-domo-biopla-500-1vp176": "img/productos/actualizadas/tapa-biopla-domo.webp",
@@ -43,8 +43,8 @@ window.REORGANICO_IMAGENES_PRODUCTOS = {
     "vaso-papel-bambu-4oz-1bg669": "img/productos/actualizadas/vasos-papel-bambu.webp",
     "vaso-papel-bambu-7oz-1bg670": "img/productos/actualizadas/vasos-papel-bambu.webp",
     "vaso-papel-bambu-8oz-1bg672": "img/productos/actualizadas/vasos-papel-bambu.webp",
-    "vaso-papel-bambu-10oz-1bg674": "img/productos/cambios-20260821/vasos-papel-bambu-10-12oz.webp",
-    "vaso-papel-bambu-12oz-1bg676": "img/productos/cambios-20260821/vasos-papel-bambu-10-12oz.webp",
+    "vaso-papel-bambu-10oz-1bg674": "img/productos/actualizadas/vasos-papel-bambu.webp",
+    "vaso-papel-bambu-12oz-1bg676": "img/productos/actualizadas/vasos-papel-bambu.webp",
     "vaso-papel-blanco-16oz-1bg039": "img/productos/actualizadas/soup-bucket-500.webp",
     "tapa-pico-dm80-1bg3358": "img/productos/actualizadas/tapa-pico-8oz.webp",
     "tapa-pico-dm90-1bg359": "img/productos/actualizadas/tapas-pico-calientes.webp",

@@ -24,12 +24,41 @@
         <circle cx="21.3" cy="10.8" r="1.25" fill="#fff"/>
       </svg>`;
 
-    let aplicando = false;
+    function agregarEstilos() {
+        if (document.getElementById("reorganico-ajustes-pc")) return;
+        const estilo = document.createElement("style");
+        estilo.id = "reorganico-ajustes-pc";
+        estilo.textContent = `
+          .icono-red{width:24px;height:24px;display:inline-block;vertical-align:middle;flex:0 0 auto}
+          .trabajo-instagram,.boton-contacto,.boton-enviar-consulta{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:9px!important}
+          #whatsapp-flotante{display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important}
+          #whatsapp-flotante .icono-whatsapp{width:34px!important;height:34px!important;display:block!important}
+          #enlace-whatsapp-contacto .icono-whatsapp,.boton-enviar-consulta .icono-whatsapp{width:23px!important;height:23px!important}
+          .trabajo-instagram .icono-instagram{width:24px!important;height:24px!important}
+          #enlace-instagram-pie,#enlace-instagram-contacto{display:inline-flex!important;align-items:center!important;gap:7px!important}
+          #enlace-instagram-pie .icono-instagram,#enlace-instagram-contacto .icono-instagram{width:19px!important;height:19px!important}
+
+          /* Modal de producto pedido en PC: sin textos repetidos y opciones verde oscuro. */
+          #modal-presentacion-resumen,
+          #modal-cantidad-compra .modal-cantidad-texto{display:none!important}
+          #modal-presentacion .presentacion-opcion,
+          #modal-presentacion .presentacion-opcion *{color:#1f4d3a!important}
+          #modal-presentacion .presentacion-opcion{
+            border-color:rgba(31,77,58,.18)!important;
+            background:#f5f7f3!important;
+            text-decoration:none!important
+          }
+          #modal-presentacion .presentacion-opcion.activo{
+            border-color:#1f4d3a!important;
+            background:#e7f0e9!important;
+            box-shadow:0 0 0 2px rgba(31,77,58,.08)!important
+          }
+          @media(max-width:700px){#whatsapp-flotante .icono-whatsapp{width:31px!important;height:31px!important}}
+        `;
+        document.head.append(estilo);
+    }
 
     function aplicarLogos() {
-        if (aplicando) return;
-        aplicando = true;
-
         const flotante = document.getElementById("whatsapp-flotante");
         if (flotante && !flotante.querySelector(".icono-whatsapp")) flotante.innerHTML = logoWhatsApp;
 
@@ -45,51 +74,47 @@
             if (icono && !icono.querySelector(".icono-whatsapp")) icono.innerHTML = logoWhatsApp;
         });
 
-        document.querySelectorAll('.trabajo-instagram[href*="instagram.com"], #enlace-instagram-pie').forEach((enlace) => {
-            if (enlace.querySelector(".icono-instagram")) return;
-            if (enlace.classList.contains("trabajo-instagram")) {
-                enlace.innerHTML = `${logoInstagram}<span>Ver Instagram</span>`;
-            } else {
-                enlace.innerHTML = `${logoInstagram}<span>Instagram</span>`;
-            }
+        /* El botón parte con href=#; por eso se selecciona por clase y no por href. */
+        document.querySelectorAll(".trabajo-instagram").forEach((enlace) => {
+            if (!enlace.querySelector(".icono-instagram")) enlace.innerHTML = `${logoInstagram}<span>Ver Instagram</span>`;
         });
 
-        aplicando = false;
+        const instagramPie = document.getElementById("enlace-instagram-pie");
+        if (instagramPie && !instagramPie.querySelector(".icono-instagram")) instagramPie.innerHTML = `${logoInstagram}<span>Instagram</span>`;
     }
 
-    function agregarEstilos() {
-        if (document.getElementById("reorganico-logos-redes")) return;
-        const estilo = document.createElement("style");
-        estilo.id = "reorganico-logos-redes";
-        estilo.textContent = `
-          .icono-red{width:24px;height:24px;display:inline-block;vertical-align:middle;flex:0 0 auto}
-          .trabajo-instagram,.boton-contacto,.boton-enviar-consulta{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:9px!important}
-          #whatsapp-flotante{display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important}
-          #whatsapp-flotante .icono-whatsapp{width:34px!important;height:34px!important;display:block!important}
-          #enlace-whatsapp-contacto .icono-whatsapp,.boton-enviar-consulta .icono-whatsapp{width:23px!important;height:23px!important}
-          .trabajo-instagram .icono-instagram{width:24px!important;height:24px!important}
-          #enlace-instagram-pie{display:inline-flex!important;align-items:center!important;gap:7px!important}
-          #enlace-instagram-pie .icono-instagram{width:19px!important;height:19px!important}
-          @media(max-width:700px){#whatsapp-flotante .icono-whatsapp{width:31px!important;height:31px!important}}
-        `;
-        document.head.append(estilo);
+    function aplicarFaq() {
+        document.querySelectorAll(".pregunta").forEach((item) => {
+            const titulo = item.querySelector(".pregunta-titulo")?.textContent || item.textContent || "";
+            if (!titulo.toLowerCase().includes("cuántas bolsas vienen en un pack") &&
+                !titulo.toLowerCase().includes("cuantas bolsas vienen en un pack")) return;
+            const respuesta = item.querySelector(".pregunta-respuesta p");
+            if (respuesta) respuesta.textContent = "Rollos de bolsas, pack y cajas muestran su cantidad exacta en la descripción de cada producto.";
+        });
     }
 
-    function iniciar() {
+    function aplicarEtiquetaMy21() {
+        const tarjeta = document.querySelector('[data-id="bolsa-mediana-42x50-my21"]');
+        if (!tarjeta) return;
+        const etiqueta = tarjeta.querySelector(".producto-etiqueta, .producto-badge, .etiqueta-producto");
+        if (etiqueta && etiqueta.textContent.trim() !== "Mediana resistente") etiqueta.textContent = "Mediana resistente";
+    }
+
+    function aplicarTodo() {
         agregarEstilos();
         aplicarLogos();
+        aplicarFaq();
+        aplicarEtiquetaMy21();
+    }
 
-        [100, 400, 900, 1800, 3000].forEach((ms) => setTimeout(aplicarLogos, ms));
+    /* Se ejecuta después de script.js para que ningún script vuelva a poner la flecha. */
+    window.addEventListener("load", () => {
+        aplicarTodo();
+        [100, 500, 1200, 2500].forEach((ms) => setTimeout(aplicarTodo, ms));
 
         const observador = new MutationObserver(() => {
-            window.requestAnimationFrame(aplicarLogos);
+            window.requestAnimationFrame(aplicarTodo);
         });
-        observador.observe(document.body, { childList: true, subtree: true, characterData: true });
-    }
-
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", iniciar, { once: true });
-    } else {
-        iniciar();
-    }
+        observador.observe(document.body, { childList:true, subtree:true, characterData:true, attributes:true, attributeFilter:["href","class"] });
+    }, { once:true });
 })();

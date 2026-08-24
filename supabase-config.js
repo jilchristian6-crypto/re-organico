@@ -185,3 +185,123 @@ window.REORGANICO_IMAGENES_PRODUCTOS = {
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar, { once: true });
     else iniciar();
 })();
+
+/* Corrección visual del modal de cotización: evita campos invisibles sobre fondo blanco. */
+(() => {
+    function corregirModalPedido() {
+        const modal = document.getElementById("modal-pedido");
+        if (!modal) return;
+
+        const estilo = document.createElement("style");
+        estilo.id = "reorganico-fix-modal-pedido";
+        estilo.textContent = `
+          #modal-pedido .modal-pedido-contenido{
+            width:min(780px,calc(100% - 28px));
+            max-height:92vh;
+            padding:34px;
+            overflow-y:auto;
+            overscroll-behavior:contain;
+            background:#fff;
+            color:#26352d;
+          }
+          #modal-pedido .pedido-modal-encabezado{padding-right:40px}
+          #modal-pedido .pedido-modal-encabezado h2{color:#1f4d3a}
+          #modal-pedido .pedido-modal-encabezado p{margin-top:10px;color:#647068;line-height:1.6}
+          #modal-pedido .pedido-resumen-mini{color:#26352d}
+          #modal-pedido .formulario-pedido{
+            display:grid;
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            gap:16px;
+            margin-top:22px;
+          }
+          #modal-pedido .campo-completo{grid-column:1/-1}
+          #modal-pedido .campo-formulario{
+            display:flex;
+            flex-direction:column;
+            gap:8px;
+            min-width:0;
+          }
+          #modal-pedido .campo-formulario label{
+            color:#1f4d3a;
+            font-size:13px;
+            font-weight:800;
+          }
+          #modal-pedido .campo-formulario input,
+          #modal-pedido .campo-formulario select,
+          #modal-pedido .campo-formulario textarea{
+            width:100%;
+            border:1px solid rgba(31,77,58,.22);
+            outline:0;
+            border-radius:14px;
+            background:#fff;
+            color:#26352d;
+            box-shadow:none;
+          }
+          #modal-pedido .campo-formulario input,
+          #modal-pedido .campo-formulario select{
+            min-height:50px;
+            padding:0 14px;
+          }
+          #modal-pedido .campo-formulario textarea{
+            min-height:96px!important;
+            max-height:180px;
+            height:auto;
+            padding:13px 14px;
+            resize:vertical;
+          }
+          #modal-pedido .campo-formulario input::placeholder,
+          #modal-pedido .campo-formulario textarea::placeholder{color:#8a958e}
+          #modal-pedido .campo-formulario input:focus,
+          #modal-pedido .campo-formulario select:focus,
+          #modal-pedido .campo-formulario textarea:focus{
+            border-color:#3f7458;
+            background:#fff;
+            box-shadow:0 0 0 3px rgba(63,116,88,.10);
+          }
+          #modal-pedido .campo-formulario select option{background:#fff;color:#26352d}
+          #modal-pedido .ayuda-pago{
+            display:block;
+            margin-top:2px;
+            color:#647068;
+            font-size:12px;
+            line-height:1.45;
+          }
+          #modal-pedido .nota-despacho{
+            margin:0;
+            padding:12px 14px;
+            border-radius:12px;
+            background:#f4f8f4;
+            color:#4f5d55;
+            font-size:13px;
+            line-height:1.5;
+          }
+          #modal-pedido [aria-label="Verificación de seguridad"]{
+            display:flex;
+            justify-content:center;
+            min-height:72px;
+            padding:4px 0;
+            overflow:hidden;
+          }
+          #modal-pedido .cf-turnstile{max-width:100%}
+          #modal-pedido .mensaje-pedido{min-height:0;margin:0;color:#26352d}
+          #modal-pedido .mensaje-pedido.error{color:#a43131}
+          #modal-pedido .boton-enviar-pedido{min-height:56px;margin-top:0}
+          @media(max-width:680px){
+            #modal-pedido{padding:10px}
+            #modal-pedido .modal-pedido-contenido{width:100%;max-height:94vh;padding:24px 18px;border-radius:24px}
+            #modal-pedido .formulario-pedido{grid-template-columns:1fr;gap:14px}
+            #modal-pedido .campo-completo{grid-column:1}
+            #modal-pedido .pedido-modal-encabezado{padding-right:34px}
+          }
+        `;
+
+        document.getElementById(estilo.id)?.remove();
+        document.head.append(estilo);
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", corregirModalPedido, { once: true });
+    } else {
+        corregirModalPedido();
+    }
+})();

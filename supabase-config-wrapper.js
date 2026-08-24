@@ -2,7 +2,7 @@
 
 /*
  * Capa única de compatibilidad de Re Orgánico.
- * Carga la configuración estable y aplica los ajustes visuales solicitados.
+ * Carga la configuración estable y aplica solo los ajustes visuales solicitados.
  */
 document.write('<script src="https://cdn.jsdelivr.net/gh/jilchristian6-crypto/re-organico@c06631bda7a8a6a6a2b088bb542ed5e10e7a2cd1/supabase-config.js"></script>');
 
@@ -104,16 +104,25 @@ document.write('<script src="https://cdn.jsdelivr.net/gh/jilchristian6-crypto/re
   function aplicarImagenesSeguras() {
     const imagenes = window.REORGANICO_IMAGENES_PRODUCTOS;
     if (!imagenes) return;
-    imagenes["bolsa-pequena-36x40-my14"] = "img/productos/actualizadas/bolsa-36x40-my14.webp";
-    imagenes["bambu-soup-bucket-500-1bg606"] = "img/productos/actualizadas/soup-bucket-500.webp";
-    imagenes["pulpa-fast-food-191x136-ydb001"] = "img/productos/cambios-20260821/fast-food-191x136.webp";
-    imagenes["pulpa-fast-food-172x113-ydb004"] = "img/productos/cambios-20260821/fast-food-172x113.webp";
-    imagenes["bambu-tapa-cpla-1200-1bg056"] = "img/productos/cambios-20260821/tapa-cpla-1200-750.webp";
-    imagenes["bambu-tapa-cpla-750-1bg053"] = "img/productos/cambios-20260821/tapa-cpla-1200-750.webp";
-    imagenes["bambu-tapa-soup-bucket-500-1bg607"] = "img/productos/cambios-20260821/tapa-soup-bucket-500.webp";
-    imagenes["pack-tris-servilleta-1vp129"] = "img/productos/cambios-20260821/pack-tris-servilleta.webp";
-    imagenes["contenedor-pla-tapa-250-20500"] = "img/productos/cambios-20260821/contenedor-pla-250.webp";
-    imagenes["contenedor-pla-tapa-1000-20508"] = "img/productos/cambios-20260821/contenedor-pla-1000.webp";
+
+    // Estado del catálogo al comenzar el 24-08-2026.
+    // Se usan copias fijadas al commit del 22-08 para que los archivos
+    // reemplazados durante hoy no cambien visualmente estos productos.
+    const base = "https://cdn.jsdelivr.net/gh/jilchristian6-crypto/re-organico@bc63c8149a2a7124e4d1d87d6d9638c6f4eec6f8/";
+
+    imagenes["bolsa-pequena-36x40-my14"] = base + "img/productos/cambios-20260821/bolsa-36x40-my14.webp";
+    imagenes["pulpa-fast-food-191x136-ydb001"] = base + "img/productos/cambios-20260821/fast-food-191x136.webp";
+    imagenes["pulpa-fast-food-172x113-ydb004"] = base + "img/productos/cambios-20260821/fast-food-172x113.webp";
+    imagenes["bambu-tapa-cpla-1200-1bg056"] = base + "img/productos/cambios-20260821/tapa-cpla-1200-750.webp";
+    imagenes["bambu-tapa-cpla-750-1bg053"] = base + "img/productos/cambios-20260821/tapa-cpla-1200-750.webp";
+    imagenes["bambu-soup-bucket-500-1bg606"] = base + "img/productos/cambios-20260821/soup-bucket-500.webp";
+    imagenes["bambu-tapa-soup-bucket-500-1bg607"] = base + "img/productos/cambios-20260821/tapa-soup-bucket-500.webp";
+    imagenes["vaso-biopla-500-1vp180"] = base + "img/productos/cambios-20260821/vaso-biopla-500.webp";
+    imagenes["vaso-papel-bambu-10oz-1bg674"] = base + "img/productos/cambios-20260821/vasos-papel-bambu-10-12oz.webp";
+    imagenes["vaso-papel-bambu-12oz-1bg676"] = base + "img/productos/cambios-20260821/vasos-papel-bambu-10-12oz.webp";
+    imagenes["pack-tris-servilleta-1vp129"] = base + "img/productos/cambios-20260821/pack-tris-servilleta.webp";
+    imagenes["contenedor-pla-tapa-250-20500"] = base + "img/productos/cambios-20260821/contenedor-pla-250.webp";
+    imagenes["contenedor-pla-tapa-1000-20508"] = base + "img/productos/cambios-20260821/contenedor-pla-1000.webp";
   }
 
   function aplicarFaq() {

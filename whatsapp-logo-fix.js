@@ -4,12 +4,27 @@
     const logoWhatsApp = `
       <svg class="icono-red icono-whatsapp" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
         <circle cx="16" cy="16" r="15" fill="#25D366"/>
-        <g transform="translate(5.2 5.2) scale(1.2)">
-          <path fill="#fff" d="M13.601 2.326A7.854 7.854 0 0 0 9.594 1C5.217 1 1.659 4.557 1.659 8.934c0 1.398.366 2.761 1.057 3.958L1.592 17l4.222-1.108a7.93 7.93 0 0 0 3.78.965h.004c4.376 0 7.934-3.558 7.934-7.934 0-2.12-.826-4.113-2.329-5.616a7.855 7.855 0 0 0-1.602-.981Zm-4.007 13.19h-.003a6.6 6.6 0 0 1-3.36-.92l-.24-.144-2.501.656.667-2.434-.156-.251a6.56 6.56 0 0 1-1.007-3.493c0-3.642 2.964-6.605 6.61-6.605A6.567 6.567 0 0 1 14.28 4.26a6.561 6.561 0 0 1 1.935 4.664c0 3.642-2.964 6.605-6.621 6.605Zm3.626-4.945c-.198-.099-1.175-.58-1.357-.646-.182-.066-.314-.099-.445.099-.132.198-.511.646-.627.778-.116.132-.231.148-.429.05-.198-.099-.836-.308-1.593-.982-.588-.525-.985-1.174-1.101-1.372-.116-.198-.012-.305.087-.404.089-.088.198-.231.297-.347.1-.116.132-.198.198-.33.066-.132.033-.248-.017-.347-.05-.099-.445-1.074-.61-1.47-.16-.389-.323-.336-.445-.342-.116-.006-.248-.007-.38-.007a.729.729 0 0 0-.528.248c-.182.198-.693.677-.693 1.65 0 .973.71 1.914.81 2.046.099.132 1.398 2.134 3.385 2.993.473.204.842.326 1.13.417.475.151.907.129 1.248.078.381-.057 1.175-.48 1.34-.943.165-.462.165-.858.116-.943-.05-.083-.182-.132-.38-.231Z"/>
-        </g>
+        <path fill="#fff" d="M23.3 8.6A10.03 10.03 0 0 0 16.03 5.6C10.4 5.6 5.82 10.05 5.82 15.52c0 1.75.47 3.46 1.36 4.96L5.74 25.7l5.5-1.4a10.35 10.35 0 0 0 4.78 1.16h.01c5.62 0 10.2-4.45 10.2-9.93 0-2.65-1.04-5.14-2.93-6.93Zm-7.27 15.2h-.01a8.58 8.58 0 0 1-4.37-1.17l-.31-.18-3.26.83.87-3.08-.2-.32a8.02 8.02 0 0 1-1.28-4.36c0-4.56 3.83-8.27 8.56-8.27 2.29 0 4.44.86 6.06 2.43a8.12 8.12 0 0 1 2.5 5.86c0 4.55-3.84 8.26-8.56 8.26Zm4.67-6.17c-.26-.13-1.51-.73-1.75-.81-.23-.09-.4-.13-.57.13-.17.25-.66.81-.81.97-.15.17-.3.19-.56.06-.26-.13-1.08-.39-2.06-1.23-.76-.65-1.27-1.47-1.42-1.72-.15-.25-.02-.38.11-.51.12-.11.26-.29.39-.43.13-.15.17-.25.26-.42.09-.17.04-.32-.02-.45-.06-.13-.57-1.36-.79-1.86-.21-.49-.42-.42-.57-.43h-.49c-.17 0-.45.06-.68.32-.24.25-.9.87-.9 2.11s.92 2.45 1.05 2.62c.13.17 1.8 2.7 4.37 3.78.61.26 1.09.41 1.46.52.61.19 1.17.16 1.61.1.49-.07 1.51-.6 1.73-1.19.21-.6.21-1.11.15-1.21-.06-.11-.23-.17-.49-.3Z"/>
       </svg>`;
 
-    function aplicarLogo() {
+    const logoInstagram = `
+      <svg class="icono-red icono-instagram" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="reorganico-instagram-gradient" x1="4" y1="28" x2="28" y2="4" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#FEDA75"/>
+            <stop offset="0.28" stop-color="#FA7E1E"/>
+            <stop offset="0.53" stop-color="#D62976"/>
+            <stop offset="0.76" stop-color="#962FBF"/>
+            <stop offset="1" stop-color="#4F5BD5"/>
+          </linearGradient>
+        </defs>
+        <rect x="2" y="2" width="28" height="28" rx="8.5" fill="url(#reorganico-instagram-gradient)"/>
+        <rect x="8.2" y="8.2" width="15.6" height="15.6" rx="4.8" fill="none" stroke="#fff" stroke-width="2.2"/>
+        <circle cx="16" cy="16" r="3.7" fill="none" stroke="#fff" stroke-width="2.2"/>
+        <circle cx="21.3" cy="10.8" r="1.25" fill="#fff"/>
+      </svg>`;
+
+    function aplicarLogos() {
         const flotante = document.getElementById("whatsapp-flotante");
         if (flotante) flotante.innerHTML = logoWhatsApp;
 
@@ -24,12 +39,40 @@
             const icono = servicio.querySelector(":scope > span");
             if (icono) icono.innerHTML = logoWhatsApp;
         });
+
+        document.querySelectorAll('.trabajo-instagram[href*="instagram.com"], #enlace-instagram-pie').forEach((enlace) => {
+            if (enlace.classList.contains("trabajo-instagram")) {
+                enlace.innerHTML = `${logoInstagram}<span>Ver Instagram</span>`;
+            } else {
+                enlace.innerHTML = `${logoInstagram}<span>Instagram</span>`;
+            }
+        });
+    }
+
+    function agregarEstilos() {
+        if (document.getElementById("reorganico-logos-redes")) return;
+        const estilo = document.createElement("style");
+        estilo.id = "reorganico-logos-redes";
+        estilo.textContent = `
+          .icono-red{width:24px;height:24px;display:inline-block;vertical-align:middle;flex:0 0 auto}
+          .trabajo-instagram,.boton-contacto,.boton-enviar-consulta{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:9px!important}
+          #whatsapp-flotante{display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important}
+          #whatsapp-flotante .icono-whatsapp{width:34px!important;height:34px!important;display:block!important}
+          #enlace-whatsapp-contacto .icono-whatsapp,.boton-enviar-consulta .icono-whatsapp{width:23px!important;height:23px!important}
+          .trabajo-instagram .icono-instagram{width:24px!important;height:24px!important}
+          #enlace-instagram-pie{display:inline-flex!important;align-items:center!important;gap:7px!important}
+          #enlace-instagram-pie .icono-instagram{width:19px!important;height:19px!important}
+          @media(max-width:700px){#whatsapp-flotante .icono-whatsapp{width:31px!important;height:31px!important}}
+        `;
+        document.head.append(estilo);
     }
 
     function iniciar() {
-        aplicarLogo();
-        setTimeout(aplicarLogo, 100);
-        setTimeout(aplicarLogo, 800);
+        agregarEstilos();
+        aplicarLogos();
+        setTimeout(aplicarLogos, 100);
+        setTimeout(aplicarLogos, 800);
+        setTimeout(aplicarLogos, 1800);
     }
 
     if (document.readyState === "loading") {

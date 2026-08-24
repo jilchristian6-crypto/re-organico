@@ -24,29 +24,37 @@
         <circle cx="21.3" cy="10.8" r="1.25" fill="#fff"/>
       </svg>`;
 
+    let aplicando = false;
+
     function aplicarLogos() {
+        if (aplicando) return;
+        aplicando = true;
+
         const flotante = document.getElementById("whatsapp-flotante");
-        if (flotante) flotante.innerHTML = logoWhatsApp;
+        if (flotante && !flotante.querySelector(".icono-whatsapp")) flotante.innerHTML = logoWhatsApp;
 
         const contacto = document.getElementById("enlace-whatsapp-contacto");
-        if (contacto) contacto.innerHTML = `${logoWhatsApp}<span>Hablar por WhatsApp</span>`;
+        if (contacto && !contacto.querySelector(".icono-whatsapp")) contacto.innerHTML = `${logoWhatsApp}<span>Hablar por WhatsApp</span>`;
 
         const consulta = document.querySelector(".boton-enviar-consulta");
-        if (consulta) consulta.innerHTML = `${logoWhatsApp}<span>Enviar consulta por WhatsApp</span>`;
+        if (consulta && !consulta.querySelector(".icono-whatsapp")) consulta.innerHTML = `${logoWhatsApp}<span>Enviar consulta por WhatsApp</span>`;
 
         document.querySelectorAll(".servicio-rapido").forEach((servicio) => {
             if (!servicio.textContent.includes("WhatsApp")) return;
             const icono = servicio.querySelector(":scope > span");
-            if (icono) icono.innerHTML = logoWhatsApp;
+            if (icono && !icono.querySelector(".icono-whatsapp")) icono.innerHTML = logoWhatsApp;
         });
 
         document.querySelectorAll('.trabajo-instagram[href*="instagram.com"], #enlace-instagram-pie').forEach((enlace) => {
+            if (enlace.querySelector(".icono-instagram")) return;
             if (enlace.classList.contains("trabajo-instagram")) {
                 enlace.innerHTML = `${logoInstagram}<span>Ver Instagram</span>`;
             } else {
                 enlace.innerHTML = `${logoInstagram}<span>Instagram</span>`;
             }
         });
+
+        aplicando = false;
     }
 
     function agregarEstilos() {
@@ -70,9 +78,13 @@
     function iniciar() {
         agregarEstilos();
         aplicarLogos();
-        setTimeout(aplicarLogos, 100);
-        setTimeout(aplicarLogos, 800);
-        setTimeout(aplicarLogos, 1800);
+
+        [100, 400, 900, 1800, 3000].forEach((ms) => setTimeout(aplicarLogos, ms));
+
+        const observador = new MutationObserver(() => {
+            window.requestAnimationFrame(aplicarLogos);
+        });
+        observador.observe(document.body, { childList: true, subtree: true, characterData: true });
     }
 
     if (document.readyState === "loading") {

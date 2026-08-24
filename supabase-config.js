@@ -335,7 +335,6 @@ window.REORGANICO_IMAGENES_PRODUCTOS = {
         const estilo = document.createElement("style");
         estilo.id = "reorganico-mejora-multimedia";
         estilo.textContent = `
-          /* Videos: mostrar el cuadro completo sin agrandarlo/cortarlo artificialmente. */
           .impacto-video-marco{
             background:#081d15!important;
           }
@@ -348,8 +347,6 @@ window.REORGANICO_IMAGENES_PRODUCTOS = {
             filter:none!important;
             image-rendering:auto!important;
           }
-
-          /* Catálogo: evita deformaciones y filtros que resten nitidez. */
           .producto-visual .imagen-producto-escena{
             width:100%!important;
             height:100%!important;
@@ -358,8 +355,6 @@ window.REORGANICO_IMAGENES_PRODUCTOS = {
             filter:none!important;
             image-rendering:auto!important;
           }
-
-          /* En el detalle del producto es más importante ver el producto completo que recortarlo. */
           #modal-producto-visual .imagen-producto-escena{
             object-fit:contain!important;
             object-position:center!important;
@@ -367,17 +362,12 @@ window.REORGANICO_IMAGENES_PRODUCTOS = {
             filter:none!important;
             image-rendering:auto!important;
           }
-
-          /* Portada: mantener el encuadre sin filtros ni escalados extra. */
           .hero-portada-nueva .hero-diapositiva img{
             filter:none!important;
             image-rendering:auto!important;
           }
-
           @media(max-width:700px){
-            .impacto-video-marco video{
-              object-fit:contain!important;
-            }
+            .impacto-video-marco video{object-fit:contain!important;}
           }
         `;
 
@@ -388,7 +378,6 @@ window.REORGANICO_IMAGENES_PRODUCTOS = {
     function iniciarMejorasMultimedia() {
         aplicarEstilosMultimedia();
         mejorarVideos();
-
         const observador = new MutationObserver(() => mejorarVideos());
         observador.observe(document.body, { childList: true, subtree: true });
     }
@@ -397,5 +386,123 @@ window.REORGANICO_IMAGENES_PRODUCTOS = {
         document.addEventListener("DOMContentLoaded", iniciarMejorasMultimedia, { once: true });
     } else {
         iniciarMejorasMultimedia();
+    }
+})();
+
+/* Ajustes solicitados por la jefa: logos reales, modal más limpio y FAQ resumida. */
+(() => {
+    const iconoInstagram = `
+      <svg class="icono-red icono-instagram" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="ig-reorganico" x1="0" y1="1" x2="1" y2="0">
+            <stop offset="0" stop-color="#ffd600"/>
+            <stop offset="0.35" stop-color="#ff7a00"/>
+            <stop offset="0.7" stop-color="#d300c5"/>
+            <stop offset="1" stop-color="#7638fa"/>
+          </linearGradient>
+        </defs>
+        <rect x="2" y="2" width="28" height="28" rx="8" fill="url(#ig-reorganico)"/>
+        <rect x="8" y="8" width="16" height="16" rx="5" fill="none" stroke="#fff" stroke-width="2.2"/>
+        <circle cx="16" cy="16" r="4" fill="none" stroke="#fff" stroke-width="2.2"/>
+        <circle cx="22.2" cy="9.8" r="1.45" fill="#fff"/>
+      </svg>`;
+
+    const iconoWhatsApp = `
+      <svg class="icono-red icono-whatsapp" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <path d="M16 4.1c-6.35 0-11.5 4.85-11.5 10.83 0 2.07.62 4.01 1.69 5.66L4.5 27.9l7.05-1.82a12.05 12.05 0 0 0 4.45.85c6.35 0 11.5-4.85 11.5-10.83S22.35 4.1 16 4.1Z" fill="none" stroke="currentColor" stroke-width="2.35" stroke-linejoin="round"/>
+        <path d="M11.15 10.15c.35-.75.72-.77 1.06-.78h.9c.29 0 .59.1.74.49.18.47.63 1.63.68 1.75.08.18.04.39-.09.59-.12.2-.3.45-.47.64-.18.21-.37.39-.16.76.2.37.93 1.47 2.03 2.37 1.4 1.14 2.48 1.51 2.88 1.69.4.18.63.15.87-.11.24-.27 1.02-1.13 1.3-1.52.28-.39.55-.32.92-.18.37.14 2.34 1.05 2.74 1.24.4.19.66.28.76.44.1.16.1.93-.22 1.83-.32.9-1.83 1.72-2.53 1.8-.66.07-1.5.1-2.43-.18-.56-.17-1.29-.4-2.22-.78-3.89-1.58-6.43-5.48-6.63-5.73-.2-.26-1.58-1.99-1.58-3.79 0-.96.28-1.79.65-2.35Z" fill="currentColor"/>
+      </svg>`;
+
+    function aplicarAjustesJefa() {
+        const estilo = document.createElement("style");
+        estilo.id = "reorganico-ajustes-jefa";
+        estilo.textContent = `
+          /* 1) Modal de productos: eliminar el texto redundante. */
+          #modal-presentacion-resumen,
+          #modal-cantidad-compra .modal-cantidad-texto{
+            display:none!important;
+          }
+
+          /* Opciones de presentación: azul -> verde oscuro. */
+          #modal-presentacion .presentacion-opcion,
+          #modal-presentacion .presentacion-opcion *{
+            color:#1f4d3a!important;
+          }
+          #modal-presentacion .presentacion-opcion{
+            border-color:rgba(31,77,58,.18)!important;
+            background:#f5f7f3!important;
+            text-decoration:none!important;
+          }
+          #modal-presentacion .presentacion-opcion.activo{
+            border-color:#1f4d3a!important;
+            background:#e7f0e9!important;
+            box-shadow:0 0 0 2px rgba(31,77,58,.08)!important;
+          }
+
+          /* 2) Logos oficiales/recognocibles de redes. */
+          .trabajo-instagram,
+          #enlace-whatsapp-contacto,
+          .boton-enviar-consulta{
+            gap:10px!important;
+          }
+          .icono-red{
+            width:25px;
+            height:25px;
+            display:inline-block;
+            flex:0 0 auto;
+            vertical-align:middle;
+          }
+          .icono-whatsapp{color:#fff;}
+          #whatsapp-flotante .icono-whatsapp{
+            width:40px;
+            height:40px;
+          }
+          .servicio-rapido .icono-whatsapp{
+            width:30px;
+            height:30px;
+            color:#1f4d3a;
+          }
+
+          /* Mantiene el bloque de cantidad compacto después de quitar la explicación repetida. */
+          #modal-cantidad-compra{
+            margin-top:12px!important;
+          }
+        `;
+        document.getElementById(estilo.id)?.remove();
+        document.head.append(estilo);
+
+        const instagram = document.querySelector('.trabajo-instagram[href*="instagram.com"]');
+        if (instagram) instagram.innerHTML = `<span>Ver Instagram</span>${iconoInstagram}`;
+
+        const whatsappFlotante = document.getElementById("whatsapp-flotante");
+        if (whatsappFlotante) whatsappFlotante.innerHTML = iconoWhatsApp;
+
+        const whatsappContacto = document.getElementById("enlace-whatsapp-contacto");
+        if (whatsappContacto) whatsappContacto.innerHTML = `${iconoWhatsApp}<span>Hablar por WhatsApp</span>`;
+
+        const botonConsulta = document.querySelector(".boton-enviar-consulta");
+        if (botonConsulta) botonConsulta.innerHTML = `${iconoWhatsApp}<span>Enviar consulta por WhatsApp</span>`;
+
+        document.querySelectorAll(".servicio-rapido").forEach((servicio) => {
+            if (!servicio.textContent.includes("WhatsApp")) return;
+            const icono = servicio.querySelector(":scope > span");
+            if (icono) icono.innerHTML = iconoWhatsApp;
+        });
+
+        /* 3) Pregunta frecuente: dejar solo la frase solicitada. */
+        document.querySelectorAll(".pregunta").forEach((pregunta) => {
+            const titulo = pregunta.querySelector(".pregunta-boton span")?.textContent || "";
+            if (!titulo.includes("Cuántas bolsas vienen en un pack")) return;
+            const respuesta = pregunta.querySelector(".pregunta-respuesta p");
+            if (respuesta) {
+                respuesta.textContent = "Rollos de bolsas, pack y cajas muestran su cantidad exacta en la descripción de cada producto.";
+            }
+        });
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", aplicarAjustesJefa, { once: true });
+    } else {
+        aplicarAjustesJefa();
     }
 })();

@@ -1,0 +1,84 @@
+name: Corregir videos en celular
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-mobile-videos.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix-mobile-videos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Crear versiones completas optimizadas para celular
+        run: |
+          set -e
+          ffmpeg -y \
+            -i "videos/nuestro-trabajo/proceso-organico-web.mp4" \
+            -vf "scale='min(720,iw)':-2:force_original_aspect_ratio=decrease" \
+            -c:v libx264 -preset medium -crf 26 -profile:v main -level 3.1 \
+            -pix_fmt yuv420p -movflags +faststart \
+            -c:a aac -b:a 96k -ac 2 \
+            "videos/nuestro-trabajo/proceso-organico-mobile.mp4"
+
+          ffmpeg -y \
+            -i "videos/nuestro-trabajo/bolsa-re-organico-compostando.mp4" \
+            -vf "scale='min(720,iw)':-2:force_original_aspect_ratio=decrease" \
+            -c:v libx264 -preset medium -crf 26 -profile:v main -level 3.1 \
+            -pix_fmt yuv420p -movflags +faststart \
+            -c:a aac -b:a 96k -ac 2 \
+            "videos/nuestro-trabajo/bolsa-re-organico-compostando-mobile.mp4"
+
+      - name: Usar videos completos y mejorar vista móvil
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          index = Path('index.html')
+          text = index.read_text(encoding='utf-8')
+          text = text.replace(
+              'videos/nuestro-trabajo/proceso-organico-lite.mp4',
+              'videos/nuestro-trabajo/proceso-organico-mobile.mp4'
+          )
+          text = text.replace(
+              'videos/nuestro-trabajo/bolsa-re-organico-compostando-lite.mp4',
+              'videos/nuestro-trabajo/bolsa-re-organico-compostando-mobile.mp4'
+          )
+          index.write_text(text, encoding='utf-8')
+
+          css = Path('style.css')
+          styles = css.read_text(encoding='utf-8')
+          marker = '/* REORGANICO_VIDEO_MOVIL_FIX_20260824 */'
+          if marker not in styles:
+              styles += '''\n\n/* REORGANICO_VIDEO_MOVIL_FIX_20260824 */\n.impacto-video-marco video {\n    display: block;\n    width: 100%;\n    height: auto;\n    max-height: 72vh;\n    object-fit: contain;\n    background: #000;\n}\n\n@media (max-width: 700px) {\n    .impacto-video-marco {\n        overflow: hidden;\n    }\n\n    .impacto-video-marco video {\n        width: 100%;\n        height: auto !important;\n        min-height: 0 !important;\n        max-height: 68vh;\n        object-fit: contain !important;\n        background: #000;\n    }\n}\n'''
+          css.write_text(styles, encoding='utf-8')
+          PY
+
+      - name: Verificar duración de los videos nuevos
+        run: |
+          echo "Proceso orgánico:"
+          ffprobe -v error -show_entries format=duration,size -of default=noprint_wrappers=1 "videos/nuestro-trabajo/proceso-organico-mobile.mp4"
+          echo "Bolsa compostando:"
+          ffprobe -v error -show_entries format=duration,size -of default=noprint_wrappers=1 "videos/nuestro-trabajo/bolsa-re-organico-compostando-mobile.mp4"
+
+      - name: Guardar cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html style.css videos/nuestro-trabajo/*-mobile.mp4
+          if git diff --cached --quiet; then
+            echo "No hay cambios"
+            exit 0
+          fi
+          git commit -m "Corrige reproducción completa de videos en celular"
+          git push origin main

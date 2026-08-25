@@ -1,0 +1,107 @@
+name: Ordenar fotos de productos
+
+on:
+  push:
+    paths:
+      - '.github/workflows/map-product-photos.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  map-product-photos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Ordenar fotos según nombre de producto
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('supabase-config.js')
+          text = path.read_text(encoding='utf-8')
+
+          reemplazos = {
+              'bolsa-pequena-36x40-my14': 'img/productos/cambios-20260821/bolsa-36x40-my14.webp',
+              'bolsa-mediana-42x50-my14': 'img/productos/actualizadas/bolsa-42x50-my14.webp',
+              'bolsa-mediana-42x50-my21': 'img/productos/actualizadas/bolsa-42x50-my21.webp',
+              'bolsa-grande-48x55-my22': 'img/productos/actualizadas/bolsa-48x55-my22.webp',
+              'bolsa-grande-48x60-my20': 'img/productos/actualizadas/bolsa-48x60-my20.webp',
+              'bolsa-extra-grande-55x65-my25': 'img/productos/actualizadas/bolsa-55x65-my25.webp',
+              'bolsa-taco-25x35-my14': 'img/productos/actualizadas/bolsa-taco-25x35.webp',
+              'rollo-basura-50x60-my16': 'img/productos/actualizadas/bolsas-basura-rollo.webp',
+              'rollo-basura-70x90-my20': 'img/productos/actualizadas/bolsas-basura-rollo.webp',
+              'rollo-camiseta-34x50-my11': 'img/productos/actualizadas/bolsa-camiseta-rollo.webp',
+              'papel-compost-25x37': 'img/productos/actualizadas/papel-compostable.webp',
+              'papel-compost-37x50': 'img/productos/actualizadas/papel-compostable.webp',
+              'papel-compost-50x75': 'img/productos/actualizadas/papel-compostable.webp',
+              'pulpa-fast-food-251x162-ydb0030': 'img/productos/actualizadas/contenedor-pulpa-251x162.webp',
+              'pulpa-fast-food-240x160-ydb040': 'img/productos/actualizadas/contenedor-pulpa-biscomp.webp',
+              'pulpa-fast-food-153x147-ydb003': 'img/productos/actualizadas/contenedor-pulpa-153x147.webp',
+              'pulpa-fast-food-145x141-ydb024': 'img/productos/actualizadas/contenedor-pulpa-145x141.webp',
+              'pulpa-fast-food-218x207-ydb026': 'img/productos/actualizadas/contenedor-pulpa-218x207.webp',
+              'bambu-pote-ensalada-1200-1bg055': 'img/productos/actualizadas/pote-ensalada-1200.webp',
+              'bambu-tapa-cpla-1200-1bg056': 'img/productos/actualizadas/pote-ensalada-1200.webp',
+              'bambu-pote-ensalada-750-1bg052': 'img/productos/actualizadas/pote-ensalada-750.webp',
+              'bambu-tapa-cpla-750-1bg053': 'img/productos/actualizadas/pote-ensalada-750.webp',
+              'bambu-soup-bucket-500-1bg606': 'img/productos/cambios-20260821/soup-bucket-500.webp',
+              'vaso-biopla-200-1vp185': 'img/productos/actualizadas/vaso-biopla-200.webp',
+              'vaso-biopla-500-1vp180': 'img/productos/actualizadas/vaso-biopla-500.webp',
+              'tapa-domo-biopla-400-1vp189': 'img/productos/actualizadas/tapa-biopla-domo.webp',
+              'tapa-plana-biopla-400-1vp191': 'img/productos/actualizadas/tapa-biopla-plana.webp',
+              'tapa-domo-biopla-500-1vp176': 'img/productos/actualizadas/tapa-biopla-domo.webp',
+              'tapa-plana-biopla-500-1vp177': 'img/productos/actualizadas/tapa-biopla-plana.webp',
+              'vaso-papel-bambu-2-5oz-1bg668': 'img/productos/actualizadas/vasos-papel-bambu.webp',
+              'vaso-papel-bambu-4oz-1bg669': 'img/productos/actualizadas/vasos-papel-bambu.webp',
+              'vaso-papel-bambu-7oz-1bg670': 'img/productos/actualizadas/vasos-papel-bambu.webp',
+              'vaso-papel-bambu-8oz-1bg672': 'img/productos/actualizadas/vasos-papel-bambu.webp',
+              'vaso-papel-blanco-16oz-1bg039': 'img/productos/cambios-20260821/soup-bucket-500.webp',
+              'tapa-pico-dm80-1bg3358': 'img/productos/actualizadas/tapa-pico-8oz.webp',
+              'tapa-pico-dm90-1bg359': 'img/productos/actualizadas/tapas-pico-calientes.webp',
+              'pote-helado-bambu-160-1bg174': 'img/productos/actualizadas/pote-helado-bambu-160.webp',
+              'pote-helado-blanco-80-1bg090': 'img/productos/actualizadas/potes-helado-80-120.webp',
+              'pote-helado-blanco-120-1bg092': 'img/productos/actualizadas/potes-helado-80-120.webp',
+              'pote-helado-blanco-200-1bg096': 'img/productos/actualizadas/potes-helado-200-230.webp',
+              'pote-helado-blanco-230-1bg097': 'img/productos/actualizadas/potes-helado-200-230.webp',
+              'cuchara-pla-15-1vp222': 'img/productos/actualizadas/cuchara-15cm.webp',
+              'pack-tenedor-servilleta-1vp125': 'img/productos/actualizadas/pack-tenedor-servilleta.webp',
+              'pack-bis-servilleta-1vp126': 'img/productos/actualizadas/pack-bis-servilleta.webp',
+              'cucharita-helado-pla-10-5-1vp226': 'img/productos/actualizadas/cucharita-10-5cm.webp',
+              'bombilla-pla-blanca-1can41': 'img/productos/actualizadas/bombilla-blanca.webp',
+              'bombilla-pla-negra-1can60': 'img/productos/actualizadas/bombilla-negra.webp',
+              'contenedor-pla-tapa-370-20502': 'img/productos/actualizadas/contenedor-pla-370.webp',
+              'contenedor-pla-tapa-500-20504': 'img/productos/actualizadas/contenedor-pla-500.webp',
+              'contenedor-pla-tapa-750-20506': 'img/productos/actualizadas/contenedor-pla-750.webp',
+          }
+
+          cambios = 0
+          for clave, ruta in reemplazos.items():
+              patron = rf'(^\s*"{re.escape(clave)}"\s*:\s*)[^,\n]+(,?$)'
+              nuevo = rf'\1"{ruta}"\2'
+              text2, n = re.subn(patron, nuevo, text, count=1, flags=re.M)
+              if n:
+                  text = text2
+                  cambios += 1
+              else:
+                  print(f'AVISO: no se encontró {clave}')
+
+          path.write_text(text, encoding='utf-8')
+          print(f'Fotos ordenadas/mapeadas: {cambios}')
+          PY
+
+      - name: Guardar cambios
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No hubo cambios"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add supabase-config.js
+          git commit -m "Ordena fotos del catálogo según nombre del producto"
+          git push

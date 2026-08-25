@@ -20,6 +20,7 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import base64
 
           path = Path('supabase-config.js')
           text = path.read_text(encoding='utf-8')
@@ -27,75 +28,9 @@ jobs:
           if marker in text:
               raise SystemExit(0)
 
-          bloque = r'''
-
-/* REORGANICO_LOGOS_REDES_20260824 */
-(() => {
-    const iconoInstagram = `
-      <svg class="icono-red icono-instagram-real" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-        <defs>
-          <radialGradient id="reorganico-instagram-gradient" cx="30%" cy="107%" r="140%">
-            <stop offset="0%" stop-color="#fdf497"/>
-            <stop offset="20%" stop-color="#fdf497"/>
-            <stop offset="40%" stop-color="#fd5949"/>
-            <stop offset="60%" stop-color="#d6249f"/>
-            <stop offset="90%" stop-color="#285AEB"/>
-          </radialGradient>
-        </defs>
-        <rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="url(#reorganico-instagram-gradient)"/>
-        <rect x="8" y="8" width="16" height="16" rx="5" fill="none" stroke="#fff" stroke-width="2.4"/>
-        <circle cx="16" cy="16" r="4" fill="none" stroke="#fff" stroke-width="2.4"/>
-        <circle cx="22" cy="10.3" r="1.45" fill="#fff"/>
-      </svg>`;
-
-    const iconoWhatsApp = `
-      <svg class="icono-red icono-whatsapp-real" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-        <circle cx="16" cy="16" r="15.3" fill="#25D366"/>
-        <path fill="#fff" d="M24.2 7.8A11.38 11.38 0 0 0 16.1 4.5C9.8 4.5 4.7 9.5 4.7 15.6c0 2 .5 3.9 1.5 5.6L4.6 27l6-1.5c1.6.9 3.5 1.3 5.4 1.3h.1c6.3 0 11.4-5 11.4-11.1 0-3-1.2-5.8-3.3-7.9Zm-8.1 17.1H16c-1.7 0-3.4-.5-4.8-1.3l-.3-.2-3.6.9 1-3.4-.2-.4a8.9 8.9 0 0 1-1.4-4.9c0-4.9 4.2-9 9.4-9 2.5 0 4.9.9 6.7 2.7a8.6 8.6 0 0 1 2.7 6.4c-.1 5-4.3 9.2-9.4 9.2Zm5.2-6.8c-.3-.1-1.7-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.6-1.5-.9-2.1-.2-.5-.5-.5-.6-.5h-.5c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.7 1.2 2.9c.1.2 2 3 4.8 4.2.7.3 1.2.4 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.2-1.3-.1-.2-.3-.3-.6-.4Z"/>
-      </svg>`;
-
-    function aplicarLogosReales() {
-        document.querySelectorAll('.trabajo-instagram').forEach((enlace) => {
-            enlace.innerHTML = `${iconoInstagram}<span>Ver Instagram</span>`;
-        });
-
-        const flotante = document.getElementById('whatsapp-flotante');
-        if (flotante) {
-            flotante.innerHTML = iconoWhatsApp;
-            flotante.setAttribute('aria-label', 'Contactar por WhatsApp');
-        }
-    }
-
-    function instalarEstilosLogos() {
-        if (document.getElementById('reorganico-estilos-logos-reales')) return;
-        const estilo = document.createElement('style');
-        estilo.id = 'reorganico-estilos-logos-reales';
-        estilo.textContent = `
-          .trabajo-instagram{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:9px!important}
-          .trabajo-instagram .icono-instagram-real{width:25px!important;height:25px!important;display:block!important;flex:0 0 auto!important}
-          #whatsapp-flotante{display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important;background:#25D366!important;border:3px solid #fff!important;box-shadow:0 8px 24px rgba(0,0,0,.22)!important}
-          #whatsapp-flotante .icono-whatsapp-real{width:42px!important;height:42px!important;display:block!important}
-          @media(max-width:700px){#whatsapp-flotante .icono-whatsapp-real{width:38px!important;height:38px!important}}
-        `;
-        document.head.appendChild(estilo);
-    }
-
-    function iniciarLogosReales() {
-        instalarEstilosLogos();
-        aplicarLogosReales();
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', iniciarLogosReales, { once: true });
-    } else {
-        iniciarLogosReales();
-    }
-
-    window.addEventListener('load', aplicarLogosReales, { once: true });
-})();
-'''
-
-          path.write_text(text + bloque, encoding='utf-8')
+          b64 = 'Ci8qIFJFT1JHQU5JQ09fTE9HT1NfUkVERVNfMjAyNjA4MjQgKi8KKCgpID0+IHsKICAgIGNvbnN0IGljb25vSW5zdGFncmFtID0gYAogICAgICA8c3ZnIGNsYXNzPSJpY29uby1yZWQgaWNvbm8taW5zdGFncmFtLXJlYWwiIHZpZXdCb3g9IjAgMCAzMiAzMiIgYXJpYS1oaWRkZW49InRydWUiIGZvY3VzYWJsZT0iZmFsc2UiPgogICAgICAgIDxkZWZzPgogICAgICAgICAgPHJhZGlhbEdyYWRpZW50IGlkPSJyZW9yZ2FuaWNvLWluc3RhZ3JhbS1ncmFkaWVudCIgY3g9IjMwJSIgY3k9IjEwNyUiIHI9IjE0MCUiPgogICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjZmRmNDk3Ii8+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iMjAlIiBzdG9wLWNvbG9yPSIjZmRmNDk3Ii8+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iNDAlIiBzdG9wLWNvbG9yPSIjZmQ1OTQ5Ii8+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iNjAlIiBzdG9wLWNvbG9yPSIjZDYyNDlmIi8+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iOTAlIiBzdG9wLWNvbG9yPSIjMjg1QUVCIi8+CiAgICAgICAgICA8L3JhZGlhbEdyYWRpZW50PgogICAgICAgIDwvZGVmcz4KICAgICAgICA8cmVjdCB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjI5IiBoZWlnaHQ9IjI5IiByeD0iOC41IiBmaWxsPSJ1cmwoI3Jlb3JnYW5pY28taW5zdGFncmFtLWdyYWRpZW50KSIvPgogICAgICAgIDxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgcng9IjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIyLjQiLz4KICAgICAgICA8Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMi40Ii8+CiAgICAgICAgPGNpcmNsZSBjeD0iMjIiIGN5PSIxMC4zIiByPSIxLjQ1IiBmaWxsPSIjZmZmIi8+CiAgICAgIDwvc3ZnPmA7CgogICAgY29uc3QgaWNvbm9XaGF0c0FwcCA9IGAKICAgICAgPHN2ZyBjbGFzcz0iaWNvbm8tcmVkIGljb25vLXdoYXRzYXBwLXJlYWwiIHZpZXdCb3g9IjAgMCAzMiAzMiIgYXJpYS1oaWRkZW49InRydWUiIGZvY3VzYWJsZT0iZmFsc2UiPgogICAgICAgIDxjaXJjbGUgY3g9IjE2IiBjeT0iMTYiIHI9IjE1LjMiIGZpbGw9IiMyNUQzNjYiLz4KICAgICAgICA8cGF0aCBmaWxsPSIjZmZmIiBkPSJNMjQuMiA3LjhBMTIuMzggMTIuMzggMCAwIDAgMTYuMSA0LjVDOS44IDQuNSA0LjcgOS41IDQuNyAxNS42YzAgMiAuNSAzLjkgMS41IDUuNkw0LjYgMjdsNi0xLjVjMS42LjkgMy41IDEuMyA1LjQgMS4zaC4xYzYuMyAwIDExLjQtNSAxMS40LTExLjEgMC0zLTEuMi01LjgtMy4zLTcuOVptLTguMSAxNy4xSDE2Yy0xLjcgMC0zLjQtLjUtNC44LTEuM2wtLjMtLjItMy42LjkgMS0zLjQtLjItLjRhOC45IDguOSAwIDAgMS0xLjQtNC45YzAtNC45IDQuMi05IDkuNC05IDIuNSAwIDQuOS45IDYuNyAyLjdhOC42IDguNiAwIDAgMSAyLjcgNi40Yy0uMSA1LTQuMyA5LjItOS40IDkuMlptNS4yLTYuOGMtLjMtLjEtMS43LS44LTEuOS0uOS0uMy0uMS0uNC0uMS0uNi4xLS4yLjMtLjcuOS0uOSAxLjEtLjIuMi0uMy4yLS42LjEtLjMtLjEtMS4yLS40LTIuMy0xLjQtLjgtLjctMS40LTEuNi0xLjYtMS45LS4yLS4zIDAtLjQuMS0uNmwuNC0uNWMuMS0uMi4yLS4zLjMtLjUuMS0uMiAwLS40IDAtLjUtLjEtLjEtLjYtMS41LS45LTIuMS0uMi0uNS0uNS0uNS0uNi0uNWgtLjVjLS4yIDAtLjUuMS0uOC40LS4zLjMtMSAxLTEgMi40czEgMi43IDEuMiAyLjljLjEuMiAyIDMgNC44IDQuMi43LjMgMS4yLjQgMS42LjYuNy4yIDEuMy4yIDEuOC4xLjUtLjEgMS43LS43IDEuOS0xLjMuMi0uNy4yLTEuMi4yLTEuMy0uMS0uMi0uMy0uMy0uNi0uNFoiLz4KICAgICAgPC9zdmc+YDsKCiAgICBmdW5jdGlvbiBhcGxpY2FyTG9nb3NSZWFsZXMoKSB7CiAgICAgICAgZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbCgiLnRyYWJham8taW5zdGFncmFtIikuZm9yRWFjaCgoZW5sYWNlKSA9PiB7CiAgICAgICAgICAgIGVubGFjZS5pbm5lckhUTUwgPSBgJHtpY29ub0luc3RhZ3JhbX08c3Bhbj5WZXIgSW5zdGFncmFtPC9zcGFuPmA7CiAgICAgICAgfSk7CgogICAgICAgIGNvbnN0IGZsb3RhbnRlID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoIndoYXRzYXBwLWZsb3RhbnRlIik7CiAgICAgICAgaWYgKGZsb3RhbnRlKSB7CiAgICAgICAgICAgIGZsb3RhbnRlLmlubmVySFRNTCA9IGljb25vV2hhdHNBcHA7CiAgICAgICAgICAgIGZsb3RhbnRlLnNldEF0dHJpYnV0ZSgiYXJpYS1sYWJlbCIsICJDb250YWN0YXIgcG9yIFdoYXRzQXBwIik7CiAgICAgICAgfQogICAgfQoKICAgIGZ1bmN0aW9uIGluc3RhbGFyRXN0aWxvc0xvZ29zKCkgewogICAgICAgIGlmIChkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgicmVvcmdhbmljby1lc3RpbG9zLWxvZ29zLXJlYWxlcyIpKSByZXR1cm47CiAgICAgICAgY29uc3QgZXN0aWxvID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgic3R5bGUiKTsKICAgICAgICBlc3RpbG8uaWQgPSAicmVvcmdhbmljby1lc3RpbG9zLWxvZ29zLXJlYWxlcyI7CiAgICAgICAgZXN0aWxvLnRleHRDb250ZW50ID0gYAogICAgICAgICAgLnRyYWJham8taW5zdGFncmFte2Rpc3BsYXk6aW5saW5lLWZsZXghaW1wb3J0YW50O2FsaWduLWl0ZW1zOmNlbnRlciFpbXBvcnRhbnQ7anVzdGlmeS1jb250ZW50OmNlbnRlciFpbXBvcnRhbnQ7Z2FwOjlweCFpbXBvcnRhbnR9CiAgICAgICAgICAudHJhYmFqby1pbnN0YWdyYW0gLmljb25vLWluc3RhZ3JhbS1yZWFse3dpZHRoOjI1cHghaW1wb3J0YW50O2hlaWdodDoyNXB4IWltcG9ydGFudDtkaXNwbGF5OmJsb2NrIWltcG9ydGFudDtmbGV4OjAgMCBhdXRvIWltcG9ydGFudH0KICAgICAgICAgICN3aGF0c2FwcC1mbG90YW50ZXtkaXNwbGF5OmZsZXghaW1wb3J0YW50O2FsaWduLWl0ZW1zOmNlbnRlciFpbXBvcnRhbnQ7anVzdGlmeS1jb250ZW50OmNlbnRlciFpbXBvcnRhbnQ7cGFkZGluZzowIWltcG9ydGFudDtiYWNrZ3JvdW5kOiMyNUQzNjYhaW1wb3J0YW50O2JvcmRlcjozcHggc29saWQgI2ZmZiFpbXBvcnRhbnQ7Ym94LXNoYWRvdzowIDhweCAyNHB4IHJnYmEoMCwwLDAsLjIyKSFpbXBvcnRhbnR9CiAgICAgICAgICAjd2hhdHNhcHAtZmxvdGFudGUgLmljb25vLXdoYXRzYXBwLXJlYWx7d2lkdGg6NDJweCFpbXBvcnRhbnQ7aGVpZ2h0OjQycHghaW1wb3J0YW50O2Rpc3BsYXk6YmxvY2shaW1wb3J0YW50fQogICAgICAgICAgQG1lZGlhKG1heC13aWR0aDo3MDBweCl7I3doYXRzYXBwLWZsb3RhbnRlIC5pY29uby13aGF0c2FwcC1yZWFse3dpZHRoOjM4cHghaW1wb3J0YW50O2hlaWdodDozOHB4IWltcG9ydGFudH19CiAgICAgICAgYDsKICAgICAgICBkb2N1bWVudC5oZWFkLmFwcGVuZENoaWxkKGVzdGlsbyk7CiAgICB9CgogICAgZnVuY3Rpb24gaW5pY2lhckxvZ29zUmVhbGVzKCkgewogICAgICAgIGluc3RhbGFyRXN0aWxvc0xvZ29zKCk7CiAgICAgICAgYXBsaWNhckxvZ29zUmVhbGVzKCk7CiAgICB9CgogICAgaWYgKGRvY3VtZW50LnJlYWR5U3RhdGUgPT09ICJsb2FkaW5nIikgewogICAgICAgIGRvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoIkRPTUNvbnRlbnRMb2FkZWQiLCBpbmljaWFyTG9nb3NSZWFsZXMsIHsgb25jZTogdHJ1ZSB9KTsKICAgIH0gZWxzZSB7CiAgICAgICAgaW5pY2lhckxvZ29zUmVhbGVzKCk7CiAgICB9CgogICAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoImxvYWQiLCBhcGxpY2FyTG9nb3NSZWFsZXMsIHsgb25jZTogdHJ1ZSB9KTsKfSkoKTsK'
+          block = base64.b64decode(b64).decode('utf-8')
+          path.write_text(text + '\n' + block, encoding='utf-8')
           PY
 
       - name: Guardar cambio

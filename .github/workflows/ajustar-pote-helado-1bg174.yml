@@ -1,0 +1,108 @@
+name: Ajustar imagen pote helado 1BG174
+
+on:
+  push:
+    paths:
+      - '.github/workflows/ajustar-pote-helado-1bg174.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  ajustar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Instalar Pillow
+        run: pip install pillow
+
+      - name: Agrandar y mejorar imagen
+        run: |
+          python - <<'PY'
+          from PIL import Image, ImageFilter
+          from pathlib import Path
+
+          ruta = Path('img/productos/actualizadas/pote-helado-bambu-160.webp')
+          img = Image.open(ruta).convert('RGB')
+          objetivo_ancho = max(img.width, 1800)
+          objetivo_alto = round(img.height * objetivo_ancho / img.width)
+          if img.width < objetivo_ancho:
+              img = img.resize((objetivo_ancho, objetivo_alto), Image.Resampling.LANCZOS)
+              img = img.filter(ImageFilter.UnsharpMask(radius=1.2, percent=115, threshold=3))
+          img.save(ruta, 'WEBP', quality=92, method=6)
+          print('Imagen final:', img.size)
+          PY
+
+      - name: Hacer la foto mas grande en la ficha del producto
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          ruta = Path('style.css')
+          css = ruta.read_text(encoding='utf-8')
+          marcador = 'AJUSTE POTE HELADO 1BG174 - IMAGEN GRANDE'
+          if marcador not in css:
+              css += r'''
+
+/* AJUSTE POTE HELADO 1BG174 - IMAGEN GRANDE */
+article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-visual {
+    min-height: 360px !important;
+}
+
+article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-imagen {
+    object-fit: contain !important;
+    object-position: center !important;
+    background: #ffffff;
+}
+
+#modal-producto-visual:has(img[data-producto-id="pote-helado-bambu-160-1bg174"]) {
+    min-height: 640px !important;
+    height: 640px !important;
+}
+
+#modal-producto-visual img[data-producto-id="pote-helado-bambu-160-1bg174"] {
+    width: 100% !important;
+    height: 640px !important;
+    object-fit: contain !important;
+    object-position: center !important;
+    background: #ffffff;
+}
+
+@media (max-width: 780px) {
+    article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-visual {
+        min-height: 420px !important;
+    }
+
+    #modal-producto-visual:has(img[data-producto-id="pote-helado-bambu-160-1bg174"]) {
+        min-height: 520px !important;
+        height: 520px !important;
+    }
+
+    #modal-producto-visual img[data-producto-id="pote-helado-bambu-160-1bg174"] {
+        height: 520px !important;
+    }
+}
+'''
+              ruta.write_text(css, encoding='utf-8')
+          PY
+
+      - name: Guardar cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add img/productos/actualizadas/pote-helado-bambu-160.webp style.css
+          if git diff --cached --quiet; then
+            echo "No hay cambios para guardar"
+          else
+            git commit -m "agranda imagen pote helado 1BG174"
+            git push origin main
+          fi

@@ -399,3 +399,69 @@ window.REORGANICO_IMAGENES_PRODUCTOS = {
         iniciarMejorasMultimedia();
     }
 })();
+
+
+/* REORGANICO_LOGOS_REDES_20260824 */
+(() => {
+    const iconoInstagram = `
+      <svg class="icono-red icono-instagram-real" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <defs>
+          <radialGradient id="reorganico-instagram-gradient" cx="30%" cy="107%" r="140%">
+            <stop offset="0%" stop-color="#fdf497"/>
+            <stop offset="20%" stop-color="#fdf497"/>
+            <stop offset="40%" stop-color="#fd5949"/>
+            <stop offset="60%" stop-color="#d6249f"/>
+            <stop offset="90%" stop-color="#285AEB"/>
+          </radialGradient>
+        </defs>
+        <rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="url(#reorganico-instagram-gradient)"/>
+        <rect x="8" y="8" width="16" height="16" rx="5" fill="none" stroke="#fff" stroke-width="2.4"/>
+        <circle cx="16" cy="16" r="4" fill="none" stroke="#fff" stroke-width="2.4"/>
+        <circle cx="22" cy="10.3" r="1.45" fill="#fff"/>
+      </svg>`;
+
+    const iconoWhatsApp = `
+      <svg class="icono-red icono-whatsapp-real" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <circle cx="16" cy="16" r="15.3" fill="#25D366"/>
+        <path fill="#fff" d="M24.2 7.8A12.38 12.38 0 0 0 16.1 4.5C9.8 4.5 4.7 9.5 4.7 15.6c0 2 .5 3.9 1.5 5.6L4.6 27l6-1.5c1.6.9 3.5 1.3 5.4 1.3h.1c6.3 0 11.4-5 11.4-11.1 0-3-1.2-5.8-3.3-7.9Zm-8.1 17.1H16c-1.7 0-3.4-.5-4.8-1.3l-.3-.2-3.6.9 1-3.4-.2-.4a8.9 8.9 0 0 1-1.4-4.9c0-4.9 4.2-9 9.4-9 2.5 0 4.9.9 6.7 2.7a8.6 8.6 0 0 1 2.7 6.4c-.1 5-4.3 9.2-9.4 9.2Zm5.2-6.8c-.3-.1-1.7-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.6-1.5-.9-2.1-.2-.5-.5-.5-.6-.5h-.5c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.7 1.2 2.9c.1.2 2 3 4.8 4.2.7.3 1.2.4 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.2-1.3-.1-.2-.3-.3-.6-.4Z"/>
+      </svg>`;
+
+    function aplicarLogosReales() {
+        document.querySelectorAll(".trabajo-instagram").forEach((enlace) => {
+            enlace.innerHTML = `${iconoInstagram}<span>Ver Instagram</span>`;
+        });
+
+        const flotante = document.getElementById("whatsapp-flotante");
+        if (flotante) {
+            flotante.innerHTML = iconoWhatsApp;
+            flotante.setAttribute("aria-label", "Contactar por WhatsApp");
+        }
+    }
+
+    function instalarEstilosLogos() {
+        if (document.getElementById("reorganico-estilos-logos-reales")) return;
+        const estilo = document.createElement("style");
+        estilo.id = "reorganico-estilos-logos-reales";
+        estilo.textContent = `
+          .trabajo-instagram{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:9px!important}
+          .trabajo-instagram .icono-instagram-real{width:25px!important;height:25px!important;display:block!important;flex:0 0 auto!important}
+          #whatsapp-flotante{display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important;background:#25D366!important;border:3px solid #fff!important;box-shadow:0 8px 24px rgba(0,0,0,.22)!important}
+          #whatsapp-flotante .icono-whatsapp-real{width:42px!important;height:42px!important;display:block!important}
+          @media(max-width:700px){#whatsapp-flotante .icono-whatsapp-real{width:38px!important;height:38px!important}}
+        `;
+        document.head.appendChild(estilo);
+    }
+
+    function iniciarLogosReales() {
+        instalarEstilosLogos();
+        aplicarLogosReales();
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", iniciarLogosReales, { once: true });
+    } else {
+        iniciarLogosReales();
+    }
+
+    window.addEventListener("load", aplicarLogosReales, { once: true });
+})();

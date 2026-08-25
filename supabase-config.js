@@ -125,7 +125,7 @@ window.REORGANICO_IMAGENES_PRODUCTOS = {
                 const boton = document.createElement("button");
                 boton.type = "button";
                 boton.className = `galeria-producto-miniatura${i === 0 ? " activa" : ""}`;
-                const img = document.createElement("img"); img.src = ruta; img.alt = ""; img.loading = "lazy";
+                const img = document.createElement("img"); img.src = ruta; img.alt = ""; img.loading = "eager"; img.decoding = "async";
                 boton.append(img);
                 boton.addEventListener("click", () => {
                     principal.src = ruta;
@@ -176,7 +176,7 @@ window.REORGANICO_IMAGENES_PRODUCTOS = {
           .galeria-producto-miniaturas{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:10px;background:rgba(255,255,255,.96)}
           .galeria-producto-miniatura{height:68px;padding:0;overflow:hidden;border:2px solid transparent;border-radius:10px;background:#e8eee5;cursor:pointer}
           .galeria-producto-miniatura.activa{border-color:#4f7b55;box-shadow:0 0 0 2px rgba(79,123,85,.2)}
-          .galeria-producto-miniatura img{width:100%;height:100%;object-fit:cover}
+          .galeria-producto-miniatura img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
           @media(max-width:780px){#modal-producto-visual .galeria-producto-local{height:390px}.galeria-producto-miniatura{height:56px}}
         `;
         document.head.append(estilo);

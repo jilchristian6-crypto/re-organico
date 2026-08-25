@@ -2,12 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
   "trailingSlash": false,
-  "rewrites": [
-    {
-      "source": "/supabase-config.js",
-      "destination": "/supabase-config-wrapper.js"
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",

@@ -2147,47 +2147,30 @@ img {
    BOTONES FLOTANTES (VISIBLE EN PC Y CELULAR)
    ========================================== */
 
-.whatsapp-flotante {
-    position: fixed !important;
-    right: 20px !important;
-    bottom: 20px !important;
-    z-index: 99999 !important;
-    width: 55px !important;
-    height: 55px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border: 3px solid #ffffff !important;
-    border-radius: 50% !important;
-    background: #25d366 !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
-    transition: transform 0.2s ease !important;
-}
-
-/* Forzar que el botón de Instagram se vea siempre en PC y Móvil */
-a#instagram-flotante {
+/* ==========================================
+   FORZAR VISIBILIDAD GLOBAL (PC Y MÓVIL)
+   ========================================== */
+#instagram-flotante,
+.instagram-flotante {
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
-}
-
-.instagram-flotante {
     position: fixed !important;
     right: 20px !important;
-    bottom: 85px !important; /* Lo posiciona exactamente arriba de WhatsApp */
-    z-index: 99999 !important;
-    width: 55px !important;
-    height: 55px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border: 3px solid #ffffff !important;
-    border-radius: 50% !important;
-    background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
-    transition: transform 0.2s ease !important;
+    bottom: 85px !important;
+    z-index: 999999 !important;
 }
 
+#whatsapp-flotante,
+.whatsapp-flotante {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: fixed !important;
+    right: 20px !important;
+    bottom: 20px !important;
+    z-index: 999999 !important;
+}
 .whatsapp-flotante:hover,
 .instagram-flotante:hover 
 

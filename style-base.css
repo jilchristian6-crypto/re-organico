@@ -1349,28 +1349,6 @@ img {
     font-size: 12px;
 }
 
-.whatsapp-flotante,
-.boton-volver-arriba {
-    position: fixed;
-    bottom: 24px;
-    z-index: 1500;
-    display: grid;
-    place-items: center;
-    border: 4px solid var(--blanco);
-    border-radius: 50%;
-    color: var(--blanco);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
-    transition: 0.3s ease;
-}
-
-.whatsapp-flotante {
-    right: 24px;
-    width: 61px;
-    height: 61px;
-    background: #25d366;
-    font-size: 28px;
-}
-
 .boton-volver-arriba {
     left: 24px;
     width: 51px;
@@ -2142,37 +2120,7 @@ img {
     .pie-enlaces {
         gap: 17px;
     }
-    
-  /* ==========================================
-   BOTONES FLOTANTES (VISIBLE EN PC Y CELULAR)
-   ========================================== */
 
-/* ==========================================
-   FORZAR VISIBILIDAD GLOBAL (PC Y MÓVIL)
-   ========================================== */
-#instagram-flotante,
-.instagram-flotante {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    position: fixed !important;
-    right: 20px !important;
-    bottom: 85px !important;
-    z-index: 999999 !important;
-}
-
-#whatsapp-flotante,
-.whatsapp-flotante {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    position: fixed !important;
-    right: 20px !important;
-    bottom: 20px !important;
-    z-index: 999999 !important;
-}
-.whatsapp-flotante:hover,
-.instagram-flotante:hover 
 
 {
     transform: scale(1.1) !important;

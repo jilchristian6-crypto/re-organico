@@ -2164,6 +2164,13 @@ img {
     transition: transform 0.2s ease !important;
 }
 
+/* Forzar que el botón de Instagram se vea siempre en PC y Móvil */
+a#instagram-flotante {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
 .instagram-flotante {
     position: fixed !important;
     right: 20px !important;
@@ -2182,7 +2189,9 @@ img {
 }
 
 .whatsapp-flotante:hover,
-.instagram-flotante:hover {
+.instagram-flotante:hover 
+
+{
     transform: scale(1.1) !important;
 }
   

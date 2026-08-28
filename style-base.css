@@ -2142,23 +2142,24 @@ img {
     .pie-enlaces {
         gap: 17px;
     }
-
+    
     .whatsapp-flotante {
+        position: fixed;
         right: 16px;
-        bottom: 16px;
+        bottom: 16px; /* Se queda abajo */
         width: 55px;
         height: 55px;
         font-size: 25px;
     }
 
-      .instagram-flotante {
+    .instagram-flotante {
+        position: fixed;
         right: 16px;
-        bottom: 16px;
+        bottom: 81px; /* 16px del borde + 55px de alto del botón + 10px de espacio entre ellos = 81px */
         width: 55px;
         height: 55px;
         font-size: 25px;
     }
-
   
     .boton-volver-arriba {
         left: 16px;

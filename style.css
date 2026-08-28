@@ -41,7 +41,7 @@ article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-imagen {
     }
 }
 /* ==========================================
-   MODAL DE PRODUCTO - DISEÑO MODERNO
+   MODAL DE PRODUCTO - DISEÑO MODERNO (CORREGIDO)
    ========================================== */
 
 .modal-producto-contenido {
@@ -63,11 +63,10 @@ article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-imagen {
     }
 }
 
-/* Textos e Información */
 .modal-producto-info {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.8rem;
 }
 
 .modal-categoria {
@@ -75,11 +74,10 @@ article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-imagen {
     font-weight: 600;
     text-transform: uppercase;
     color: #2e6930;
-    letter-spacing: 0.5px;
 }
 
 #modal-producto-titulo {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: #1a2e1b;
     line-height: 1.2;
@@ -88,77 +86,98 @@ article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-imagen {
 
 #modal-producto-descripcion {
     font-size: 0.95rem;
-    color: #555555;
-    line-height: 1.5;
+    color: #555;
+    margin: 0;
 }
 
 .modal-producto-datos {
-    font-size: 0.9rem;
-    color: #666666;
+    font-size: 0.85rem;
+    color: #555;
     background: #f4f7f4;
-    padding: 0.5rem 0.75rem;
-    border-radius: 6px;
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin: 0;
 }
 
-/* Opciones de Presentación (Pack vs Caja) */
+/* ==========================================
+   1. OCULTAR TEXTOS REPETIDOS DEL JS
+   ========================================== */
+#modal-presentacion-resumen,
+#modal-cantidad-total {
+    display: none !important;
+}
+
+/* ==========================================
+   2. TARJETAS DE SELECCIÓN (PACK VS CAJA)
+   ========================================== */
 .modal-presentacion-label {
     font-weight: 600;
     font-size: 0.95rem;
-    color: #2c3e50;
+    color: #1a2e1b;
     margin-top: 0.5rem;
 }
 
-.modal-presentacion-opciones {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
+#modal-presentacion {
+    display: flex;
+    gap: 10px;
 }
 
-/* Estilo para las tarjetas de opciones de compra */
-.modal-presentacion-opciones label,
-.modal-presentacion-opciones .opcion-tarjeta {
+#modal-presentacion > * {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 1rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    background: #fafafa;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 8px;
+    border: 2px solid #e0e0e0 !important; /* Fuerza el borde limpio */
+    border-radius: 10px !important;
+    background: #ffffff !important;
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: center;
+    font-size: 0.9rem;
+    color: #333;
+    margin: 0 !important;
 }
 
-.modal-presentacion-opciones input[type="radio"] {
-    display: none;
+/* Ocultar el círculo del radio button nativo */
+#modal-presentacion input[type="radio"] {
+    display: none !important;
 }
 
-.modal-presentacion-opciones input[type="radio"]:checked + .opcion-contenido,
-.modal-presentacion-opciones label:has(input[type="radio"]:checked) {
-    border-color: #1b4d20;
-    background: #f0f7f1;
-    box-shadow: 0 4px 12px rgba(27, 77, 32, 0.1);
+/* Estilo cuando la tarjeta está seleccionada */
+#modal-presentacion label:has(input[type="radio"]:checked) {
+    border-color: #1b4d20 !important;
+    background: #f0f7f1 !important;
 }
 
-/* Selector de Cantidad */
+/* ==========================================
+   3. SELECTOR DE CANTIDADES
+   ========================================== */
 .modal-cantidad-compra {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #f9f9f9;
-    padding: 0.75rem 1rem;
+    background: #fafafa;
+    padding: 1rem;
     border-radius: 10px;
     border: 1px solid #eaeaea;
+    margin-top: 0.5rem;
 }
 
 .modal-cantidad-texto strong {
     display: block;
     font-size: 0.95rem;
-    color: #333333;
+    color: #1a2e1b;
 }
 
 .modal-cantidad-texto span {
     font-size: 0.8rem;
-    color: #777777;
+    color: #777;
+    line-height: 1.2;
+    display: inline-block;
+    margin-top: 4px;
+    max-width: 150px; /* Evita que el texto empuje los botones */
 }
 
 .modal-cantidad-control {
@@ -167,17 +186,17 @@ article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-imagen {
     background: #ffffff;
     border: 1px solid #dcdcdc;
     border-radius: 8px;
-    overflow: hidden;
+    height: 40px;
 }
 
 .modal-cantidad-control button {
     background: none;
     border: none;
-    padding: 0.5rem 0.8rem;
-    font-size: 1.1rem;
+    width: 35px;
+    height: 100%;
+    font-size: 1.2rem;
     cursor: pointer;
     color: #1b4d20;
-    transition: background 0.15s;
 }
 
 .modal-cantidad-control button:hover {
@@ -185,19 +204,20 @@ article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-imagen {
 }
 
 #modal-cantidad-valor {
-    padding: 0 0.5rem;
     font-size: 1rem;
     font-weight: 600;
     min-width: 30px;
     text-align: center;
 }
 
-/* Precio Final y Botón de Acción (CTA) */
+/* ==========================================
+   4. PRECIO FINAL Y BOTÓN PRINCIPAL
+   ========================================== */
 #modal-producto-precio {
     font-size: 1.8rem;
     font-weight: 800;
     color: #1b4d20;
-    margin-top: 0.5rem;
+    margin: 0.5rem 0;
 }
 
 #modal-agregar-carrito {
@@ -209,16 +229,10 @@ article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-imagen {
     font-weight: 600;
     border-radius: 10px;
     cursor: pointer;
-    transition: background 0.2s ease, transform 0.1s ease;
-    text-align: center;
-    box-shadow: 0 4px 14px rgba(27, 77, 32, 0.3);
+    transition: 0.2s ease;
+    width: 100%;
 }
 
 #modal-agregar-carrito:hover {
     background: #143818;
-    transform: translateY(-1px);
-}
-
-#modal-agregar-carrito:active {
-    transform: translateY(0);
 }

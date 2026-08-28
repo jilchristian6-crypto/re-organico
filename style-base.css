@@ -1367,11 +1367,6 @@ img {
     transform: translateY(0) scale(1);
 }
 
-.whatsapp-flotante:hover,
-.boton-volver-arriba:hover {
-    transform: translateY(-4px) scale(1.04);
-}
-
 .modal,
 .carrito {
     position: fixed;

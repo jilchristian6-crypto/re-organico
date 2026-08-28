@@ -40,3 +40,185 @@ article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-imagen {
         height: 520px !important;
     }
 }
+/* ==========================================
+   MODAL DE PRODUCTO - DISEÑO MODERNO
+   ========================================== */
+
+.modal-producto-contenido {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 850px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    position: relative;
+}
+
+@media (max-width: 768px) {
+    .modal-producto-contenido {
+        grid-template-columns: 1fr;
+        padding: 1.5rem;
+    }
+}
+
+/* Textos e Información */
+.modal-producto-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.modal-categoria {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #2e6930;
+    letter-spacing: 0.5px;
+}
+
+#modal-producto-titulo {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a2e1b;
+    line-height: 1.2;
+    margin: 0;
+}
+
+#modal-producto-descripcion {
+    font-size: 0.95rem;
+    color: #555555;
+    line-height: 1.5;
+}
+
+.modal-producto-datos {
+    font-size: 0.9rem;
+    color: #666666;
+    background: #f4f7f4;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+}
+
+/* Opciones de Presentación (Pack vs Caja) */
+.modal-presentacion-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #2c3e50;
+    margin-top: 0.5rem;
+}
+
+.modal-presentacion-opciones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+/* Estilo para las tarjetas de opciones de compra */
+.modal-presentacion-opciones label,
+.modal-presentacion-opciones .opcion-tarjeta {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    background: #fafafa;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.modal-presentacion-opciones input[type="radio"] {
+    display: none;
+}
+
+.modal-presentacion-opciones input[type="radio"]:checked + .opcion-contenido,
+.modal-presentacion-opciones label:has(input[type="radio"]:checked) {
+    border-color: #1b4d20;
+    background: #f0f7f1;
+    box-shadow: 0 4px 12px rgba(27, 77, 32, 0.1);
+}
+
+/* Selector de Cantidad */
+.modal-cantidad-compra {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    border: 1px solid #eaeaea;
+}
+
+.modal-cantidad-texto strong {
+    display: block;
+    font-size: 0.95rem;
+    color: #333333;
+}
+
+.modal-cantidad-texto span {
+    font-size: 0.8rem;
+    color: #777777;
+}
+
+.modal-cantidad-control {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.modal-cantidad-control button {
+    background: none;
+    border: none;
+    padding: 0.5rem 0.8rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: #1b4d20;
+    transition: background 0.15s;
+}
+
+.modal-cantidad-control button:hover {
+    background: #eaf2eb;
+}
+
+#modal-cantidad-valor {
+    padding: 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    min-width: 30px;
+    text-align: center;
+}
+
+/* Precio Final y Botón de Acción (CTA) */
+#modal-producto-precio {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1b4d20;
+    margin-top: 0.5rem;
+}
+
+#modal-agregar-carrito {
+    background: #1b4d20;
+    color: #ffffff;
+    border: none;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+    text-align: center;
+    box-shadow: 0 4px 14px rgba(27, 77, 32, 0.3);
+}
+
+#modal-agregar-carrito:hover {
+    background: #143818;
+    transform: translateY(-1px);
+}
+
+#modal-agregar-carrito:active {
+    transform: translateY(0);
+}

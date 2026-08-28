@@ -1,0 +1,25 @@
+name: Agregar fotos carrusel
+
+on:
+  push:
+    paths:
+      - '.github/workflows/agregar-fotos-carrusel.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  aplicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Aplicar cambios
+        run: python3 .github/scripts/agregar-fotos-carrusel.py
+      - name: Guardar cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f .github/scripts/agregar-fotos-carrusel.py .github/workflows/agregar-fotos-carrusel.yml
+          git add -A
+          git commit -m "Agregar dos fotos al carrusel principal" || exit 0
+          git push

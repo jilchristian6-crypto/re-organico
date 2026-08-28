@@ -1630,13 +1630,69 @@
 
     <button class="boton-volver-arriba" id="volver-arriba" type="button" aria-label="Volver al inicio">↑</button>
 
-    <a id="whatsapp-flotante" href="#" class="whatsapp-flotante" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">
-        <img src="assets/whatsapp.png" alt="WhatsApp" style="width: 32px; height: 32px; object-fit: contain;">
-    </a>
+<!-- ==========================================
+         BOTONES FLOTANTES GARANTIZADOS (PC Y MÓVIL)
+         ========================================== -->
+    <style>
+        .contenedor-flotantes {
+            position: fixed !important;
+            bottom: 24px !important;
+            right: 24px !important;
+            z-index: 999999 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 16px !important; /* Separación perfecta entre botones */
+            pointer-events: none !important; /* Evita que el contenedor bloquee clics */
+        }
+        .boton-red-social {
+            pointer-events: auto !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 58px !important;
+            height: 58px !important;
+            border: 3px solid #ffffff !important;
+            border-radius: 50% !important;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25) !important;
+            transition: transform 0.2s ease !important;
+            text-decoration: none !important;
+        }
+        .boton-red-social:hover {
+            transform: scale(1.1) !important;
+        }
+        .btn-insta {
+            background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%) !important;
+        }
+        .btn-wsp {
+            background: #25d366 !important;
+        }
+        .boton-red-social img {
+            width: 32px !important;
+            height: 32px !important;
+            object-fit: contain !important;
+            display: block !important;
+        }
+    </style>
 
-    <a id="instagram-flotante" href="https://www.instagram.com/reorganico/" class="instagram-flotante" target="_blank" rel="noopener noreferrer" aria-label="Seguir en Instagram">
-        <img src="assets/instagram.png" alt="Instagram" style="width: 32px; height: 32px; object-fit: contain;">
-    </a>
+    <div class="contenedor-flotantes">
+        <!-- Instagram (Queda arriba automáticamente) -->
+        <a href="https://www.instagram.com/reorganico/" target="_blank" rel="noopener noreferrer" class="boton-red-social btn-insta" aria-label="Seguir en Instagram">
+            <img src="assets/instagram.png" alt="Instagram">
+        </a>
+        
+        <!-- WhatsApp (Queda abajo) -->
+        <a href="#" class="boton-red-social btn-wsp" aria-label="Contactar por WhatsApp">
+            <img src="assets/whatsapp.png" alt="WhatsApp">
+        </a>
+    </div>
+
+    <!-- Aquí van tus scripts finales -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
 
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.2"></script>

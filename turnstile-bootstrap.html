@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Re Orgánico</title>
+  <style>
+    html,body{margin:0;min-height:100%;background:#fbfaf5}
+    body{display:grid;place-items:center;font-family:Arial,sans-serif;color:#1f4d3a}
+    .cargando{padding:24px;text-align:center}
+  </style>
+</head>
+<body>
+  <div class="cargando">Cargando Re Orgánico…</div>
+  <script>
+    (async function () {
+      try {
+        const respuesta = await fetch('/index.html?form-fix=1', {
+          cache: 'no-store',
+          credentials: 'same-origin'
+        });
+
+        if (!respuesta.ok) throw new Error('No se pudo cargar la página principal.');
+
+        let html = await respuesta.text();
+        const scriptTurnstile = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer><\\/script>';
+
+        if (!html.includes('https://challenges.cloudflare.com/turnstile/v0/api.js')) {
+          html = html.replace('</head>', scriptTurnstile + '</head>');
+        }
+
+        document.open();
+        document.write(html);
+        document.close();
+      } catch (error) {
+        console.error(error);
+        document.body.innerHTML = '<div class="cargando"><strong>No se pudo cargar Re Orgánico.</strong><br>Recarga la página e inténtalo nuevamente.</div>';
+      }
+    })();
+  </script>
+</body>
+</html>

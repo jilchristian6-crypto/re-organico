@@ -23,7 +23,7 @@
         if (!respuesta.ok) throw new Error('No se pudo cargar la página principal.');
 
         let html = await respuesta.text();
-        const scriptTurnstile = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer><\\/script>';
+        const scriptTurnstile = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer>' + '</' + 'script>';
 
         if (!html.includes('https://challenges.cloudflare.com/turnstile/v0/api.js')) {
           html = html.replace('</head>', scriptTurnstile + '</head>');

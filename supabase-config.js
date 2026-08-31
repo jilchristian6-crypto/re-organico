@@ -33,7 +33,7 @@ window.REORGANICO_IMAGENES_PRODUCTOS = {
     "bambu-soup-bucket-500-1bg606": "img/productos/cambios-20260821/soup-bucket-500.webp",
     "bambu-tapa-soup-bucket-500-1bg607": "img/productos/cambios-20260821/tapa-soup-bucket-500.webp",
     "vaso-biopla-200-1vp185": "img/productos/actualizadas/vaso-biopla-200.webp",
-    "vaso-biopla-400-1vp184": "img/productos/actualizadas/vaso-biopla-500.webp",
+    "vaso-biopla-400-1vp184": "img/productos/actualizadas/vaso-biopla-400.webp",
     "vaso-biopla-500-1vp180": "img/productos/actualizadas/vaso-biopla-500.webp",
     "tapa-domo-biopla-400-1vp189": "img/productos/actualizadas/tapa-biopla-domo.webp",
     "tapa-plana-biopla-400-1vp191": "img/productos/actualizadas/tapa-biopla-plana.webp",

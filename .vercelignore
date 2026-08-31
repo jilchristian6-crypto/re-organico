@@ -1,7 +1,6 @@
 .git
 *.sql
 *.md
-*.txt
 
 # Fuentes del backend: se despliegan en Supabase, no como archivos públicos.
 supabase/

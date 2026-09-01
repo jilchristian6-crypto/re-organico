@@ -126,8 +126,14 @@
                     <button class="pestana" type="button" data-seccion-panel="pedidos">
                         Cotizaciones y pedidos <span id="contador-pedidos-pestana">0</span>
                     </button>
-                    <button class="pestana" type="button" data-seccion-panel="galeria">
-                        📸 Fotos y videos <span id="contador-galeria-pestana">0</span>
+                    <button class="pestana" type="button" data-seccion-panel="carrusel">
+                        🎞️ Carrusel <span id="contador-carrusel-pestana">0</span>
+                    </button>
+                    <button class="pestana" type="button" data-seccion-panel="blog">
+                        📝 Nuestro Blog <span id="contador-blog-pestana">0</span>
+                    </button>
+                    <button class="pestana" type="button" data-seccion-panel="trabajo">
+                        📸 Nuestro trabajo <span id="contador-trabajo-pestana">0</span>
                     </button>
                 </nav>
 
@@ -364,8 +370,8 @@
                     <div class="galeria-admin-encabezado">
                         <div>
                             <span>Contenido multimedia</span>
-                            <h2>Fotos y videos</h2>
-                            <p>Sube contenido que después podrá mostrarse en la sección “Nuestro trabajo”.</p>
+                            <h2 id="titulo-seccion-contenido">Contenido multimedia</h2>
+                            <p id="descripcion-seccion-contenido">Administra el contenido que aparece en esta sección de la página.</p>
                         </div>
                         <button class="boton-galeria-nuevo" id="nuevo-contenido" type="button">
                             + Agregar contenido
@@ -377,11 +383,21 @@
                             <div class="titulo-bloque">
                                 <span id="modo-galeria">Nuevo contenido</span>
                                 <h2 id="titulo-formulario-galeria">Publicar foto o video</h2>
+                            <p id="ayuda-destino-contenido">Elige si el contenido aparecerá en el carrusel, en Nuestro Blog o en Nuestro trabajo.</p>
                             </div>
 
                             <form id="formulario-galeria" class="formulario-galeria">
                                 <input id="galeria-id" type="hidden">
                                 <input id="galeria-path-actual" type="hidden">
+
+                                <div class="campo">
+                                    <label for="galeria-destino">Dónde mostrar</label>
+                                    <select id="galeria-destino" required>
+                                        <option value="carrusel">🎞️ Carrusel principal</option>
+                                        <option value="blog">📝 Nuestro Blog</option>
+                                        <option value="trabajo">📸 Nuestro trabajo</option>
+                                    </select>
+                                </div>
 
                                 <div class="campo">
                                     <label for="galeria-titulo">Título</label>

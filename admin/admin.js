@@ -59,6 +59,7 @@ let clienteSupabase = null;
 let productos = [];
 let pedidos = [];
 let contenidoGaleria = [];
+let destinoContenidoActual = "carrusel";
 let usuarioActual = null;
 let temporizadorToast = null;
 let modoRecuperacion = false;
@@ -158,6 +159,13 @@ const elementos = {
 
     seccionGaleria: document.getElementById("seccion-galeria"),
     contadorGaleriaPestana: document.getElementById("contador-galeria-pestana"),
+    contadorCarruselPestana: document.getElementById("contador-carrusel-pestana"),
+    contadorBlogPestana: document.getElementById("contador-blog-pestana"),
+    contadorTrabajoPestana: document.getElementById("contador-trabajo-pestana"),
+    tituloSeccionContenido: document.getElementById("titulo-seccion-contenido"),
+    descripcionSeccionContenido: document.getElementById("descripcion-seccion-contenido"),
+    ayudaDestinoContenido: document.getElementById("ayuda-destino-contenido"),
+    galeriaDestino: document.getElementById("galeria-destino"),
     nuevoContenido: document.getElementById("nuevo-contenido"),
     actualizarGaleria: document.getElementById("actualizar-galeria"),
     formularioGaleria: document.getElementById("formulario-galeria"),
@@ -402,9 +410,10 @@ function registrarEventos() {
         seleccionarFotosProducto(evento.dataTransfer?.files);
     });
     elementos.actualizarPedidos.addEventListener("click", cargarPedidos);
-    elementos.actualizarGaleria.addEventListener("click", cargarGaleria);
+    elementos.actualizarGaleria.addEventListener("click", () => cargarGaleria(destinoContenidoActual));
     elementos.nuevoContenido.addEventListener("click", () => {
         limpiarFormularioGaleria();
+        elementos.galeriaDestino.value = destinoContenidoActual;
         elementos.galeriaTitulo.focus();
     });
     elementos.cancelarContenido.addEventListener("click", limpiarFormularioGaleria);
@@ -629,7 +638,7 @@ async function mostrarPanelAutorizado() {
     elementos.formularioMfa.hidden = true;
     limpiarMensaje(elementos.mensajeLogin);
     registrarActividadAdministrador();
-    await Promise.all([cargarProductos(), cargarPedidos(), cargarGaleria()]);
+    await Promise.all([cargarProductos(), cargarPedidos(), cargarGaleria("carrusel")]);
 }
 
 async function asegurarMfaAdministrador() {
@@ -1563,19 +1572,38 @@ function crearIdUnico(nombre) {
 function cambiarSeccionPanel(seccion) {
     const mostrarProductos = seccion === "productos";
     const mostrarPedidos = seccion === "pedidos";
-    const mostrarGaleria = seccion === "galeria";
+    const mostrarContenido = ["carrusel", "blog", "trabajo"].includes(seccion);
 
     elementos.seccionProductos.hidden = !mostrarProductos;
     elementos.seccionPedidos.hidden = !mostrarPedidos;
-    elementos.seccionGaleria.hidden = !mostrarGaleria;
+    elementos.seccionGaleria.hidden = !mostrarContenido;
     elementos.nuevoProducto.hidden = !mostrarProductos;
+    elementos.nuevoContenido.hidden = !mostrarContenido;
 
     elementos.pestanasPanel.forEach((boton) => {
         boton.classList.toggle("activa", boton.dataset.seccionPanel === seccion);
     });
 
     if (mostrarPedidos) cargarPedidos();
-    if (mostrarGaleria) cargarGaleria();
+    if (mostrarContenido) {
+        destinoContenidoActual = seccion;
+        cargarGaleria(seccion);
+        actualizarEncabezadoContenido(seccion);
+        limpiarFormularioGaleria(false);
+    }
+}
+
+function actualizarEncabezadoContenido(destino) {
+    const datos = {
+        carrusel: { titulo: "Carrusel principal", descripcion: "Agrega y ordena las fotos o videos que aparecerán en la portada de Re Orgánico.", formulario: "Agregar al carrusel" },
+        blog: { titulo: "Nuestro Blog", descripcion: "Publica fotos y videos para que aparezcan automáticamente en Nuestro Blog.", formulario: "Publicar en Nuestro Blog" },
+        trabajo: { titulo: "Nuestro trabajo", descripcion: "Administra las fotos y videos de la sección Nuestro trabajo.", formulario: "Publicar en Nuestro trabajo" }
+    };
+    const info = datos[destino] || datos.carrusel;
+    elementos.tituloSeccionContenido.textContent = info.titulo;
+    elementos.descripcionSeccionContenido.textContent = info.descripcion;
+    elementos.tituloFormularioGaleria.textContent = info.formulario;
+    elementos.ayudaDestinoContenido.textContent = "El contenido se publicará en: " + info.titulo + ". Puedes cambiar el destino antes de guardar.";
 }
 
 async function cargarPedidos() {
@@ -1785,8 +1813,9 @@ const MIME_GALERIA_PERMITIDOS = new Set([
 
 const MAX_ARCHIVO_GALERIA = 50 * 1024 * 1024;
 
-async function cargarGaleria() {
+async function cargarGaleria(destino = destinoContenidoActual) {
     if (!clienteSupabase || !elementos.estadoGaleria) return;
+    destinoContenidoActual = ["carrusel", "blog", "trabajo"].includes(destino) ? destino : "carrusel";
 
     elementos.estadoGaleria.hidden = false;
     elementos.estadoGaleria.textContent = "Cargando fotos y videos...";
@@ -1794,7 +1823,8 @@ async function cargarGaleria() {
 
     const { data, error } = await clienteSupabase
         .from("contenido_galeria")
-        .select("id,tipo,titulo,descripcion,archivo_path,activo,orden,created_at,updated_at")
+        .select("id,tipo,titulo,descripcion,archivo_path,activo,orden,destino,created_at,updated_at")
+        .eq("destino", destino || destinoContenidoActual)
         .order("orden", { ascending: true })
         .order("created_at", { ascending: false });
 
@@ -1806,6 +1836,7 @@ async function cargarGaleria() {
     }
 
     contenidoGaleria = Array.isArray(data) ? data : [];
+    actualizarEncabezadoContenido(destinoContenidoActual);
     renderizarGaleriaAdmin();
 }
 
@@ -1823,6 +1854,9 @@ function renderizarGaleriaAdmin() {
     if (!elementos.listaGaleriaAdmin) return;
 
     elementos.contadorGaleriaPestana.textContent = String(contenidoGaleria.length);
+    if (elementos.contadorCarruselPestana) elementos.contadorCarruselPestana.textContent = destinoContenidoActual === "carrusel" ? String(contenidoGaleria.length) : elementos.contadorCarruselPestana.textContent;
+    if (elementos.contadorBlogPestana) elementos.contadorBlogPestana.textContent = destinoContenidoActual === "blog" ? String(contenidoGaleria.length) : elementos.contadorBlogPestana.textContent;
+    if (elementos.contadorTrabajoPestana) elementos.contadorTrabajoPestana.textContent = destinoContenidoActual === "trabajo" ? String(contenidoGaleria.length) : elementos.contadorTrabajoPestana.textContent;
 
     if (contenidoGaleria.length === 0) {
         elementos.estadoGaleria.hidden = false;
@@ -1857,6 +1891,7 @@ function renderizarGaleriaAdmin() {
 
                     <div class="contenido-admin-meta">
                         <span>Orden ${Number(item.orden) || 0}</span>
+                        <span>${item.destino === "carrusel" ? "Carrusel" : item.destino === "blog" ? "Nuestro Blog" : "Nuestro trabajo"}</span>
                         <span class="${item.activo ? "visible" : "oculto"}">
                             ${item.activo ? "Visible en página" : "Oculto de la página"}
                         </span>
@@ -1942,6 +1977,7 @@ async function guardarContenidoGaleria(evento) {
     const id = elementos.galeriaId.value.trim();
     const titulo = elementos.galeriaTitulo.value.trim();
     const descripcion = elementos.galeriaDescripcion.value.trim();
+    const destino = elementos.galeriaDestino.value;
     const orden = Number(elementos.galeriaOrden.value);
     const activo = elementos.galeriaActivo.checked;
     const archivo = elementos.galeriaArchivo.files?.[0] || null;
@@ -1949,6 +1985,11 @@ async function guardarContenidoGaleria(evento) {
 
     if (!titulo) {
         mostrarMensaje(elementos.mensajeGaleria, "Escribe un título.");
+        return;
+    }
+
+    if (!["carrusel", "blog", "trabajo"].includes(destino)) {
+        mostrarMensaje(elementos.mensajeGaleria, "Selecciona dónde mostrar el contenido.");
         return;
     }
 
@@ -2019,7 +2060,8 @@ async function guardarContenidoGaleria(evento) {
                 titulo,
                 descripcion: descripcion || null,
                 activo,
-                orden
+                orden,
+                destino
             };
 
             if (nuevoPath) {
@@ -2066,7 +2108,8 @@ async function guardarContenidoGaleria(evento) {
                     descripcion: descripcion || null,
                     archivo_path: nuevoPath,
                     activo,
-                    orden
+                    orden,
+                    destino
                 });
 
             if (errorInsertar) {
@@ -2118,6 +2161,7 @@ function editarContenidoGaleria(id) {
     elementos.galeriaPathActual.value = item.archivo_path;
     elementos.galeriaTitulo.value = item.titulo || "";
     elementos.galeriaDescripcion.value = item.descripcion || "";
+    elementos.galeriaDestino.value = item.destino || "trabajo";
     elementos.galeriaOrden.value = Number(item.orden) || 0;
     elementos.galeriaActivo.checked = Boolean(item.activo);
     elementos.galeriaArchivo.value = "";
@@ -2199,6 +2243,7 @@ function limpiarFormularioGaleria(limpiarMensajeActual = true) {
     elementos.formularioGaleria.reset();
     elementos.galeriaId.value = "";
     elementos.galeriaPathActual.value = "";
+    elementos.galeriaDestino.value = destinoContenidoActual;
     elementos.galeriaOrden.value = siguienteOrdenGaleria();
     elementos.galeriaActivo.checked = true;
     elementos.galeriaArchivo.value = "";

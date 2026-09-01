@@ -1,0 +1,165 @@
+name: CMS update
+on:
+  push:
+    branches: [cms-update]
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Actualizar panel y sitio
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          admin = Path('admin/index.html')
+          s = admin.read_text()
+          old = '''                    <button class="pestana" type="button" data-seccion-panel="pedidos">\n                        Cotizaciones y pedidos <span id="contador-pedidos-pestana">0</span>\n                    </button>\n                    <button class="pestana" type="button" data-seccion-panel="galeria">\n                        📸 Fotos y videos <span id="contador-galeria-pestana">0</span>\n                    </button>'''
+          new = '''                    <button class="pestana" type="button" data-seccion-panel="pedidos">\n                        Cotizaciones y pedidos <span id="contador-pedidos-pestana">0</span>\n                    </button>\n                    <button class="pestana" type="button" data-seccion-panel="carrusel">\n                        🎞️ Carrusel <span id="contador-carrusel-pestana">0</span>\n                    </button>\n                    <button class="pestana" type="button" data-seccion-panel="blog">\n                        📝 Nuestro Blog <span id="contador-blog-pestana">0</span>\n                    </button>\n                    <button class="pestana" type="button" data-seccion-panel="trabajo">\n                        📸 Nuestro trabajo <span id="contador-trabajo-pestana">0</span>\n                    </button>'''
+          if old not in s: raise SystemExit('No se encontró navegación del panel')
+          s = s.replace(old, new, 1)
+          s = s.replace('<h2>Fotos y videos</h2>\n                            <p>Sube contenido que después podrá mostrarse en la sección “Nuestro trabajo”.</p>', '<h2 id="titulo-seccion-contenido">Contenido multimedia</h2>\n                            <p id="descripcion-seccion-contenido">Administra el contenido que aparece en esta sección de la página.</p>', 1)
+          s = s.replace('<h2 id="titulo-formulario-galeria">Publicar foto o video</h2>', '<h2 id="titulo-formulario-galeria">Publicar foto o video</h2>\n                            <p id="ayuda-destino-contenido">Elige si el contenido aparecerá en el carrusel, en Nuestro Blog o en Nuestro trabajo.</p>', 1)
+          marker = '''                                <div class="campo">\n                                    <label for="galeria-titulo">Título</label>'''
+          replacement = '''                                <div class="campo">\n                                    <label for="galeria-destino">Dónde mostrar</label>\n                                    <select id="galeria-destino" required>\n                                        <option value="carrusel">🎞️ Carrusel principal</option>\n                                        <option value="blog">📝 Nuestro Blog</option>\n                                        <option value="trabajo">📸 Nuestro trabajo</option>\n                                    </select>\n                                </div>\n\n                                <div class="campo">\n                                    <label for="galeria-titulo">Título</label>'''
+          if marker not in s: raise SystemExit('No se encontró formulario de contenido')
+          s = s.replace(marker, replacement, 1)
+          admin.write_text(s)
+
+          js = Path('admin/admin.js')
+          s = js.read_text()
+          s = s.replace('let contenidoGaleria = [];\n', 'let contenidoGaleria = [];\nlet destinoContenidoActual = "carrusel";\n', 1)
+          s = s.replace('    seccionGaleria: document.getElementById("seccion-galeria"),\n    contadorGaleriaPestana: document.getElementById("contador-galeria-pestana"),', '    seccionGaleria: document.getElementById("seccion-galeria"),\n    contadorGaleriaPestana: document.getElementById("contador-galeria-pestana"),\n    contadorCarruselPestana: document.getElementById("contador-carrusel-pestana"),\n    contadorBlogPestana: document.getElementById("contador-blog-pestana"),\n    contadorTrabajoPestana: document.getElementById("contador-trabajo-pestana"),\n    tituloSeccionContenido: document.getElementById("titulo-seccion-contenido"),\n    descripcionSeccionContenido: document.getElementById("descripcion-seccion-contenido"),\n    ayudaDestinoContenido: document.getElementById("ayuda-destino-contenido"),\n    galeriaDestino: document.getElementById("galeria-destino"),', 1)
+          s = s.replace('elementos.actualizarGaleria.addEventListener("click", cargarGaleria);', 'elementos.actualizarGaleria.addEventListener("click", () => cargarGaleria(destinoContenidoActual));', 1)
+          s = s.replace('''    elementos.nuevoContenido.addEventListener("click", () => {\n        limpiarFormularioGaleria();\n        elementos.galeriaTitulo.focus();\n    });''', '''    elementos.nuevoContenido.addEventListener("click", () => {\n        limpiarFormularioGaleria();\n        elementos.galeriaDestino.value = destinoContenidoActual;\n        elementos.galeriaTitulo.focus();\n    });''', 1)
+          s = s.replace('''async function mostrarPanelAutorizado() {\n    limpiarDatosMfaSensibles();\n    elementos.correoAdmin.textContent = usuarioActual?.email || "Administrador";\n    elementos.vistaAcceso.hidden = true;\n    elementos.vistaPanel.hidden = false;\n    elementos.formularioMfa.hidden = true;\n    limpiarMensaje(elementos.mensajeLogin);\n    registrarActividadAdministrador();\n    await Promise.all([cargarProductos(), cargarPedidos(), cargarGaleria()]);\n}''', '''async function mostrarPanelAutorizado() {\n    limpiarDatosMfaSensibles();\n    elementos.correoAdmin.textContent = usuarioActual?.email || "Administrador";\n    elementos.vistaAcceso.hidden = true;\n    elementos.vistaPanel.hidden = false;\n    elementos.formularioMfa.hidden = true;\n    limpiarMensaje(elementos.mensajeLogin);\n    registrarActividadAdministrador();\n    await Promise.all([cargarProductos(), cargarPedidos(), cargarGaleria("carrusel")]);\n}''', 1)
+          s = s.replace('.select("id,tipo,titulo,descripcion,archivo_path,activo,orden,created_at,updated_at")', '.select("id,tipo,titulo,descripcion,archivo_path,activo,orden,destino,created_at,updated_at")', 1)
+          s = s.replace('''        .from("contenido_galeria")\n        .select("id,tipo,titulo,descripcion,archivo_path,activo,orden,destino,created_at,updated_at")\n        .order("orden", { ascending: true })''', '''        .from("contenido_galeria")\n        .select("id,tipo,titulo,descripcion,archivo_path,activo,orden,destino,created_at,updated_at")\n        .eq("destino", destino || destinoContenidoActual)\n        .order("orden", { ascending: true })''', 1)
+          s = s.replace('''async function cargarGaleria() {\n    if (!clienteSupabase || !elementos.estadoGaleria) return;''', '''async function cargarGaleria(destino = destinoContenidoActual) {\n    if (!clienteSupabase || !elementos.estadoGaleria) return;\n    destinoContenidoActual = ["carrusel", "blog", "trabajo"].includes(destino) ? destino : "carrusel";''', 1)
+          s = s.replace('''    contenidoGaleria = Array.isArray(data) ? data : [];\n    renderizarGaleriaAdmin();''', '''    contenidoGaleria = Array.isArray(data) ? data : [];\n    actualizarEncabezadoContenido(destinoContenidoActual);\n    renderizarGaleriaAdmin();''', 1)
+          s = s.replace('''    elementos.contadorGaleriaPestana.textContent = String(contenidoGaleria.length);''', '''    elementos.contadorGaleriaPestana.textContent = String(contenidoGaleria.length);\n    if (elementos.contadorCarruselPestana) elementos.contadorCarruselPestana.textContent = destinoContenidoActual === "carrusel" ? String(contenidoGaleria.length) : elementos.contadorCarruselPestana.textContent;\n    if (elementos.contadorBlogPestana) elementos.contadorBlogPestana.textContent = destinoContenidoActual === "blog" ? String(contenidoGaleria.length) : elementos.contadorBlogPestana.textContent;\n    if (elementos.contadorTrabajoPestana) elementos.contadorTrabajoPestana.textContent = destinoContenidoActual === "trabajo" ? String(contenidoGaleria.length) : elementos.contadorTrabajoPestana.textContent;''', 1)
+          s = s.replace('''        const url = obtenerUrlPublicaGaleria(item.archivo_path);\n        const esVideo = item.tipo === "video";''', '''        const url = obtenerUrlPublicaGaleria(item.archivo_path);\n        const esVideo = item.tipo === "video";''', 1)
+          s = s.replace('''                        <span>Orden ${Number(item.orden) || 0}</span>\n                        <span class="${item.activo ? "visible" : "oculto"}">''', '''                        <span>Orden ${Number(item.orden) || 0}</span>\n                        <span>${item.destino === "carrusel" ? "Carrusel" : item.destino === "blog" ? "Nuestro Blog" : "Nuestro trabajo"}</span>\n                        <span class="${item.activo ? "visible" : "oculto"}">''', 1)
+          s = s.replace('''    const titulo = elementos.galeriaTitulo.value.trim();\n    const descripcion = elementos.galeriaDescripcion.value.trim();''', '''    const titulo = elementos.galeriaTitulo.value.trim();\n    const descripcion = elementos.galeriaDescripcion.value.trim();\n    const destino = elementos.galeriaDestino.value;''', 1)
+          s = s.replace('''    if (!titulo) {\n        mostrarMensaje(elementos.mensajeGaleria, "Escribe un título.");\n        return;\n    }''', '''    if (!titulo) {\n        mostrarMensaje(elementos.mensajeGaleria, "Escribe un título.");\n        return;\n    }\n\n    if (!["carrusel", "blog", "trabajo"].includes(destino)) {\n        mostrarMensaje(elementos.mensajeGaleria, "Selecciona dónde mostrar el contenido.");\n        return;\n    }''', 1)
+          s = s.replace('''            const payload = {\n                titulo,\n                descripcion: descripcion || null,\n                activo,\n                orden\n            };''', '''            const payload = {\n                titulo,\n                descripcion: descripcion || null,\n                activo,\n                orden,\n                destino\n            };''', 1)
+          s = s.replace('''                    archivo_path: nuevoPath,\n                    activo,\n                    orden\n                });''', '''                    archivo_path: nuevoPath,\n                    activo,\n                    orden,\n                    destino\n                });''', 1)
+          s = s.replace('''    elementos.galeriaDescripcion.value = item.descripcion || "";\n    elementos.galeriaOrden.value = Number(item.orden) || 0;''', '''    elementos.galeriaDescripcion.value = item.descripcion || "";\n    elementos.galeriaDestino.value = item.destino || "trabajo";\n    elementos.galeriaOrden.value = Number(item.orden) || 0;''', 1)
+          s = s.replace('''    elementos.galeriaPathActual.value = "";\n    elementos.galeriaOrden.value = siguienteOrdenGaleria();''', '''    elementos.galeriaPathActual.value = "";\n    elementos.galeriaDestino.value = destinoContenidoActual;\n    elementos.galeriaOrden.value = siguienteOrdenGaleria();''', 1)
+          old_change = '''function cambiarSeccionPanel(seccion) {\n    const mostrarProductos = seccion === "productos";\n    const mostrarPedidos = seccion === "pedidos";\n    const mostrarGaleria = seccion === "galeria";\n\n    elementos.seccionProductos.hidden = !mostrarProductos;\n    elementos.seccionPedidos.hidden = !mostrarPedidos;\n    elementos.seccionGaleria.hidden = !mostrarGaleria;\n    elementos.nuevoProducto.hidden = !mostrarProductos;\n\n    elementos.pestanasPanel.forEach((boton) => {\n        boton.classList.toggle("activa", boton.dataset.seccionPanel === seccion);\n    });\n\n    if (mostrarPedidos) cargarPedidos();\n    if (mostrarGaleria) cargarGaleria();\n}'''
+          new_change = '''function cambiarSeccionPanel(seccion) {\n    const mostrarProductos = seccion === "productos";\n    const mostrarPedidos = seccion === "pedidos";\n    const mostrarContenido = ["carrusel", "blog", "trabajo"].includes(seccion);\n\n    elementos.seccionProductos.hidden = !mostrarProductos;\n    elementos.seccionPedidos.hidden = !mostrarPedidos;\n    elementos.seccionGaleria.hidden = !mostrarContenido;\n    elementos.nuevoProducto.hidden = !mostrarProductos;\n    elementos.nuevoContenido.hidden = !mostrarContenido;\n\n    elementos.pestanasPanel.forEach((boton) => {\n        boton.classList.toggle("activa", boton.dataset.seccionPanel === seccion);\n    });\n\n    if (mostrarPedidos) cargarPedidos();\n    if (mostrarContenido) {\n        destinoContenidoActual = seccion;\n        cargarGaleria(seccion);\n        actualizarEncabezadoContenido(seccion);\n        limpiarFormularioGaleria(false);\n    }\n}\n\nfunction actualizarEncabezadoContenido(destino) {\n    const datos = {\n        carrusel: { titulo: "Carrusel principal", descripcion: "Agrega y ordena las fotos o videos que aparecerán en la portada de Re Orgánico.", formulario: "Agregar al carrusel" },\n        blog: { titulo: "Nuestro Blog", descripcion: "Publica fotos y videos para que aparezcan automáticamente en Nuestro Blog.", formulario: "Publicar en Nuestro Blog" },\n        trabajo: { titulo: "Nuestro trabajo", descripcion: "Administra las fotos y videos de la sección Nuestro trabajo.", formulario: "Publicar en Nuestro trabajo" }\n    };\n    const info = datos[destino] || datos.carrusel;\n    elementos.tituloSeccionContenido.textContent = info.titulo;\n    elementos.descripcionSeccionContenido.textContent = info.descripcion;\n    elementos.tituloFormularioGaleria.textContent = info.formulario;\n    elementos.ayudaDestinoContenido.textContent = "El contenido se publicará en: " + info.titulo + ". Puedes cambiar el destino antes de guardar.";\n}'''
+          if old_change not in s: raise SystemExit('No se encontró cambiarSeccionPanel')
+          s = s.replace(old_change, new_change, 1)
+          js.write_text(s)
+
+          public = Path('index.html')
+          s = public.read_text()
+          old_scripts = '''    <script src="supabase-config.js"></script>\n    <script src="script.js"></script>'''
+          new_scripts = '''    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.2"></script>\n    <script src="supabase-config.js"></script>\n    <script src="script.js"></script>\n    <script src="cms-publico.js"></script>'''
+          if old_scripts not in s: raise SystemExit('No se encontró bloque de scripts público')
+          s = s.replace(old_scripts, new_scripts, 1)
+          public.write_text(s)
+          PY
+
+          cat > cms-publico.js <<'JS'
+          "use strict";
+
+          (function () {
+              const CONFIG = window.REORGANICO_SUPABASE;
+              if (!CONFIG || !window.supabase?.createClient) return;
+
+              const cliente = window.supabase.createClient(CONFIG.url, CONFIG.anonKey);
+
+              function escapar(texto) {
+                  return String(texto ?? "")
+                      .replaceAll("&", "&amp;")
+                      .replaceAll("<", "&lt;")
+                      .replaceAll(">", "&gt;")
+                      .replaceAll('"', "&quot;")
+                      .replaceAll("'", "&#039;");
+              }
+
+              function urlPublica(path) {
+                  if (!path) return "";
+                  return cliente.storage.from("galeria").getPublicUrl(path).data?.publicUrl || "";
+              }
+
+              async function cargar(destino) {
+                  const { data, error } = await cliente
+                      .from("contenido_galeria")
+                      .select("id,tipo,titulo,descripcion,archivo_path,orden")
+                      .eq("destino", destino)
+                      .eq("activo", true)
+                      .order("orden", { ascending: true })
+                      .order("created_at", { ascending: true });
+                  if (error || !Array.isArray(data) || data.length === 0) return [];
+                  return data;
+              }
+
+              function renderizarCarrusel(items) {
+                  const carrusel = document.getElementById("hero-carrusel");
+                  if (!carrusel || !items.length) return;
+                  const pista = carrusel.querySelector(".hero-carrusel-pista");
+                  const indicadores = carrusel.querySelector(".hero-carrusel-indicadores");
+                  if (!pista || !indicadores) return;
+
+                  pista.innerHTML = items.map((item, i) => {
+                      const url = urlPublica(item.archivo_path);
+                      const media = item.tipo === "video"
+                          ? `<video src="${escapar(url)}" controls muted playsinline preload="metadata" aria-label="${escapar(item.titulo)}"></video>`
+                          : `<img src="${escapar(url)}" alt="${escapar(item.titulo)}" loading="${i === 0 ? "eager" : "lazy"}">`;
+                      return `<div class="hero-diapositiva ${i === 0 ? "activa" : ""}" data-cms-hero-slide aria-hidden="${i === 0 ? "false" : "true"}">${media}</div>`;
+                  }).join("");
+
+                  indicadores.innerHTML = items.map((item, i) => `<button class="hero-carrusel-indicador" type="button" data-cms-hero-index="${i}" aria-label="Ver contenido ${i + 1}" aria-current="${i === 0 ? "true" : "false"}"></button>`).join("");
+
+                  const slides = [...pista.querySelectorAll("[data-cms-hero-slide]")];
+                  const dots = [...indicadores.querySelectorAll("[data-cms-hero-index]")];
+                  let actual = 0;
+                  let timer = null;
+                  const mostrar = (indice) => {
+                      actual = (indice + slides.length) % slides.length;
+                      slides.forEach((slide, i) => { slide.classList.toggle("activa", i === actual); slide.setAttribute("aria-hidden", i === actual ? "false" : "true"); });
+                      dots.forEach((dot, i) => dot.setAttribute("aria-current", i === actual ? "true" : "false"));
+                  };
+                  const avanzar = () => mostrar(actual + 1);
+                  dots.forEach((dot) => dot.addEventListener("click", () => { mostrar(Number(dot.dataset.cmsHeroIndex)); reiniciar(); }));
+                  const anterior = carrusel.querySelector("[data-hero-anterior]");
+                  const siguiente = carrusel.querySelector("[data-hero-siguiente]");
+                  anterior?.addEventListener("click", () => { mostrar(actual - 1); reiniciar(); });
+                  siguiente?.addEventListener("click", () => { mostrar(actual + 1); reiniciar(); });
+                  function reiniciar() { if (timer) clearInterval(timer); if (slides.length > 1) timer = setInterval(avanzar, 6500); }
+                  reiniciar();
+              }
+
+              function renderizarBlog(items) {
+                  const contenedor = document.querySelector(".impacto-videos");
+                  if (!contenedor || !items.length) return;
+                  contenedor.innerHTML = items.map((item) => {
+                      const url = urlPublica(item.archivo_path);
+                      const media = item.tipo === "video"
+                          ? `<video src="${escapar(url)}" controls preload="metadata" playsinline aria-label="${escapar(item.titulo)}"></video>`
+                          : `<img src="${escapar(url)}" alt="${escapar(item.titulo)}" loading="lazy">`;
+                      return `<article class="impacto-video revelar"><div class="impacto-video-marco">${media}<span>${item.tipo === "video" ? "Video" : "Artículo"}</span></div><div class="impacto-video-info"><h3>${escapar(item.titulo)}</h3><p>${escapar(item.descripcion || "")}</p></div></article>`;
+                  }).join("");
+              }
+
+              async function iniciar() {
+                  const [carrusel, blog] = await Promise.all([cargar("carrusel"), cargar("blog")]);
+                  renderizarCarrusel(carrusel);
+                  renderizarBlog(blog);
+              }
+
+              if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar, { once: true });
+              else iniciar();
+          })();
+          JS
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add admin/index.html admin/admin.js index.html cms-publico.js
+          git commit -m "Conectar CMS con carrusel y Nuestro Blog"
+          git push

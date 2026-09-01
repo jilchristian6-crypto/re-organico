@@ -1572,7 +1572,7 @@ function crearIdUnico(nombre) {
 function cambiarSeccionPanel(seccion) {
     const mostrarProductos = seccion === "productos";
     const mostrarPedidos = seccion === "pedidos";
-    const mostrarContenido = ["carrusel", "blog", "trabajo"].includes(seccion);
+    const mostrarContenido = ["carrusel", "blog"].includes(seccion);
 
     elementos.seccionProductos.hidden = !mostrarProductos;
     elementos.seccionPedidos.hidden = !mostrarPedidos;
@@ -1597,7 +1597,6 @@ function actualizarEncabezadoContenido(destino) {
     const datos = {
         carrusel: { titulo: "Carrusel principal", descripcion: "Agrega y ordena las fotos o videos que aparecerán en la portada de Re Orgánico.", formulario: "Agregar al carrusel" },
         blog: { titulo: "Nuestro Blog", descripcion: "Publica fotos y videos para que aparezcan automáticamente en Nuestro Blog.", formulario: "Publicar en Nuestro Blog" },
-        trabajo: { titulo: "Nuestro trabajo", descripcion: "Administra las fotos y videos de la sección Nuestro trabajo.", formulario: "Publicar en Nuestro trabajo" }
     };
     const info = datos[destino] || datos.carrusel;
     elementos.tituloSeccionContenido.textContent = info.titulo;
@@ -1815,7 +1814,7 @@ const MAX_ARCHIVO_GALERIA = 50 * 1024 * 1024;
 
 async function cargarGaleria(destino = destinoContenidoActual) {
     if (!clienteSupabase || !elementos.estadoGaleria) return;
-    destinoContenidoActual = ["carrusel", "blog", "trabajo"].includes(destino) ? destino : "carrusel";
+    destinoContenidoActual = ["carrusel", "blog"].includes(destino) ? destino : "carrusel";
 
     elementos.estadoGaleria.hidden = false;
     elementos.estadoGaleria.textContent = "Cargando fotos y videos...";

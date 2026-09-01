@@ -2587,7 +2587,7 @@ function actualizarBotonLimpiar() {
 
 function renderizarSelectorProductos() {
     const valorActual = elementos.productoConsulta.value;
-    const listaFiltrada = productosFiltrados();
+    const listaFiltrada = productos;
 
     elementos.productoConsulta.innerHTML = `
         <option value="">Selecciona Un Producto</option>

@@ -79,9 +79,9 @@
         if (!contenedor || !items.length) return;
         const nuevasPublicaciones = items.map((item) => {
             const media = crearMedia(item);
-            return `<article class="impacto-video revelar"><div class="impacto-video-marco">${media}<span>${item.tipo === "video" ? "Video" : "Artículo"}</span></div><div class="impacto-video-info"><h3>${escapar(item.titulo)}</h3><p>${escapar(item.descripcion || "")}</p></div></article>`;
+            return `<article class="impacto-video"><div class="impacto-video-marco">${media}<span>${item.tipo === "video" ? "Video" : "Artículo"}</span></div><div class="impacto-video-info"><h3>${escapar(item.titulo)}</h3><p>${escapar(item.descripcion || "")}</p></div></article>`;
         }).join("");
-        contenedor.insertAdjacentHTML("beforeend", nuevasPublicaciones);
+        contenedor.innerHTML = nuevasPublicaciones;
     }
 
     async function iniciar() {

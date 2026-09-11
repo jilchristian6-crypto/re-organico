@@ -20,27 +20,11 @@ jobs:
 
           p = Path('admin/admin.js')
           s = p.read_text(encoding='utf-8')
-
-          s = s.replace(
-              'presentaciones,imagen_path")',
-              'presentaciones,imagen_path,imagen_admin_path")'
-          )
-          s = s.replace(
-              'obtenerUrlPublicaProducto(producto.imagen_path)',
-              'obtenerUrlPublicaProducto(producto.imagen_admin_path || producto.imagen_path)'
-          )
-          s = s.replace(
-              '${producto.imagen_path ? "Cambiar foto" : "Agregar foto"}',
-              '${producto.imagen_admin_path ? "Cambiar foto" : "Agregar foto"}'
-          )
-          s = s.replace(
-              '.update({ imagen_path: nuevoPath })',
-              '.update({ imagen_admin_path: nuevoPath })'
-          )
-          s = s.replace(
-              'const pathAnterior = producto.imagen_path;\n            producto.imagen_path = nuevoPath;',
-              'const pathAnterior = producto.imagen_admin_path;\n            producto.imagen_admin_path = nuevoPath;'
-          )
+          s = s.replace('presentaciones,imagen_path")', 'presentaciones,imagen_path,imagen_admin_path")')
+          s = s.replace('obtenerUrlPublicaProducto(producto.imagen_path)', 'obtenerUrlPublicaProducto(producto.imagen_admin_path || producto.imagen_path)')
+          s = s.replace('${producto.imagen_path ? "Cambiar foto" : "Agregar foto"}', '${producto.imagen_admin_path ? "Cambiar foto" : "Agregar foto"}')
+          s = s.replace('.update({ imagen_path: nuevoPath })', '.update({ imagen_admin_path: nuevoPath })')
+          s = s.replace('const pathAnterior = producto.imagen_path;\n            producto.imagen_path = nuevoPath;', 'const pathAnterior = producto.imagen_admin_path;\n            producto.imagen_admin_path = nuevoPath;')
           p.write_text(s, encoding='utf-8')
 
           g = Path('admin/galeria-productos.js')
@@ -50,8 +34,6 @@ jobs:
               s = s.replace('p?.imagen_path||""', 'p?.imagen_admin_path||p?.imagen_path||""')
               s = s.replace('!p?.imagen_path', '!p?.imagen_admin_path')
               s = s.replace('.update({imagen_path:path})', '.update({imagen_admin_path:path})')
-              s = s.replace('.update({imagen_path:path}).eq("id",id)', '.update({imagen_admin_path:path}).eq("id",id)')
-              s = s.replace('await sb.from("productos").update({imagen_path:path})', 'await sb.from("productos").update({imagen_admin_path:path})')
               s = s.replace('p?.imagen_path===v.path', 'p?.imagen_admin_path===v.path')
               s = s.replace('.update({imagen_path:next?.path||null})', '.update({imagen_admin_path:next?.path||null})')
               g.write_text(s, encoding='utf-8')

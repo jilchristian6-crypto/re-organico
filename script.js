@@ -3410,3 +3410,119 @@ function actualizarNavegacion() {
 
     new MutationObserver(limpiar).observe(document.documentElement, { childList: true, subtree: true });
 })();
+
+/* Re Orgánico: enlaces directos por producto */
+(() => {
+    const PARAMETRO_PRODUCTO = "producto";
+    const CLASE_ENLACE = "enlace-producto-directo";
+    let ultimoProductoAbierto = null;
+
+    function obtenerIdDesdeUrl() {
+        try {
+  return new URL(window.location.href).searchParams.get(PARAMETRO_PRODUCTO);
+        } catch (error) {
+  return null;
+        }
+    }
+
+    function crearUrlProducto(id) {
+        const url = new URL(window.location.href);
+        url.searchParams.set(PARAMETRO_PRODUCTO, id);
+        url.hash = "productos";
+        return url.toString();
+    }
+
+    function agregarEnlacesProducto() {
+        document.querySelectorAll("article.producto[data-id]").forEach((tarjeta) => {
+  const id = tarjeta.dataset.id;
+  if (!id || tarjeta.querySelector(`.${CLASE_ENLACE}`)) return;
+
+  const enlace = document.createElement("a");
+  enlace.className = CLASE_ENLACE;
+  enlace.href = crearUrlProducto(id);
+  enlace.textContent = "🔗 Ver producto";
+  enlace.setAttribute("aria-label", "Abrir producto y obtener su enlace directo");
+
+  const acciones = tarjeta.querySelector(".producto-acciones") || tarjeta;
+  acciones.append(enlace);
+        });
+    }
+
+    function abrirProductoDesdeUrl() {
+        const id = obtenerIdDesdeUrl();
+        if (!id || id === ultimoProductoAbierto) return;
+
+        const boton = document.querySelector(`[data-accion="detalle"][data-id="${CSS.escape(id)}"]`);
+        if (!boton) return;
+
+        ultimoProductoAbierto = id;
+        boton.click();
+        setTimeout(() => {
+  const modal = document.getElementById("modal-producto");
+  if (modal) modal.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 100);
+    }
+
+    function actualizarUrlAlAbrirProducto() {
+        document.addEventListener("click", (evento) => {
+  const boton = evento.target.closest('[data-accion="detalle"][data-id]');
+  if (!boton) return;
+  const id = boton.dataset.id;
+  if (!id) return;
+  const url = new URL(window.location.href);
+  url.searchParams.set(PARAMETRO_PRODUCTO, id);
+  history.replaceState({ producto: id }, "", url.toString());
+  ultimoProductoAbierto = id;
+        }, true);
+    }
+
+    function iniciarEnlacesProducto() {
+        const catalogo = document.getElementById("lista-productos");
+        if (!catalogo) return;
+
+        const observer = new MutationObserver(() => {
+  agregarEnlacesProducto();
+  abrirProductoDesdeUrl();
+        });
+        observer.observe(catalogo, { childList: true, subtree: true });
+
+        agregarEnlacesProducto();
+        abrirProductoDesdeUrl();
+        actualizarUrlAlAbrirProducto();
+    }
+
+    const estilo = document.createElement("style");
+    estilo.textContent = `
+        .enlace-producto-directo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 9px 13px;
+  border: 1px solid #6f9b73;
+  border-radius: 999px;
+  background: #f3f8f1;
+  color: #2f6840;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: .2s ease;
+        }
+        .enlace-producto-directo:hover,
+        .enlace-producto-directo:focus-visible {
+  background: #e5f0e3;
+  color: #235331;
+  transform: translateY(-1px);
+        }
+    `;
+    document.head.append(estilo);
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", iniciarEnlacesProducto, { once: true });
+    } else {
+        iniciarEnlacesProducto();
+    }
+})();

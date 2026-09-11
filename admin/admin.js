@@ -884,7 +884,7 @@ async function cargarProductos() {
 
     const { data, error } = await clienteSupabase
         .from("productos")
-        .select("id,nombre,precio,categoria,descripcion,emoji,etiqueta,estado,orden,medida,micras,presentaciones,imagen_path")
+        .select("id,nombre,precio,categoria,descripcion,emoji,etiqueta,estado,orden,medida,micras,presentaciones,imagen_path,imagen_admin_path")
         .order("orden", { ascending: true })
         .order("nombre", { ascending: true });
 
@@ -912,7 +912,7 @@ function renderizarProductos() {
 
     elementos.listaAdmin.innerHTML = productos
         .map((producto) => {
-            const urlImagen = obtenerUrlPublicaProducto(producto.imagen_path);
+            const urlImagen = obtenerUrlPublicaProducto(producto.imagen_admin_path || producto.imagen_path);
             const visual = urlImagen
                 ? `<img src="${escaparAtributo(urlImagen)}" alt="${escaparAtributo(producto.nombre)}" loading="lazy">`
                 : escaparHTML(producto.emoji);
@@ -937,7 +937,7 @@ function renderizarProductos() {
 
                     <div class="producto-admin-acciones">
                         <button type="button" data-accion="foto" data-id="${escaparHTML(producto.id)}">
-                            ${producto.imagen_path ? "Cambiar foto" : "Agregar foto"}
+                            ${producto.imagen_admin_path ? "Cambiar foto" : "Agregar foto"}
                         </button>
                         <button type="button" data-accion="editar" data-id="${escaparHTML(producto.id)}">
                             Editar
@@ -1208,7 +1208,7 @@ async function subirFotosProductoEnLote() {
 
             const { error: errorProducto } = await clienteSupabase
                 .from("productos")
-                .update({ imagen_path: nuevoPath })
+                .update({ imagen_admin_path: nuevoPath })
                 .eq("id", producto.id);
 
             if (errorProducto) {
@@ -1216,8 +1216,8 @@ async function subirFotosProductoEnLote() {
                 throw errorProducto;
             }
 
-            const pathAnterior = producto.imagen_path;
-            producto.imagen_path = nuevoPath;
+            const pathAnterior = producto.imagen_admin_path;
+            producto.imagen_admin_path = nuevoPath;
 
             if (pathAnterior && pathAnterior !== nuevoPath) {
                 const { error: errorBorrado } = await clienteSupabase.storage

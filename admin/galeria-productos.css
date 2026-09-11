@@ -23,24 +23,15 @@
     background: #eef4f0;
 }
 
-/* En Nuestro Blog, los campos deben volver a ser visibles aunque otro script
-   haya marcado el campo como hidden al pasar previamente por Carrusel. */
+/* Nuestro Blog: recuperar los campos aunque Carrusel haya dejado hidden en el contenedor. */
 body:has([data-seccion-panel="blog"].activa) #galeria-titulo,
 body:has([data-seccion-panel="blog"].activa) #galeria-descripcion {
     display: block !important;
-}
-
-body:has([data-seccion-panel="blog"].activa) #galeria-titulo:disabled,
-body:has([data-seccion-panel="blog"].activa) #galeria-descripcion:disabled {
-    opacity: 1;
-}
-
-body:has([data-seccion-panel="blog"].activa) #galeria-titulo,
-body:has([data-seccion-panel="blog"].activa) #galeria-descripcion {
     visibility: visible !important;
 }
 
-body:has([data-seccion-panel="blog"].activa) #galeria-titulo + *,
-body:has([data-seccion-panel="blog"].activa) #galeria-descripcion + * {
-    visibility: visible;
+body:has([data-seccion-panel="blog"].activa) .campo:has(#galeria-titulo),
+body:has([data-seccion-panel="blog"].activa) .campo:has(#galeria-descripcion) {
+    display: flex !important;
+    visibility: visible !important;
 }

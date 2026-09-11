@@ -84,7 +84,13 @@ jobs:
               if marker_admin not in a:
                   raise SystemExit('No se encontró admin.js en admin/index.html')
               a = a.replace(marker_admin, marker_admin + '\n    ' + tag, 1)
-              admin.write_text(a, encoding='utf-8')
+          css_tag = '<link rel="stylesheet" href="/admin/galeria-productos.css">'
+          if css_tag not in a:
+              marker_css = '<link rel="stylesheet" href="/admin/admin.css">'
+              if marker_css not in a:
+                  raise SystemExit('No se encontró admin.css en admin/index.html')
+              a = a.replace(marker_css, marker_css + '\n    ' + css_tag, 1)
+          admin.write_text(a, encoding='utf-8')
           PY
       - name: Guardar cambios
         run: |

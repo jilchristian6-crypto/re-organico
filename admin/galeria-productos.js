@@ -46,10 +46,24 @@
         boton.type = "button";
         boton.className = "boton-fotos-admin";
         boton.textContent = "📸 Gestionar fotos del producto";
-        boton.addEventListener("click", () => panel.scrollIntoView({ behavior: "smooth", block: "center" }));
+        boton.title = "Abrir el selector para agregar fotos al producto";
+        boton.addEventListener("click", () => {
+            sincronizarProducto();
+            if (!productoId) {
+                mensaje("Primero guarda el producto para poder agregar fotos.");
+                document.getElementById("gpa")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                return;
+            }
+            cargarFotos(productoId);
+            document.getElementById("gpa")?.scrollIntoView({ behavior: "smooth", block: "center" });
+            setTimeout(() => {
+                if (!ocupada) document.getElementById("gpa-in")?.click();
+            }, 300);
+        });
         acciones.insertBefore(boton, acciones.firstChild);
 
         document.getElementById("gpa-add")?.addEventListener("click", () => {
+            sincronizarProducto();
             if (!productoId) return mensaje("Primero guarda el producto.");
             document.getElementById("gpa-in")?.click();
         });

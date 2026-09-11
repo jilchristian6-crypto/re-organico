@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Cambiar botón y activar copia
+      - name: Cambiar botón, activar copia y cargar galería admin
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -75,12 +75,22 @@ jobs:
               p.write_text(s + block, encoding='utf-8')
           else:
               p.write_text(s, encoding='utf-8')
+
+          admin = Path('admin/index.html')
+          a = admin.read_text(encoding='utf-8')
+          tag = '<script src="/admin/galeria-productos.js"></script>'
+          if tag not in a:
+              marker_admin = '<script src="/admin/admin.js"></script>'
+              if marker_admin not in a:
+                  raise SystemExit('No se encontró admin.js en admin/index.html')
+              a = a.replace(marker_admin, marker_admin + '\n    ' + tag, 1)
+              admin.write_text(a, encoding='utf-8')
           PY
       - name: Guardar cambios
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add script.js
+          git add script.js admin/index.html
           git diff --cached --quiet && exit 0
-          git commit -m "feat: copiar link del producto al hacer clic"
+          git commit -m "feat: cargar galeria de fotos por producto en admin"
           git push

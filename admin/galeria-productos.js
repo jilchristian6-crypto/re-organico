@@ -19,6 +19,33 @@
         crearGestor();
         cargarSelector();
         conectarBotonesProductos();
+        ajustarFormularioBlog();
+    }
+
+    function ajustarFormularioBlog() {
+        const destino = document.getElementById("galeria-destino");
+        const titulo = document.getElementById("galeria-titulo");
+        const descripcion = document.getElementById("galeria-descripcion");
+        if (!titulo || !descripcion) return;
+
+        const campoTitulo = titulo.closest(".campo");
+        const campoDescripcion = descripcion.closest(".campo");
+        const campoDestino = destino?.closest(".campo");
+        const esBlog = destino?.value === "blog";
+
+        if (campoTitulo) {
+            campoTitulo.style.display = esBlog ? "block" : "none";
+            titulo.required = esBlog;
+            titulo.placeholder = esBlog ? "Ej: Cómo hacer compost en casa" : "Título del contenido";
+        }
+
+        if (campoDescripcion) {
+            campoDescripcion.style.display = esBlog ? "block" : "none";
+            descripcion.required = esBlog;
+            descripcion.placeholder = esBlog ? "Escribe una descripción para la publicación del blog" : "Una descripción corta del contenido";
+        }
+
+        if (campoDestino) campoDestino.style.display = "none";
     }
 
     function crearEstilos() {
@@ -199,5 +226,6 @@
     setInterval(() => {
         actualizarBotones();
         conectarBotonesProductos();
-    }, 1000);
+        ajustarFormularioBlog();
+    }, 500);
 })();

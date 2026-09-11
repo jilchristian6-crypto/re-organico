@@ -28,10 +28,14 @@
 
         crearInput();
         agregarBotones();
+        configurarCarruselSoloFotos();
 
         const lista = document.getElementById("lista-admin");
         if (lista) {
-            new MutationObserver(agregarBotones).observe(lista, {
+            new MutationObserver(() => {
+                agregarBotones();
+                configurarCarruselSoloFotos();
+            }).observe(lista, {
                 childList: true,
                 subtree: true
             });
@@ -83,6 +87,168 @@
             boton.title = "Agregar varias fotos a este producto";
             boton.className = "boton-agregar-fotos-directo";
             acciones.insertBefore(boton, editar);
+        });
+    }
+
+    function configurarCarruselSoloFotos() {
+        const seccion = document.getElementById("seccion-galeria");
+        const destino = document.getElementById("galeria-destino");
+        const formulario = document.getElementById("formulario-galeria");
+        if (!seccion || !destino || !formulario) return;
+
+        const esCarrusel = destino.value === "carrusel";
+        seccion.classList.toggle("modo-carrusel-solo-fotos", esCarrusel);
+
+        if (!esCarrusel) return;
+
+        const titulo = document.getElementById("titulo-formulario-galeria");
+        const modo = document.getElementById("modo-galeria");
+        const ayuda = document.getElementById("ayuda-destino-contenido");
+        const boton = document.getElementById("guardar-contenido");
+        const archivo = document.getElementById("galeria-archivo");
+
+        if (modo) modo.textContent = "Carrusel principal";
+        if (titulo) titulo.textContent = "Subir fotos al carrusel";
+        if (ayuda) ayuda.textContent = "Selecciona una o varias fotos. Se agregarán directamente al carrusel principal.";
+        if (boton) boton.textContent = "📸 Subir fotos";
+        if (archivo) {
+            archivo.accept = "image/jpeg,image/png,image/webp";
+            archivo.multiple = true;
+        }
+
+        ocultarCampo("galeria-destino");
+        ocultarCampo("galeria-titulo");
+        ocultarCampo("galeria-descripcion");
+        ocultarCampo("galeria-orden");
+        ocultarCampo("galeria-activo");
+
+        const campoTitulo = document.getElementById("galeria-titulo");
+        const campoDescripcion = document.getElementById("galeria-descripcion");
+        const campoOrden = document.getElementById("galeria-orden");
+        const campoActivo = document.getElementById("galeria-activo");
+        if (campoTitulo) campoTitulo.required = false;
+        if (campoDescripcion) campoDescripcion.required = false;
+        if (campoOrden) campoOrden.required = false;
+        if (campoActivo) campoActivo.checked = true;
+    }
+
+    function ocultarCampo(id) {
+        const elemento = document.getElementById(id);
+        const campo = elemento?.closest(".campo");
+        if (campo) campo.hidden = true;
+    }
+
+    async function subirFotosCarrusel(archivos) {
+        const validos = archivos.filter((archivo) =>
+            TIPOS.has(archivo.type) && archivo.size <= MAX_FOTO
+        );
+
+        if (!validos.length) {
+            alert("Selecciona una o varias fotos JPG, PNG o WEBP de máximo 10 MB por foto.");
+            return;
+        }
+
+        const boton = document.getElementById("guardar-contenido");
+        const mensaje = document.getElementById("mensaje-galeria");
+        if (boton) {
+            boton.disabled = true;
+            boton.textContent = `Subiendo ${validos.length} foto${validos.length === 1 ? "" : "s"}...`;
+        }
+
+        try {
+            const { data: ultimo } = await cliente
+                .from("contenido_galeria")
+                .select("orden")
+                .eq("destino", "carrusel")
+                .order("orden", { ascending: false })
+                .limit(1)
+                .maybeSingle();
+
+            let orden = Number(ultimo?.orden);
+            if (!Number.isFinite(orden)) orden = 0;
+
+            let subidas = 0;
+            for (const archivo of validos) {
+                const extension = archivo.type === "image/jpeg"
+                    ? "jpg"
+                    : archivo.type === "image/png"
+                    ? "png"
+                    : "webp";
+                const aleatorio = crypto.randomUUID
+                    ? crypto.randomUUID()
+                    : Math.random().toString(36).slice(2);
+                const ruta = `fotos/${Date.now()}-${aleatorio}.${extension}`;
+
+                const { error: errorSubida } = await cliente.storage
+                    .from("galeria")
+                    .upload(ruta, archivo, {
+                        cacheControl: "31536000",
+                        upsert: false,
+                        contentType: archivo.type
+                    });
+
+                if (errorSubida) {
+                    console.error("No se pudo subir la foto del carrusel:", errorSubida);
+                    continue;
+                }
+
+                orden += 1;
+                const { error: errorRegistro } = await cliente
+                    .from("contenido_galeria")
+                    .insert({
+                        tipo: "foto",
+                        titulo: `Foto carrusel ${orden}`,
+                        descripcion: null,
+                        archivo_path: ruta,
+                        activo: true,
+                        orden,
+                        destino: "carrusel"
+                    });
+
+                if (errorRegistro) {
+                    console.error("No se pudo registrar la foto del carrusel:", errorRegistro);
+                    await cliente.storage.from("galeria").remove([ruta]);
+                    continue;
+                }
+
+                subidas += 1;
+            }
+
+            if (mensaje) {
+                mensaje.textContent = subidas === validos.length
+                    ? `${subidas} foto${subidas === 1 ? " subida" : "s subidas"} correctamente al carrusel.`
+                    : `${subidas} foto${subidas === 1 ? " subida" : "s subidas"}. Revisa los archivos que no se pudieron cargar.`;
+                mensaje.classList.toggle("exito", subidas > 0);
+            }
+
+            if (subidas > 0) {
+                document.getElementById("actualizar-galeria")?.click();
+            }
+        } finally {
+            if (boton) {
+                boton.disabled = false;
+                boton.textContent = "📸 Subir fotos";
+            }
+        }
+    }
+
+    function interceptarCarrusel() {
+        const formulario = document.getElementById("formulario-galeria");
+        const destino = document.getElementById("galeria-destino");
+        const archivo = document.getElementById("galeria-archivo");
+        if (!formulario || !destino || !archivo || formulario.dataset.carruselFotosConectado) return;
+
+        formulario.dataset.carruselFotosConectado = "1";
+        formulario.addEventListener("submit", async (evento) => {
+            if (destino.value !== "carrusel") return;
+            evento.preventDefault();
+            evento.stopImmediatePropagation();
+            const archivos = Array.from(archivo.files || []);
+            await subirFotosCarrusel(archivos);
+        }, true);
+
+        destino.addEventListener("change", () => {
+            configurarCarruselSoloFotos();
         });
     }
 
@@ -169,8 +335,17 @@
     }
 
     if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", iniciar, { once: true });
+        document.addEventListener("DOMContentLoaded", () => {
+            iniciar();
+            interceptarCarrusel();
+        }, { once: true });
     } else {
         iniciar();
+        interceptarCarrusel();
     }
+
+    setInterval(() => {
+        configurarCarruselSoloFotos();
+        interceptarCarrusel();
+    }, 500);
 })();

@@ -31,7 +31,8 @@
         const campoTitulo = titulo.closest(".campo");
         const campoDescripcion = descripcion.closest(".campo");
         const campoDestino = destino?.closest(".campo");
-        const esBlog = destino?.value === "blog";
+        const pestañaBlogActiva = document.querySelector('[data-seccion-panel="blog"].activa');
+        const esBlog = destino?.value === "blog" || Boolean(pestañaBlogActiva);
 
         if (campoTitulo) {
             campoTitulo.style.display = esBlog ? "block" : "none";

@@ -195,115 +195,35 @@ window.REORGANICO_IMAGENES_PRODUCTOS = {
         const estilo = document.createElement("style");
         estilo.id = "reorganico-fix-modal-pedido";
         estilo.textContent = `
-          #modal-pedido .modal-pedido-contenido{
-            width:min(780px,calc(100% - 28px));
-            max-height:92vh;
-            padding:34px;
-            overflow-y:auto;
-            overscroll-behavior:contain;
-            background:#fff;
-            color:#26352d;
-          }
+          #modal-pedido .modal-pedido-contenido{width:min(780px,calc(100% - 28px));max-height:92vh;padding:34px;overflow-y:auto;overscroll-behavior:contain;background:#fff;color:#26352d}
           #modal-pedido .pedido-modal-encabezado{padding-right:40px}
           #modal-pedido .pedido-modal-encabezado h2{color:#1f4d3a}
           #modal-pedido .pedido-modal-encabezado p{margin-top:10px;color:#647068;line-height:1.6}
           #modal-pedido .pedido-resumen-mini{color:#26352d}
-          #modal-pedido .formulario-pedido{
-            display:grid;
-            grid-template-columns:repeat(2,minmax(0,1fr));
-            gap:16px;
-            margin-top:22px;
-          }
+          #modal-pedido .formulario-pedido{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:22px}
           #modal-pedido .campo-completo{grid-column:1/-1}
-          #modal-pedido .campo-formulario{
-            display:flex;
-            flex-direction:column;
-            gap:8px;
-            min-width:0;
-          }
-          #modal-pedido .campo-formulario label{
-            color:#1f4d3a;
-            font-size:13px;
-            font-weight:800;
-          }
-          #modal-pedido .campo-formulario input,
-          #modal-pedido .campo-formulario select,
-          #modal-pedido .campo-formulario textarea{
-            width:100%;
-            border:1px solid rgba(31,77,58,.22);
-            outline:0;
-            border-radius:14px;
-            background:#fff;
-            color:#26352d;
-            box-shadow:none;
-          }
-          #modal-pedido .campo-formulario input,
-          #modal-pedido .campo-formulario select{
-            min-height:50px;
-            padding:0 14px;
-          }
-          #modal-pedido .campo-formulario textarea{
-            min-height:96px!important;
-            max-height:180px;
-            height:auto;
-            padding:13px 14px;
-            resize:vertical;
-          }
-          #modal-pedido .campo-formulario input::placeholder,
-          #modal-pedido .campo-formulario textarea::placeholder{color:#8a958e}
-          #modal-pedido .campo-formulario input:focus,
-          #modal-pedido .campo-formulario select:focus,
-          #modal-pedido .campo-formulario textarea:focus{
-            border-color:#3f7458;
-            background:#fff;
-            box-shadow:0 0 0 3px rgba(63,116,88,.10);
-          }
+          #modal-pedido .campo-formulario{display:flex;flex-direction:column;gap:8px;min-width:0}
+          #modal-pedido .campo-formulario label{color:#1f4d3a;font-size:13px;font-weight:800}
+          #modal-pedido .campo-formulario input,#modal-pedido .campo-formulario select,#modal-pedido .campo-formulario textarea{width:100%;border:1px solid rgba(31,77,58,.22);outline:0;border-radius:14px;background:#fff;color:#26352d;box-shadow:none}
+          #modal-pedido .campo-formulario input,#modal-pedido .campo-formulario select{min-height:50px;padding:0 14px}
+          #modal-pedido .campo-formulario textarea{min-height:96px!important;max-height:180px;height:auto;padding:13px 14px;resize:vertical}
+          #modal-pedido .campo-formulario input::placeholder,#modal-pedido .campo-formulario textarea::placeholder{color:#8a958e}
+          #modal-pedido .campo-formulario input:focus,#modal-pedido .campo-formulario select:focus,#modal-pedido .campo-formulario textarea:focus{border-color:#3f7458;background:#fff;box-shadow:0 0 0 3px rgba(63,116,88,.10)}
           #modal-pedido .campo-formulario select option{background:#fff;color:#26352d}
-          #modal-pedido .ayuda-pago{
-            display:block;
-            margin-top:2px;
-            color:#647068;
-            font-size:12px;
-            line-height:1.45;
-          }
-          #modal-pedido .nota-despacho{
-            margin:0;
-            padding:12px 14px;
-            border-radius:12px;
-            background:#f4f8f4;
-            color:#4f5d55;
-            font-size:13px;
-            line-height:1.5;
-          }
-          #modal-pedido [aria-label="Verificación de seguridad"]{
-            display:flex;
-            justify-content:center;
-            min-height:72px;
-            padding:4px 0;
-            overflow:hidden;
-          }
+          #modal-pedido .ayuda-pago{display:block;margin-top:2px;color:#647068;font-size:12px;line-height:1.45}
+          #modal-pedido .nota-despacho{margin:0;padding:12px 14px;border-radius:12px;background:#f4f8f4;color:#4f5d55;font-size:13px;line-height:1.5}
+          #modal-pedido [aria-label="Verificación de seguridad"]{display:flex;justify-content:center;min-height:72px;padding:4px 0;overflow:hidden}
           #modal-pedido .cf-turnstile{max-width:100%}
           #modal-pedido .mensaje-pedido{min-height:0;margin:0;color:#26352d}
           #modal-pedido .mensaje-pedido.error{color:#a43131}
           #modal-pedido .boton-enviar-pedido{min-height:56px;margin-top:0}
-          @media(max-width:680px){
-            #modal-pedido{padding:10px}
-            #modal-pedido .modal-pedido-contenido{width:100%;max-height:94vh;padding:24px 18px;border-radius:24px}
-            #modal-pedido .formulario-pedido{grid-template-columns:1fr;gap:14px}
-            #modal-pedido .campo-completo{grid-column:1}
-            #modal-pedido .pedido-modal-encabezado{padding-right:34px}
-          }
+          @media(max-width:680px){#modal-pedido{padding:10px}#modal-pedido .modal-pedido-contenido{width:100%;max-height:94vh;padding:24px 18px;border-radius:24px}#modal-pedido .formulario-pedido{grid-template-columns:1fr;gap:14px}#modal-pedido .campo-completo{grid-column:1}#modal-pedido .pedido-modal-encabezado{padding-right:34px}}
         `;
-
         document.getElementById(estilo.id)?.remove();
         document.head.append(estilo);
     }
-
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", corregirModalPedido, { once: true });
-    } else {
-        corregirModalPedido();
-    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", corregirModalPedido, { once: true });
+    else corregirModalPedido();
 })();
 
 /* Mejoras de calidad multimedia: usa los videos web y evita zoom/cortes innecesarios. */
@@ -312,92 +232,39 @@ window.REORGANICO_IMAGENES_PRODUCTOS = {
         ["videos/nuestro-trabajo/proceso-organico-lite.mp4", "videos/nuestro-trabajo/proceso-organico-web.mp4"],
         ["videos/nuestro-trabajo/bolsa-re-organico-compostando-lite.mp4", "videos/nuestro-trabajo/bolsa-re-organico-compostando-web.mp4"]
     ]);
-
     function mejorarVideos() {
         document.querySelectorAll("video source[src]").forEach((source) => {
             const srcOriginal = source.getAttribute("src") || "";
             const srcNuevo = reemplazosVideo.get(srcOriginal);
             if (!srcNuevo || source.dataset.calidadWeb === "1") return;
-
             source.setAttribute("src", srcNuevo);
             source.dataset.calidadWeb = "1";
-
             const video = source.closest("video");
-            if (video) {
-                video.preload = "metadata";
-                video.dataset.calidadWeb = "1";
-                video.load();
-            }
+            if (video) { video.preload = "metadata"; video.dataset.calidadWeb = "1"; video.load(); }
         });
     }
-
     function aplicarEstilosMultimedia() {
         const estilo = document.createElement("style");
         estilo.id = "reorganico-mejora-multimedia";
         estilo.textContent = `
-          /* Videos: mostrar el cuadro completo sin agrandarlo/cortarlo artificialmente. */
-          .impacto-video-marco{
-            background:#081d15!important;
-          }
-          .impacto-video-marco video{
-            width:100%!important;
-            height:100%!important;
-            object-fit:contain!important;
-            object-position:center!important;
-            background:#081d15!important;
-            filter:none!important;
-            image-rendering:auto!important;
-          }
-
-          /* Catálogo: evita deformaciones y filtros que resten nitidez. */
-          .producto-visual .imagen-producto-escena{
-            width:100%!important;
-            height:100%!important;
-            object-position:center!important;
-            transform:none!important;
-            filter:none!important;
-            image-rendering:auto!important;
-          }
-
-          /* En el detalle del producto es más importante ver el producto completo que recortarlo. */
-          #modal-producto-visual .imagen-producto-escena{
-            object-fit:contain!important;
-            object-position:center!important;
-            background:#eef5e9!important;
-            filter:none!important;
-            image-rendering:auto!important;
-          }
-
-          /* Portada: mantener el encuadre sin filtros ni escalados extra. */
-          .hero-portada-nueva .hero-diapositiva img{
-            filter:none!important;
-            image-rendering:auto!important;
-          }
-
-          @media(max-width:700px){
-            .impacto-video-marco video{
-              object-fit:contain!important;
-            }
-          }
+          .impacto-video-marco{background:#081d15!important}
+          .impacto-video-marco video{width:100%!important;height:100%!important;object-fit:contain!important;object-position:center!important;background:#081d15!important;filter:none!important;image-rendering:auto!important}
+          .producto-visual .imagen-producto-escena{width:100%!important;height:100%!important;object-position:center!important;transform:none!important;filter:none!important;image-rendering:auto!important}
+          #modal-producto-visual .imagen-producto-escena{object-fit:contain!important;object-position:center!important;background:#eef5e9!important;filter:none!important;image-rendering:auto!important}
+          .hero-portada-nueva .hero-diapositiva img{filter:none!important;image-rendering:auto!important}
+          @media(max-width:700px){.impacto-video-marco video{object-fit:contain!important}}
         `;
-
         document.getElementById(estilo.id)?.remove();
         document.head.append(estilo);
     }
-
     function iniciarMejorasMultimedia() {
         aplicarEstilosMultimedia();
         mejorarVideos();
-
         const observador = new MutationObserver(() => mejorarVideos());
         observador.observe(document.body, { childList: true, subtree: true });
     }
-
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", iniciarMejorasMultimedia, { once: true });
-    } else {
-        iniciarMejorasMultimedia();
-    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciarMejorasMultimedia, { once: true });
+    else iniciarMejorasMultimedia();
 })();
 
 
@@ -405,39 +272,20 @@ window.REORGANICO_IMAGENES_PRODUCTOS = {
 (() => {
     const iconoInstagram = `
       <svg class="icono-red icono-instagram-real" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-        <defs>
-          <radialGradient id="reorganico-instagram-gradient" cx="30%" cy="107%" r="140%">
-            <stop offset="0%" stop-color="#fdf497"/>
-            <stop offset="20%" stop-color="#fdf497"/>
-            <stop offset="40%" stop-color="#fd5949"/>
-            <stop offset="60%" stop-color="#d6249f"/>
-            <stop offset="90%" stop-color="#285AEB"/>
-          </radialGradient>
-        </defs>
+        <defs><radialGradient id="reorganico-instagram-gradient" cx="30%" cy="107%" r="140%"><stop offset="0%" stop-color="#fdf497"/><stop offset="20%" stop-color="#fdf497"/><stop offset="40%" stop-color="#fd5949"/><stop offset="60%" stop-color="#d6249f"/><stop offset="90%" stop-color="#285AEB"/></radialGradient></defs>
         <rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="url(#reorganico-instagram-gradient)"/>
-        <rect x="8" y="8" width="16" height="16" rx="5" fill="none" stroke="#fff" stroke-width="2.4"/>
-        <circle cx="16" cy="16" r="4" fill="none" stroke="#fff" stroke-width="2.4"/>
-        <circle cx="22" cy="10.3" r="1.45" fill="#fff"/>
+        <rect x="8" y="8" width="16" height="16" rx="5" fill="none" stroke="#fff" stroke-width="2.4"/><circle cx="16" cy="16" r="4" fill="none" stroke="#fff" stroke-width="2.4"/><circle cx="22" cy="10.3" r="1.45" fill="#fff"/>
       </svg>`;
-
     const iconoWhatsApp = `
       <svg class="icono-red icono-whatsapp-real" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
         <circle cx="16" cy="16" r="15.3" fill="#25D366"/>
         <path fill="#fff" d="M24.2 7.8A12.38 12.38 0 0 0 16.1 4.5C9.8 4.5 4.7 9.5 4.7 15.6c0 2 .5 3.9 1.5 5.6L4.6 27l6-1.5c1.6.9 3.5 1.3 5.4 1.3h.1c6.3 0 11.4-5 11.4-11.1 0-3-1.2-5.8-3.3-7.9Zm-8.1 17.1H16c-1.7 0-3.4-.5-4.8-1.3l-.3-.2-3.6.9 1-3.4-.2-.4a8.9 8.9 0 0 1-1.4-4.9c0-4.9 4.2-9 9.4-9 2.5 0 4.9.9 6.7 2.7a8.6 8.6 0 0 1 2.7 6.4c-.1 5-4.3 9.2-9.4 9.2Zm5.2-6.8c-.3-.1-1.7-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.6-1.5-.9-2.1-.2-.5-.5-.5-.6-.5h-.5c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.7 1.2 2.9c.1.2 2 3 4.8 4.2.7.3 1.2.4 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.2-1.3-.1-.2-.3-.3-.6-.4Z"/>
       </svg>`;
-
     function aplicarLogosReales() {
-        document.querySelectorAll(".trabajo-instagram").forEach((enlace) => {
-            enlace.innerHTML = `${iconoInstagram}<span>Ver Instagram</span>`;
-        });
-
+        document.querySelectorAll(".trabajo-instagram").forEach((enlace) => { enlace.innerHTML = `${iconoInstagram}<span>Ver Instagram</span>`; });
         const flotante = document.getElementById("whatsapp-flotante");
-        if (flotante) {
-            flotante.innerHTML = iconoWhatsApp;
-            flotante.setAttribute("aria-label", "Contactar por WhatsApp");
-        }
+        if (flotante) { flotante.innerHTML = iconoWhatsApp; flotante.setAttribute("aria-label", "Contactar por WhatsApp"); }
     }
-
     function instalarEstilosLogos() {
         if (document.getElementById("reorganico-estilos-logos-reales")) return;
         const estilo = document.createElement("style");
@@ -451,17 +299,37 @@ window.REORGANICO_IMAGENES_PRODUCTOS = {
         `;
         document.head.appendChild(estilo);
     }
-
-    function iniciarLogosReales() {
-        instalarEstilosLogos();
-        aplicarLogosReales();
-    }
-
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", iniciarLogosReales, { once: true });
-    } else {
-        iniciarLogosReales();
-    }
-
+    function iniciarLogosReales() { instalarEstilosLogos(); aplicarLogosReales(); }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciarLogosReales, { once: true });
+    else iniciarLogosReales();
     window.addEventListener("load", aplicarLogosReales, { once: true });
+})();
+
+/* REORGANICO_YOUTUBE_FLOTANTE */
+(() => {
+    const YOUTUBE_URL = "https://www.youtube.com/@reorganico9949";
+    function instalarYouTube() {
+        const contenedor = document.querySelector(".contenedor-flotantes");
+        if (!contenedor || document.getElementById("youtube-flotante")) return;
+        const boton = document.createElement("a");
+        boton.id = "youtube-flotante";
+        boton.href = YOUTUBE_URL;
+        boton.target = "_blank";
+        boton.rel = "noopener noreferrer";
+        boton.className = "boton-red-social btn-youtube";
+        boton.setAttribute("aria-label", "Visitar YouTube de Re Orgánico");
+        boton.title = "YouTube Re Orgánico";
+        boton.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.8V8.2l6.5 3.8-6.5 3.8Z" fill="currentColor"/></svg>`;
+        contenedor.appendChild(boton);
+    }
+    const estilo = document.createElement("style");
+    estilo.textContent = `
+      #youtube-flotante{display:flex!important;align-items:center!important;justify-content:center!important;text-decoration:none!important;padding:0!important;background:#ff0000!important;border:3px solid #fff!important;box-shadow:0 8px 24px rgba(0,0,0,.22)!important;color:#fff!important;transition:transform .2s ease!important}
+      #youtube-flotante svg{width:34px!important;height:34px!important;display:block!important}
+      #youtube-flotante:hover{transform:translateY(-2px) scale(1.04)!important}
+      @media(max-width:700px){#youtube-flotante svg{width:30px!important;height:30px!important}}
+    `;
+    document.head.appendChild(estilo);
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", instalarYouTube, { once: true });
+    else instalarYouTube();
 })();

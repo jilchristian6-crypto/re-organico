@@ -1,0 +1,122 @@
+name: Rotar fotos de productos en el catalogo
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  rotacion:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Agregar rotacion automatica de fotos
+        run: |
+          cat > galeria-rotacion-productos.js <<'EOF'
+          "use strict";
+
+          (() => {
+              const INTERVALO = 3500;
+              const TRANSICION = 650;
+              const temporizadores = new WeakMap();
+
+              function rutasProducto(id) {
+                  const mapa = window.REORGANICO_IMAGENES_PRODUCTOS || {};
+                  const valor = mapa[id];
+                  if (!Array.isArray(valor) || valor.length < 2) return [];
+                  return valor.filter(Boolean);
+              }
+
+              function prepararTarjeta(tarjeta) {
+                  if (tarjeta.dataset.rotacionFotos === "true") return;
+
+                  const id = tarjeta.dataset.id;
+                  const rutas = rutasProducto(id);
+                  if (rutas.length < 2) return;
+
+                  const visual = tarjeta.querySelector(".producto-visual");
+                  if (!visual) return;
+
+                  const iniciar = () => {
+                      const imagen = visual.querySelector("img.producto-imagen, img.imagen-producto-escena");
+                      if (!imagen) return;
+
+                      tarjeta.dataset.rotacionFotos = "true";
+                      imagen.style.transition = `opacity ${TRANSICION}ms ease`;
+                      imagen.style.opacity = "1";
+                      imagen.dataset.rotacionProducto = "true";
+
+                      let indice = 0;
+                      const cambiar = () => {
+                          indice = (indice + 1) % rutas.length;
+                          imagen.style.opacity = "0.15";
+
+                          window.setTimeout(() => {
+                              imagen.src = rutas[indice];
+                              imagen.style.opacity = "1";
+                          }, TRANSICION / 2);
+                      };
+
+                      const temporizador = window.setInterval(cambiar, INTERVALO);
+                      temporizadores.set(tarjeta, temporizador);
+                  };
+
+                  iniciar();
+
+                  const espera = window.setInterval(() => {
+                      if (tarjeta.dataset.rotacionFotos === "true") {
+                          window.clearInterval(espera);
+                          return;
+                      }
+                      iniciar();
+                  }, 150);
+
+                  window.setTimeout(() => window.clearInterval(espera), 5000);
+              }
+
+              function aplicar() {
+                  document.querySelectorAll("article.producto[data-id]").forEach(prepararTarjeta);
+              }
+
+              function iniciar() {
+                  aplicar();
+                  const catalogo = document.getElementById("lista-productos");
+                  if (catalogo) {
+                      new MutationObserver(aplicar).observe(catalogo, { childList: true, subtree: true });
+                  }
+              }
+
+              if (document.readyState === "loading") {
+                  document.addEventListener("DOMContentLoaded", iniciar, { once: true });
+              } else {
+                  iniciar();
+              }
+          })();
+          EOF
+
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          tag = '    <script src="galeria-rotacion-productos.js"></script>'
+          if tag not in s:
+              marker = '    <script src="cms-publico.js"></script>'
+              if marker not in s:
+                  raise SystemExit('No se encontro el bloque de scripts publico')
+              s = s.replace(marker, marker + '\n' + tag, 1)
+              p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Guardar cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add galeria-rotacion-productos.js index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "feat: rotar fotos de productos en el catalogo"
+          git push

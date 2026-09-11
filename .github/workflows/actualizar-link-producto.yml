@@ -1,0 +1,86 @@
+name: Actualizar Link de Producto
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cambiar botón y activar copia
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('script.js')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('enlace.textContent = "🔗 Ver producto";', 'enlace.textContent = "🔗 Link de Producto";')
+          marker = '/* Re Orgánico: copiar link de producto al hacer clic */'
+          if marker not in s:
+              block = r'''
+
+          /* Re Orgánico: copiar link de producto al hacer clic */
+          (() => {
+              const CLASE = '.enlace-producto-directo';
+
+              function activarCopia() {
+                  document.querySelectorAll(CLASE).forEach((enlace) => {
+                      if (enlace.dataset.copiaActivada === '1') return;
+                      enlace.dataset.copiaActivada = '1';
+                      enlace.addEventListener('click', async (evento) => {
+                          evento.preventDefault();
+                          const url = enlace.href;
+                          const textoOriginal = '🔗 Link de Producto';
+                          try {
+                              await navigator.clipboard.writeText(url);
+                              enlace.textContent = '✓ Link copiado';
+                          } catch (error) {
+                              const auxiliar = document.createElement('textarea');
+                              auxiliar.value = url;
+                              auxiliar.style.position = 'fixed';
+                              auxiliar.style.opacity = '0';
+                              document.body.appendChild(auxiliar);
+                              auxiliar.select();
+                              document.execCommand('copy');
+                              auxiliar.remove();
+                              enlace.textContent = '✓ Link copiado';
+                          }
+                          setTimeout(() => {
+                              enlace.textContent = textoOriginal;
+                          }, 1800);
+                      });
+                  });
+              }
+
+              const iniciar = () => {
+                  activarCopia();
+                  const catalogo = document.getElementById('lista-productos');
+                  if (catalogo) {
+                      new MutationObserver(activarCopia).observe(catalogo, { childList: true, subtree: true });
+                  }
+              };
+
+              if (document.readyState === 'loading') {
+                  document.addEventListener('DOMContentLoaded', iniciar, { once: true });
+              } else {
+                  iniciar();
+              }
+          })();
+          '''
+              p.write_text(s + block, encoding='utf-8')
+          else:
+              p.write_text(s, encoding='utf-8')
+          PY
+      - name: Guardar cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add script.js
+          git diff --cached --quiet && exit 0
+          git commit -m "feat: copiar link del producto al hacer clic"
+          git push

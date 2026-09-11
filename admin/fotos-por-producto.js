@@ -96,46 +96,87 @@
         const formulario = document.getElementById("formulario-galeria");
         if (!seccion || !destino || !formulario) return;
 
-        const esCarrusel = destino.value === "carrusel";
-        seccion.classList.toggle("modo-carrusel-solo-fotos", esCarrusel);
+        const blogActivo = Boolean(document.querySelector('[data-seccion-panel="blog"].activa'));
+        const carruselActivo = Boolean(document.querySelector('[data-seccion-panel="carrusel"].activa'));
 
-        if (!esCarrusel) return;
+        if (blogActivo) destino.value = "blog";
+        else if (carruselActivo) destino.value = "carrusel";
+
+        const esCarrusel = destino.value === "carrusel" && !blogActivo;
+        seccion.classList.toggle("modo-carrusel-solo-fotos", esCarrusel);
 
         const titulo = document.getElementById("titulo-formulario-galeria");
         const modo = document.getElementById("modo-galeria");
         const ayuda = document.getElementById("ayuda-destino-contenido");
         const boton = document.getElementById("guardar-contenido");
         const archivo = document.getElementById("galeria-archivo");
-
-        if (modo) modo.textContent = "Carrusel principal";
-        if (titulo) titulo.textContent = "Subir fotos al carrusel";
-        if (ayuda) ayuda.textContent = "Selecciona una o varias fotos. Se agregarán directamente al carrusel principal.";
-        if (boton) boton.textContent = "📸 Subir fotos";
-        if (archivo) {
-            archivo.accept = "image/jpeg,image/png,image/webp";
-            archivo.multiple = true;
-        }
-
-        ocultarCampo("galeria-destino");
-        ocultarCampo("galeria-titulo");
-        ocultarCampo("galeria-descripcion");
-        ocultarCampo("galeria-orden");
-        ocultarCampo("galeria-activo");
-
         const campoTitulo = document.getElementById("galeria-titulo");
         const campoDescripcion = document.getElementById("galeria-descripcion");
         const campoOrden = document.getElementById("galeria-orden");
         const campoActivo = document.getElementById("galeria-activo");
-        if (campoTitulo) campoTitulo.required = false;
-        if (campoDescripcion) campoDescripcion.required = false;
-        if (campoOrden) campoOrden.required = false;
-        if (campoActivo) campoActivo.checked = true;
+
+        if (esCarrusel) {
+            if (modo) modo.textContent = "Carrusel principal";
+            if (titulo) titulo.textContent = "Subir fotos al carrusel";
+            if (ayuda) ayuda.textContent = "Selecciona una o varias fotos. Se agregarán directamente al carrusel principal.";
+            if (boton) boton.textContent = "📸 Subir fotos";
+            if (archivo) {
+                archivo.accept = "image/jpeg,image/png,image/webp";
+                archivo.multiple = true;
+            }
+
+            ocultarCampo("galeria-destino");
+            ocultarCampo("galeria-titulo");
+            ocultarCampo("galeria-descripcion");
+            ocultarCampo("galeria-orden");
+            ocultarCampo("galeria-activo");
+
+            if (campoTitulo) campoTitulo.required = false;
+            if (campoDescripcion) campoDescripcion.required = false;
+            if (campoOrden) campoOrden.required = false;
+            if (campoActivo) campoActivo.checked = true;
+            return;
+        }
+
+        if (blogActivo || destino.value === "blog") {
+            if (modo) modo.textContent = "Nuestro Blog";
+            if (titulo) titulo.textContent = "Publicar en Nuestro Blog";
+            if (ayuda) ayuda.textContent = "Completa el título y la descripción, luego selecciona una foto o video para publicar la entrada.";
+            if (boton) boton.textContent = "📝 Publicar contenido";
+            if (archivo) {
+                archivo.accept = "image/jpeg,image/png,image/webp,video/mp4,video/webm";
+                archivo.multiple = false;
+            }
+
+            mostrarCampo("galeria-destino");
+            mostrarCampo("galeria-titulo");
+            mostrarCampo("galeria-descripcion");
+            mostrarCampo("galeria-orden");
+            mostrarCampo("galeria-activo");
+
+            if (campoTitulo) {
+                campoTitulo.required = true;
+                campoTitulo.placeholder = "Ej: Cómo hacer compost en casa";
+            }
+            if (campoDescripcion) {
+                campoDescripcion.required = true;
+                campoDescripcion.placeholder = "Escribe una descripción para la publicación del blog";
+            }
+            if (campoOrden) campoOrden.required = false;
+            if (campoActivo) campoActivo.checked = true;
+        }
     }
 
     function ocultarCampo(id) {
         const elemento = document.getElementById(id);
         const campo = elemento?.closest(".campo");
         if (campo) campo.hidden = true;
+    }
+
+    function mostrarCampo(id) {
+        const elemento = document.getElementById(id);
+        const campo = elemento?.closest(".campo");
+        if (campo) campo.hidden = false;
     }
 
     async function subirFotosCarrusel(archivos) {

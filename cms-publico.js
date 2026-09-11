@@ -83,35 +83,97 @@
     }
 
     function abrirCompartir(id, tarjeta) {
-        const url = URL_PRODUCTO(id); const nombre = NOMBRE(tarjeta); const texto = `Mira este producto de Re Orgánico: ${nombre}`; const u = encodeURIComponent(url); const t = encodeURIComponent(texto);
+        const url = URL_PRODUCTO(id);
+        const nombre = NOMBRE(tarjeta);
         let modal = document.getElementById("modal-compartir-reorganico");
         if (!modal) {
-            modal = document.createElement("div"); modal.id = "modal-compartir-reorganico";
-            modal.innerHTML = `<div class="compartir-caja"><button class="compartir-cerrar" type="button">×</button><span>Compartir producto</span><h2></h2><div class="compartir-opciones"><button data-red="whatsapp">WhatsApp</button><button data-red="facebook">Facebook</button><button data-red="instagram">Instagram</button><button data-red="x">X</button><button data-red="telegram">Telegram</button><button data-red="linkedin">LinkedIn</button><button data-red="email">Email</button><button data-red="copiar">⧉ Copiar enlace</button></div><button class="compartir-nativo" data-red="nativo">↗ Compartir del dispositivo</button></div>`;
+            modal = document.createElement("div");
+            modal.id = "modal-compartir-reorganico";
+            modal.innerHTML = `<div class="compartir-caja" role="dialog" aria-modal="true" aria-labelledby="titulo-compartir-reorganico"><button class="compartir-cerrar" type="button" aria-label="Cerrar">×</button><span>Compartir producto</span><h2 id="titulo-compartir-reorganico"></h2><div class="compartir-opciones"><button type="button" data-red="whatsapp">WhatsApp</button><button type="button" data-red="facebook">Facebook</button><button type="button" data-red="instagram">Instagram</button><button type="button" data-red="x">X</button><button type="button" data-red="telegram">Telegram</button><button type="button" data-red="linkedin">LinkedIn</button><button type="button" data-red="email">Email</button><button type="button" data-red="copiar">⧉ Copiar enlace</button></div><button class="compartir-nativo" type="button" data-red="nativo">↗ Compartir del dispositivo</button></div>`;
             document.body.append(modal);
-            modal.querySelector(".compartir-cerrar").onclick = () => { modal.classList.remove("activo"); document.body.style.overflow = ""; };
+            modal.querySelector(".compartir-cerrar").onclick = cerrar;
             modal.addEventListener("click", async (e) => {
-                const accion = e.target.closest("[data-red]")?.dataset.red; if (!accion) return;
-                if (accion === "copiar" || accion === "instagram") { await copiar(modal.dataset.url); if (accion === "instagram") window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer"); e.target.textContent = "✓ Enlace copiado"; setTimeout(() => e.target.textContent = accion === "instagram" ? "Instagram" : "⧉ Copiar enlace", 1600); return; }
-                if (accion === "nativo") { if (navigator.share) await navigator.share({ title: modal.dataset.nombre, text: `Mira este producto de Re Orgánico: ${modal.dataset.nombre}`, url: modal.dataset.url }); return; }
-                const destinos = { whatsapp:`https://wa.me/?text=${encodeURIComponent(`${texto}\n${url}`)}`, facebook:`https://www.facebook.com/sharer/sharer.php?u=${u}`, x:`https://twitter.com/intent/tweet?text=${t}&url=${u}`, telegram:`https://t.me/share/url?url=${u}&text=${t}`, linkedin:`https://www.linkedin.com/sharing/share-offsite/?url=${u}`, email:`mailto:?subject=${encodeURIComponent(nombre)}&body=${encodeURIComponent(`${texto}\n\n${url}`)}` };
-                if (destinos[accion]) window.open(destinos[accion], "_blank", "noopener,noreferrer");
+                if (e.target === modal) { cerrar(); return; }
+                const boton = e.target.closest("[data-red]");
+                const accion = boton?.dataset.red;
+                if (!accion) return;
+                const enlace = modal.dataset.url;
+                const nombreActual = modal.dataset.nombre || "Producto Re Orgánico";
+                const texto = `Mira este producto de Re Orgánico: ${nombreActual}`;
+                const u = encodeURIComponent(enlace);
+                const t = encodeURIComponent(texto);
+
+                try {
+                    if (accion === "copiar") {
+                        await copiar(enlace);
+                        boton.textContent = "✓ Enlace copiado";
+                        setTimeout(() => boton.textContent = "⧉ Copiar enlace", 1600);
+                        return;
+                    }
+                    if (accion === "instagram") {
+                        await copiar(enlace);
+                        window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
+                        boton.textContent = "✓ Enlace copiado";
+                        setTimeout(() => boton.textContent = "Instagram", 1600);
+                        return;
+                    }
+                    if (accion === "nativo") {
+                        if (navigator.share) {
+                            await navigator.share({ title: nombreActual, text: texto, url: enlace });
+                        } else {
+                            await copiar(enlace);
+                            alert("Tu navegador no tiene compartir nativo. El enlace fue copiado.");
+                        }
+                        return;
+                    }
+                    const destinos = {
+                        whatsapp: `https://wa.me/?text=${encodeURIComponent(`${texto}\n${enlace}`)}`,
+                        facebook: `https://www.facebook.com/sharer/sharer.php?u=${u}`,
+                        x: `https://twitter.com/intent/tweet?text=${t}&url=${u}`,
+                        telegram: `https://t.me/share/url?url=${u}&text=${t}`,
+                        linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${u}`,
+                        email: `mailto:?subject=${encodeURIComponent(nombreActual)}&body=${encodeURIComponent(`${texto}\n\n${enlace}`)}`
+                    };
+                    if (destinos[accion]) window.open(destinos[accion], "_blank", "noopener,noreferrer");
+                } catch (error) {
+                    if (error?.name !== "AbortError") console.error("Error al compartir producto:", error);
+                }
             });
         }
-        modal.dataset.url = url; modal.dataset.nombre = nombre; modal.querySelector("h2").textContent = nombre; modal.classList.add("activo"); document.body.style.overflow = "hidden";
+
+        modal.dataset.url = url;
+        modal.dataset.nombre = nombre;
+        modal.querySelector("h2").textContent = nombre;
+        modal.classList.add("activo");
+        document.body.style.overflow = "hidden";
+    }
+
+    function cerrar() {
+        const modal = document.getElementById("modal-compartir-reorganico");
+        if (!modal) return;
+        modal.classList.remove("activo");
+        document.body.style.overflow = "";
     }
 
     function instalar() {
         document.querySelectorAll("article.producto[data-id]").forEach((tarjeta) => {
-            const id = tarjeta.dataset.id; if (!id || tarjeta.querySelector(`.${BOTON}`)) return;
-            tarjeta.querySelectorAll(".enlace-producto-directo").forEach((e) => e.remove());
-            const boton = document.createElement("button"); boton.type = "button"; boton.className = BOTON; boton.textContent = "↗ Compartir"; boton.addEventListener("click", () => abrirCompartir(id, tarjeta));
+            const id = tarjeta.dataset.id;
+            if (!id || tarjeta.querySelector(`.${BOTON}`)) return;
+            const boton = document.createElement("button");
+            boton.type = "button";
+            boton.className = BOTON;
+            boton.textContent = "↗ Compartir";
+            boton.setAttribute("aria-label", `Compartir ${NOMBRE(tarjeta)}`);
+            boton.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); abrirCompartir(id, tarjeta); });
             (tarjeta.querySelector(".producto-acciones") || tarjeta).append(boton);
         });
     }
 
-    const estilo = document.createElement("style"); estilo.textContent = `.boton-compartir-producto{display:inline-flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;padding:9px 13px;border:1px solid #6f9b73;border-radius:999px;background:#f3f8f1;color:#2f6840;font-size:13px;font-weight:800;cursor:pointer}.boton-compartir-producto:hover{background:#e5f0e3}.modal-compartir-producto{position:fixed;inset:0;z-index:99999;display:none}.modal-compartir-producto.activo{display:block}.compartir-caja{position:relative;width:min(94vw,520px);margin:8vh auto 0;padding:28px;border-radius:22px;background:#fff;box-shadow:0 24px 70px rgba(0,0,0,.25)}.compartir-cerrar{position:absolute;top:12px;right:14px;width:38px;height:38px;border:0;border-radius:50%;background:#edf4ed;color:#205b38;font-size:25px;cursor:pointer}.compartir-caja span{color:#438052;font-size:12px;font-weight:900;text-transform:uppercase}.compartir-caja h2{margin:7px 42px 18px 0;color:#173c27;font-size:22px}.compartir-opciones{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.compartir-opciones button,.compartir-nativo{min-height:44px;border:1px solid #d7e3d8;border-radius:12px;background:#f7faf7;color:#205b38;font-weight:800;cursor:pointer;padding:10px 12px}.compartir-opciones button:hover,.compartir-nativo:hover{background:#e9f2e9}.compartir-nativo{width:100%;margin-top:10px}@media(max-width:600px){.compartir-caja{margin:4vh auto 0;padding:24px 18px}}`; document.head.append(estilo);
+    const estilo = document.createElement("style");
+    estilo.textContent = `.boton-compartir-producto{display:inline-flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;padding:9px 13px;border:1px solid #6f9b73;border-radius:999px;background:#f3f8f1;color:#2f6840;font-size:13px;font-weight:800;cursor:pointer}.boton-compartir-producto:hover{background:#e5f0e3}.boton-compartir-producto:focus-visible{outline:3px solid rgba(47,104,64,.28);outline-offset:2px}.modal-compartir-reorganico{position:fixed;inset:0;z-index:99999;display:none;align-items:flex-start;justify-content:center;padding:8vh 16px;background:rgba(14,35,23,.58);box-sizing:border-box;overflow:auto}.modal-compartir-reorganico.activo{display:flex}.compartir-caja{position:relative;width:min(94vw,520px);padding:28px;border-radius:22px;background:#fff;box-shadow:0 24px 70px rgba(0,0,0,.25);box-sizing:border-box}.compartir-cerrar{position:absolute;top:12px;right:14px;width:38px;height:38px;border:0;border-radius:50%;background:#edf4ed;color:#205b38;font-size:25px;cursor:pointer}.compartir-caja span{color:#438052;font-size:12px;font-weight:900;text-transform:uppercase}.compartir-caja h2{margin:7px 42px 18px 0;color:#173c27;font-size:22px}.compartir-opciones{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.compartir-opciones button,.compartir-nativo{min-height:44px;border:1px solid #d7e3d8;border-radius:12px;background:#f7faf7;color:#205b38;font-weight:800;cursor:pointer;padding:10px 12px}.compartir-opciones button:hover,.compartir-nativo:hover{background:#e9f2e9}.compartir-nativo{width:100%;margin-top:10px}@media(max-width:600px){.modal-compartir-reorganico{padding:4vh 10px}.compartir-caja{width:100%;padding:24px 18px}.compartir-opciones{grid-template-columns:1fr 1fr}}`;
+    document.head.append(estilo);
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", instalar, { once: true }); else instalar();
-    const catalogo = document.getElementById("lista-productos"); if (catalogo) new MutationObserver(instalar).observe(catalogo, { childList:true, subtree:true });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") document.querySelector("#modal-compartir-reorganico .compartir-cerrar")?.click(); });
+    const catalogo = document.getElementById("lista-productos");
+    if (catalogo) new MutationObserver(instalar).observe(catalogo, { childList:true, subtree:true });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") cerrar(); });
 })();

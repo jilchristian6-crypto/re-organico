@@ -1,0 +1,152 @@
+name: Mostrar enlace compartible
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  agregar-enlace:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Agregar bloque de enlace compartible
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('script.js')
+          s = p.read_text(encoding='utf-8')
+          marker = '/* Re Orgánico: enlace visible y copiable en el detalle */'
+          if marker in s:
+              print('El bloque ya existe. No se modifica nada.')
+              raise SystemExit(0)
+          block = r'''
+          
+          /* Re Orgánico: enlace visible y copiable en el detalle */
+          (() => {
+              const PARAMETRO = 'producto';
+              const MARCADOR = 'enlace-compartible-producto';
+
+              function urlProducto(id) {
+                  const url = new URL(window.location.href);
+                  url.searchParams.set(PARAMETRO, id);
+                  url.hash = 'productos';
+                  return url.toString();
+              }
+
+              function obtenerId() {
+                  try {
+                      return new URL(window.location.href).searchParams.get(PARAMETRO);
+                  } catch (e) {
+                      return null;
+                  }
+              }
+
+              function agregarEnlaceVisible() {
+                  const modal = document.getElementById('modal-producto');
+                  if (!modal || modal.querySelector('.' + MARCADOR)) return;
+
+                  const id = obtenerId();
+                  if (!id) return;
+
+                  const botonCerrar = modal.querySelector('[data-accion="cerrar-modal"], .cerrar-modal, button[aria-label*="errar"]');
+                  const contenedor = modal.querySelector('.modal-producto-contenido, .contenido-modal, .modal-contenido') || modal;
+                  const caja = document.createElement('div');
+                  caja.className = MARCADOR;
+                  caja.innerHTML = `
+                      <div class="titulo-enlace-producto">🔗 Enlace de este producto</div>
+                      <div class="fila-enlace-producto">
+                          <input type="text" readonly value="${urlProducto(id).replace(/&/g, '&amp;').replace(/"/g, '&quot;')}" aria-label="Enlace directo del producto">
+                          <button type="button" data-copiar-producto="1">Copiar enlace</button>
+                      </div>
+                      <div class="texto-enlace-producto">Puedes copiar este enlace y enviárselo directamente a un cliente.</div>
+                  `;
+
+                  if (botonCerrar && botonCerrar.parentElement) {
+                      botonCerrar.parentElement.insertBefore(caja, botonCerrar);
+                  } else {
+                      contenedor.appendChild(caja);
+                  }
+
+                  const copiar = caja.querySelector('[data-copiar-producto="1"]');
+                  copiar.addEventListener('click', async () => {
+                      const input = caja.querySelector('input');
+                      try {
+                          await navigator.clipboard.writeText(input.value);
+                          copiar.textContent = '✓ Enlace copiado';
+                          setTimeout(() => copiar.textContent = 'Copiar enlace', 1800);
+                      } catch (e) {
+                          input.select();
+                          document.execCommand('copy');
+                          copiar.textContent = '✓ Enlace copiado';
+                          setTimeout(() => copiar.textContent = 'Copiar enlace', 1800);
+                      }
+                  });
+              }
+
+              const estilo = document.createElement('style');
+              estilo.textContent = `
+                  .enlace-compartible-producto {
+                      margin: 20px 0 8px;
+                      padding: 14px;
+                      border: 1px solid #d8e4da;
+                      border-radius: 14px;
+                      background: #f5f9f5;
+                  }
+                  .titulo-enlace-producto {
+                      margin-bottom: 9px;
+                      color: #165b38;
+                      font-weight: 800;
+                      font-size: 14px;
+                  }
+                  .fila-enlace-producto {
+                      display: flex;
+                      gap: 8px;
+                  }
+                  .fila-enlace-producto input {
+                      min-width: 0;
+                      flex: 1;
+                      padding: 10px 11px;
+                      border: 1px solid #d5dcd7;
+                      border-radius: 9px;
+                      background: #fff;
+                      color: #555;
+                      font-size: 12px;
+                  }
+                  .fila-enlace-producto button {
+                      padding: 10px 13px;
+                      border: 0;
+                      border-radius: 9px;
+                      background: #195b38;
+                      color: #fff;
+                      font-weight: 800;
+                      cursor: pointer;
+                      white-space: nowrap;
+                  }
+                  .texto-enlace-producto {
+                      margin-top: 7px;
+                      color: #68736c;
+                      font-size: 12px;
+                  }
+                  @media (max-width: 600px) {
+                      .fila-enlace-producto { flex-direction: column; }
+                  }
+              `;
+              document.head.appendChild(estilo);
+
+              const observer = new MutationObserver(agregarEnlaceVisible);
+              observer.observe(document.body, { childList: true, subtree: true });
+              agregarEnlaceVisible();
+          })();
+          '''
+          p.write_text(s + block, encoding='utf-8')
+          PY
+      - name: Commit y push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add script.js
+          git diff --cached --quiet && exit 0
+          git commit -m "feat: mostrar enlace copiable de cada producto"
+          git push

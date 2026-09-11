@@ -1,8 +1,16 @@
 "use strict";
 (() => {
     const BUCKET = "productos";
-    const TIPOS = new Set(["image/jpeg", "image/png", "image/webp"]);
+    const TIPOS_FOTO = new Set(["image/jpeg", "image/png", "image/webp"]);
+    const TIPOS_CONTENIDO = new Set([
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "video/mp4",
+        "video/webm"
+    ]);
     const MAX_FOTO = 10 * 1024 * 1024;
+    const MAX_CONTENIDO = 100 * 1024 * 1024;
     let cliente = null;
     let input = null;
     let productoIdActual = "";
@@ -28,24 +36,19 @@
 
         crearInput();
         agregarBotones();
-        configurarCarruselSoloFotos();
+        configurarFormularioContenido();
 
         const lista = document.getElementById("lista-admin");
         if (lista) {
             new MutationObserver(() => {
                 agregarBotones();
-                configurarCarruselSoloFotos();
-            }).observe(lista, {
-                childList: true,
-                subtree: true
-            });
+            }).observe(lista, { childList: true, subtree: true });
 
             lista.addEventListener("click", (evento) => {
                 const boton = evento.target.closest("[data-agregar-fotos-producto]");
-                if (!boton) return;
+                if (!boton || ocupado) return;
                 evento.preventDefault();
                 evento.stopPropagation();
-                if (ocupado) return;
                 productoIdActual = boton.dataset.agregarFotosProducto || "";
                 if (productoIdActual) input.click();
             });
@@ -90,131 +93,112 @@
         });
     }
 
-    function configurarCarruselSoloFotos() {
-        const seccion = document.getElementById("seccion-galeria");
-        const destino = document.getElementById("galeria-destino");
+    function configurarFormularioContenido() {
         const formulario = document.getElementById("formulario-galeria");
-        if (!seccion || !destino || !formulario) return;
-
-        const blogActivo = Boolean(document.querySelector('[data-seccion-panel="blog"].activa'));
-        const carruselActivo = Boolean(document.querySelector('[data-seccion-panel="carrusel"].activa'));
-
-        if (blogActivo) destino.value = "blog";
-        else if (carruselActivo) destino.value = "carrusel";
-
-        const esCarrusel = destino.value === "carrusel" && !blogActivo;
-        seccion.classList.toggle("modo-carrusel-solo-fotos", esCarrusel);
-
-        const titulo = document.getElementById("titulo-formulario-galeria");
-        const modo = document.getElementById("modo-galeria");
-        const ayuda = document.getElementById("ayuda-destino-contenido");
-        const boton = document.getElementById("guardar-contenido");
+        const destino = document.getElementById("galeria-destino");
         const archivo = document.getElementById("galeria-archivo");
-        const campoTitulo = document.getElementById("galeria-titulo");
-        const campoDescripcion = document.getElementById("galeria-descripcion");
-        const campoOrden = document.getElementById("galeria-orden");
-        const campoActivo = document.getElementById("galeria-activo");
+        if (!formulario || !destino || !archivo || formulario.dataset.multimediaConectado) return;
 
-        if (esCarrusel) {
-            if (modo) modo.textContent = "Carrusel principal";
-            if (titulo) titulo.textContent = "Subir fotos al carrusel";
-            if (ayuda) ayuda.textContent = "Selecciona una o varias fotos. Se agregarán directamente al carrusel principal.";
-            if (boton) boton.textContent = "📸 Subir fotos";
-            if (archivo) {
-                archivo.accept = "image/jpeg,image/png,image/webp";
-                archivo.multiple = true;
+        formulario.dataset.multimediaConectado = "1";
+        formulario.addEventListener("submit", async (evento) => {
+            if (destino.value === "carrusel") {
+                evento.preventDefault();
+                evento.stopImmediatePropagation();
+                await subirContenidoMultiple("carrusel");
+                return;
             }
 
-            ocultarCampo("galeria-destino");
-            ocultarCampo("galeria-titulo");
-            ocultarCampo("galeria-descripcion");
-            ocultarCampo("galeria-orden");
-            ocultarCampo("galeria-activo");
+            if (destino.value === "blog") {
+                evento.preventDefault();
+                evento.stopImmediatePropagation();
+                await subirContenidoMultiple("blog");
+            }
+        }, true);
 
-            if (campoTitulo) campoTitulo.required = false;
-            if (campoDescripcion) campoDescripcion.required = false;
-            if (campoOrden) campoOrden.required = false;
-            if (campoActivo) campoActivo.checked = true;
+        destino.addEventListener("change", actualizarModoContenido);
+        actualizarModoContenido();
+    }
+
+    function actualizarModoContenido() {
+        const destino = document.getElementById("galeria-destino");
+        const archivo = document.getElementById("galeria-archivo");
+        if (!destino || !archivo) return;
+
+        if (destino.value === "carrusel") {
+            archivo.accept = "image/jpeg,image/png,image/webp";
+            archivo.multiple = true;
             return;
         }
 
-        if (blogActivo || destino.value === "blog") {
-            if (modo) modo.textContent = "Nuestro Blog";
-            if (titulo) titulo.textContent = "Publicar en Nuestro Blog";
-            if (ayuda) ayuda.textContent = "Completa el título y la descripción, luego selecciona una foto o video para publicar la entrada.";
-            if (boton) boton.textContent = "📝 Publicar contenido";
-            if (archivo) {
-                archivo.accept = "image/jpeg,image/png,image/webp,video/mp4,video/webm";
-                archivo.multiple = false;
-            }
-
-            mostrarCampo("galeria-destino");
-            mostrarCampo("galeria-titulo");
-            mostrarCampo("galeria-descripcion");
-            mostrarCampo("galeria-orden");
-            mostrarCampo("galeria-activo");
-
-            if (campoTitulo) {
-                campoTitulo.required = true;
-                campoTitulo.placeholder = "Ej: Cómo hacer compost en casa";
-            }
-            if (campoDescripcion) {
-                campoDescripcion.required = true;
-                campoDescripcion.placeholder = "Escribe una descripción para la publicación del blog";
-            }
-            if (campoOrden) campoOrden.required = false;
-            if (campoActivo) campoActivo.checked = true;
+        if (destino.value === "blog") {
+            archivo.accept = "image/jpeg,image/png,image/webp,video/mp4,video/webm";
+            archivo.multiple = true;
         }
     }
 
-    function ocultarCampo(id) {
-        const elemento = document.getElementById(id);
-        const campo = elemento?.closest(".campo");
-        if (campo) campo.hidden = true;
-    }
-
-    function mostrarCampo(id) {
-        const elemento = document.getElementById(id);
-        const campo = elemento?.closest(".campo");
-        if (campo) campo.hidden = false;
-    }
-
-    async function subirFotosCarrusel(archivos) {
-        const validos = archivos.filter((archivo) =>
-            TIPOS.has(archivo.type) && archivo.size <= MAX_FOTO
-        );
-
-        if (!validos.length) {
-            alert("Selecciona una o varias fotos JPG, PNG o WEBP de máximo 10 MB por foto.");
-            return;
-        }
-
+    async function subirContenidoMultiple(destino) {
+        const archivo = document.getElementById("galeria-archivo");
+        const titulo = document.getElementById("galeria-titulo")?.value.trim() || "";
+        const descripcion = document.getElementById("galeria-descripcion")?.value.trim() || "";
         const boton = document.getElementById("guardar-contenido");
         const mensaje = document.getElementById("mensaje-galeria");
+        const archivos = Array.from(archivo?.files || []);
+
+        if (!archivos.length) {
+            mostrarMensajeContenido(mensaje, "Selecciona al menos una foto o video.", false);
+            return;
+        }
+
+        if (destino === "blog" && !titulo) {
+            mostrarMensajeContenido(mensaje, "Escribe el título de la publicación.", false);
+            return;
+        }
+
+        if (destino === "blog" && !descripcion) {
+            mostrarMensajeContenido(mensaje, "Escribe la descripción de la publicación.", false);
+            return;
+        }
+
+        const validos = archivos.filter((item) => {
+            const tipos = destino === "blog" ? TIPOS_CONTENIDO : TIPOS_FOTO;
+            const maximo = destino === "blog" ? MAX_CONTENIDO : MAX_FOTO;
+            return tipos.has(item.type) && item.size <= maximo;
+        });
+
+        if (!validos.length) {
+            mostrarMensajeContenido(
+                mensaje,
+                destino === "blog"
+                    ? "Los archivos deben ser JPG, PNG, WEBP, MP4 o WEBM y pesar máximo 100 MB cada uno."
+                    : "Selecciona fotos JPG, PNG o WEBP de máximo 10 MB cada una.",
+                false
+            );
+            return;
+        }
+
         if (boton) {
             boton.disabled = true;
-            boton.textContent = `Subiendo ${validos.length} foto${validos.length === 1 ? "" : "s"}...`;
+            boton.textContent = `Publicando ${validos.length} archivo${validos.length === 1 ? "" : "s"}...`;
         }
 
         try {
-            const { data: ultimo } = await cliente
+            const { data: ultimo, error: errorOrden } = await cliente
                 .from("contenido_galeria")
                 .select("orden")
-                .eq("destino", "carrusel")
+                .eq("destino", destino)
                 .order("orden", { ascending: false })
                 .limit(1)
                 .maybeSingle();
+
+            if (errorOrden) throw errorOrden;
 
             let orden = Number(ultimo?.orden);
             if (!Number.isFinite(orden)) orden = 0;
 
             let subidas = 0;
-            for (const archivo of validos) {
-                const extension = archivo.type === "image/jpeg"
-                    ? "jpg"
-                    : archivo.type === "image/png"
-                    ? "png"
-                    : "webp";
+
+            for (const archivoActual of validos) {
+                const extension = obtenerExtension(archivoActual);
                 const aleatorio = crypto.randomUUID
                     ? crypto.randomUUID()
                     : Math.random().toString(36).slice(2);
@@ -222,32 +206,35 @@
 
                 const { error: errorSubida } = await cliente.storage
                     .from("galeria")
-                    .upload(ruta, archivo, {
+                    .upload(ruta, archivoActual, {
                         cacheControl: "31536000",
                         upsert: false,
-                        contentType: archivo.type
+                        contentType: archivoActual.type
                     });
 
                 if (errorSubida) {
-                    console.error("No se pudo subir la foto del carrusel:", errorSubida);
+                    console.error("No se pudo subir contenido multimedia:", errorSubida);
                     continue;
                 }
 
                 orden += 1;
+                const tipo = archivoActual.type.startsWith("video/") ? "video" : "foto";
+                const registro = {
+                    tipo,
+                    titulo: destino === "blog" ? titulo : `Foto carrusel ${orden}`,
+                    descripcion: destino === "blog" ? descripcion : null,
+                    archivo_path: ruta,
+                    activo: true,
+                    orden,
+                    destino
+                };
+
                 const { error: errorRegistro } = await cliente
                     .from("contenido_galeria")
-                    .insert({
-                        tipo: "foto",
-                        titulo: `Foto carrusel ${orden}`,
-                        descripcion: null,
-                        archivo_path: ruta,
-                        activo: true,
-                        orden,
-                        destino: "carrusel"
-                    });
+                    .insert(registro);
 
                 if (errorRegistro) {
-                    console.error("No se pudo registrar la foto del carrusel:", errorRegistro);
+                    console.error("No se pudo registrar contenido multimedia:", errorRegistro);
                     await cliente.storage.from("galeria").remove([ruta]);
                     continue;
                 }
@@ -255,49 +242,49 @@
                 subidas += 1;
             }
 
-            if (mensaje) {
-                mensaje.textContent = subidas === validos.length
-                    ? `${subidas} foto${subidas === 1 ? " subida" : "s subidas"} correctamente al carrusel.`
-                    : `${subidas} foto${subidas === 1 ? " subida" : "s subidas"}. Revisa los archivos que no se pudieron cargar.`;
-                mensaje.classList.toggle("exito", subidas > 0);
-            }
-
             if (subidas > 0) {
+                mostrarMensajeContenido(
+                    mensaje,
+                    `${subidas} archivo${subidas === 1 ? "" : "s"} publicado${subidas === 1 ? "" : "s"} correctamente en ${destino === "blog" ? "Nuestro Blog" : "el carrusel"}.`,
+                    true
+                );
+
+                archivo.value = "";
                 document.getElementById("actualizar-galeria")?.click();
+            } else {
+                mostrarMensajeContenido(mensaje, "No se pudo publicar ningún archivo. Revisa la sesión y los permisos.", false);
             }
+        } catch (error) {
+            console.error("Error publicando contenido multimedia:", error);
+            mostrarMensajeContenido(mensaje, error?.message || "No se pudo publicar el contenido.", false);
         } finally {
             if (boton) {
                 boton.disabled = false;
-                boton.textContent = "📸 Subir fotos";
+                boton.textContent = destino === "blog" ? "📝 Publicar contenido" : "📸 Subir fotos";
             }
         }
     }
 
-    function interceptarCarrusel() {
-        const formulario = document.getElementById("formulario-galeria");
-        const destino = document.getElementById("galeria-destino");
-        const archivo = document.getElementById("galeria-archivo");
-        if (!formulario || !destino || !archivo || formulario.dataset.carruselFotosConectado) return;
+    function obtenerExtension(archivo) {
+        if (archivo.type === "image/jpeg") return "jpg";
+        if (archivo.type === "image/png") return "png";
+        if (archivo.type === "image/webp") return "webp";
+        if (archivo.type === "video/mp4") return "mp4";
+        if (archivo.type === "video/webm") return "webm";
+        return "bin";
+    }
 
-        formulario.dataset.carruselFotosConectado = "1";
-        formulario.addEventListener("submit", async (evento) => {
-            if (destino.value !== "carrusel") return;
-            evento.preventDefault();
-            evento.stopImmediatePropagation();
-            const archivos = Array.from(archivo.files || []);
-            await subirFotosCarrusel(archivos);
-        }, true);
-
-        destino.addEventListener("change", () => {
-            configurarCarruselSoloFotos();
-        });
+    function mostrarMensajeContenido(elemento, texto, exito) {
+        if (!elemento) return;
+        elemento.textContent = texto;
+        elemento.classList.toggle("exito", Boolean(exito));
     }
 
     async function subirFotos(archivos, id) {
         if (!cliente || !id || ocupado || !archivos.length) return;
 
         const validos = archivos.filter((archivo) =>
-            TIPOS.has(archivo.type) && archivo.size <= MAX_FOTO
+            TIPOS_FOTO.has(archivo.type) && archivo.size <= MAX_FOTO
         );
 
         if (!validos.length) {
@@ -315,9 +302,7 @@
 
         let subidas = 0;
         for (const archivo of validos) {
-            const extension = archivo.type === "image/jpeg"
-                ? "jpg"
-                : archivo.type.split("/")[1];
+            const extension = archivo.type === "image/jpeg" ? "jpg" : archivo.type.split("/")[1];
             const nombre = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${extension}`;
             const ruta = `${id}/${nombre}`;
 
@@ -376,17 +361,8 @@
     }
 
     if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", () => {
-            iniciar();
-            interceptarCarrusel();
-        }, { once: true });
+        document.addEventListener("DOMContentLoaded", iniciar, { once: true });
     } else {
         iniciar();
-        interceptarCarrusel();
     }
-
-    setInterval(() => {
-        configurarCarruselSoloFotos();
-        interceptarCarrusel();
-    }, 500);
 })();

@@ -22,3 +22,25 @@
 .gpa-manager .gpa-card img {
     background: #eef4f0;
 }
+
+/* En Nuestro Blog, los campos deben volver a ser visibles aunque otro script
+   haya marcado el campo como hidden al pasar previamente por Carrusel. */
+body:has([data-seccion-panel="blog"].activa) #galeria-titulo,
+body:has([data-seccion-panel="blog"].activa) #galeria-descripcion {
+    display: block !important;
+}
+
+body:has([data-seccion-panel="blog"].activa) #galeria-titulo:disabled,
+body:has([data-seccion-panel="blog"].activa) #galeria-descripcion:disabled {
+    opacity: 1;
+}
+
+body:has([data-seccion-panel="blog"].activa) #galeria-titulo,
+body:has([data-seccion-panel="blog"].activa) #galeria-descripcion {
+    visibility: visible !important;
+}
+
+body:has([data-seccion-panel="blog"].activa) #galeria-titulo + *,
+body:has([data-seccion-panel="blog"].activa) #galeria-descripcion + * {
+    visibility: visible;
+}

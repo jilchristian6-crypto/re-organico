@@ -1,0 +1,92 @@
+name: Corregir modal móvil de productos
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  fix-mobile-modal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Aplicar corrección móvil
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("supabase-config.js")
+          text = path.read_text(encoding="utf-8")
+          marker = "REORGANICO_FIX_MODAL_MOBILE_20260911"
+
+          if marker in text:
+              print("La corrección móvil ya está instalada.")
+              raise SystemExit(0)
+
+          fix = r'''
+
+/* REORGANICO_FIX_MODAL_MOBILE_20260911 */
+(() => {
+    function instalarCorreccionModalMobile() {
+        if (document.getElementById("reorganico-fix-modal-mobile")) return;
+        const estilo = document.createElement("style");
+        estilo.id = "reorganico-fix-modal-mobile";
+        estilo.textContent = `
+          /* En el modal de producto las redes flotantes no deben tapar los controles. */
+          body.bloqueado .contenedor-flotantes{
+              display:none!important;
+              pointer-events:none!important;
+          }
+          @media(max-width:700px){
+              #modal-producto .modal-producto-contenido{
+                  width:calc(100% - 20px)!important;
+                  max-width:100%!important;
+                  max-height:94vh!important;
+                  overflow-y:auto!important;
+                  overscroll-behavior:contain!important;
+                  padding-bottom:30px!important;
+              }
+              #modal-producto #modal-agregar-carrito{
+                  position:relative!important;
+                  z-index:5!important;
+                  width:100%!important;
+                  min-height:58px!important;
+                  margin-bottom:8px!important;
+                  touch-action:manipulation!important;
+              }
+          }
+        `;
+        document.head.appendChild(estilo);
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", instalarCorreccionModalMobile, { once: true });
+    } else {
+        instalarCorreccionModalMobile();
+    }
+})();
+'''
+
+          path.write_text(text.rstrip() + fix, encoding="utf-8")
+          PY
+
+      - name: Guardar cambios
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No hay cambios que guardar."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add supabase-config.js
+          git commit -m "fix: permitir agregar productos desde celular"
+          git push

@@ -10,18 +10,19 @@
 
     function iniciar() {
         if (!window.supabase || !window.REORGANICO_SUPABASE) return;
-        supabase = window.supabase.createClient(window.REORGANICO_SUPABASE.url, window.REORGANICO_SUPABASE.anonKey, {
-            auth: { storage: sessionStorage, storageKey: "reorganico-admin-auth-v1", persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: "pkce" }
-        });
+        supabase = window.supabase.createClient(
+            window.REORGANICO_SUPABASE.url,
+            window.REORGANICO_SUPABASE.anonKey,
+            { auth: { storage: sessionStorage, storageKey: "reorganico-admin-auth-v1", persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: "pkce" } }
+        );
         prepararEstilos();
         crearGestorFotos();
         prepararBotonesListado();
-        observarPanel();
         cargarProductosSelector();
         setInterval(() => {
             prepararBotonesListado();
             sincronizarProducto();
-        }, 1000);
+        }, 2000);
     }
 
     function prepararEstilos() {
@@ -30,7 +31,14 @@
         style.id = "gpa-styles";
         style.textContent = `
             .gpa-manager{margin-top:28px;padding:28px;border:1px solid #d9e4dd;border-radius:24px;background:#fff;box-shadow:0 10px 30px rgba(31,77,58,.07)}
-            .gpa-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:20px}.gpa-head span{background:#dfeae3;padding:9px 14px;border-radius:999px;font-weight:800;white-space:nowrap;color:#1f4d3a}.gpa-head b{font-size:12px;letter-spacing:1.4px;color:#2b6650}.gpa-head h2{margin:5px 0 7px;color:#174b3a}.gpa-head p{margin:0;color:#617169}.gpa-select-wrap{display:flex;gap:12px;align-items:end;margin-bottom:22px}.gpa-select-wrap label{display:flex;flex-direction:column;gap:7px;flex:1;font-weight:700;color:#174b3a}.gpa-select-wrap select{width:100%;padding:13px 15px;border:1px solid #ccd9d2;border-radius:12px;background:#fff;font-size:16px;cursor:pointer}.gpa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px}.gpa-card{border:1px solid #dbe5df;border-radius:16px;overflow:hidden;background:#f8faf9}.gpa-card img{display:block;width:100%;height:170px;object-fit:cover}.gpa-card>div{padding:10px;display:flex;flex-wrap:wrap;gap:7px}.gpa-card button{border:0;border-radius:9px;padding:8px 10px;background:#e7eee9;color:#174b3a;font-weight:700;cursor:pointer}.gpa-card button:last-child{background:#f3e2df;color:#8a352d}.gpa-card.principal{border:2px solid #6f9482}.gpa-principal{display:block;color:#1f6a4d;font-size:12px;font-weight:800;margin-bottom:7px}.gpa-empty{padding:28px;border:1px dashed #a9c5b4;border-radius:16px;background:#f7faf8;text-align:center;color:#537064}.gpa-empty small{display:block;margin-top:6px}.gpa-actions{display:flex;align-items:center;gap:12px;margin-top:20px;flex-wrap:wrap}.gpa-actions button{border:0;border-radius:12px;padding:13px 18px;font-weight:800;cursor:pointer}.gpa-add{background:#6f9482;color:#fff}.gpa-add:disabled{opacity:.5;cursor:not-allowed}.gpa-msg{font-weight:700;color:#426457}.gpa-hint{margin-top:10px;color:#718078;font-size:13px}
+            .gpa-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:20px}
+            .gpa-head span{background:#dfeae3;padding:9px 14px;border-radius:999px;font-weight:800;white-space:nowrap;color:#1f4d3a}
+            .gpa-head b{font-size:12px;letter-spacing:1.4px;color:#2b6650}.gpa-head h2{margin:5px 0 7px;color:#174b3a}.gpa-head p{margin:0;color:#617169}
+            .gpa-select-wrap{margin-bottom:22px}.gpa-select-wrap label{display:flex;flex-direction:column;gap:7px;font-weight:700;color:#174b3a}
+            .gpa-select-wrap select{width:100%;padding:13px 15px;border:1px solid #ccd9d2;border-radius:12px;background:#fff;font-size:16px;cursor:pointer}
+            .gpa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px}.gpa-card{border:1px solid #dbe5df;border-radius:16px;overflow:hidden;background:#f8faf9}.gpa-card img{display:block;width:100%;height:170px;object-fit:cover}
+            .gpa-card>div{padding:10px;display:flex;flex-wrap:wrap;gap:7px}.gpa-card button{border:0;border-radius:9px;padding:8px 10px;background:#e7eee9;color:#174b3a;font-weight:700;cursor:pointer}.gpa-card button:last-child{background:#f3e2df;color:#8a352d}.gpa-card.principal{border:2px solid #6f9482}.gpa-principal{display:block;color:#1f6a4d;font-size:12px;font-weight:800;margin-bottom:7px}
+            .gpa-empty{padding:28px;border:1px dashed #a9c5b4;border-radius:16px;background:#f7faf8;text-align:center;color:#537064}.gpa-empty small{display:block;margin-top:6px}.gpa-actions{display:flex;align-items:center;gap:12px;margin-top:20px;flex-wrap:wrap}.gpa-actions button{border:0;border-radius:12px;padding:13px 18px;font-weight:800;cursor:pointer}.gpa-add{background:#6f9482;color:#fff}.gpa-add:disabled{opacity:.5;cursor:not-allowed}.gpa-msg{font-weight:700;color:#426457}.gpa-hint{margin-top:10px;color:#718078;font-size:13px}
             @media(max-width:700px){.gpa-head{flex-direction:column}.gpa-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.gpa-card img{height:135px}}
         `;
         document.head.appendChild(style);
@@ -45,22 +53,11 @@
         gestor.id = "gpa-manager";
         gestor.className = "gpa-manager";
         gestor.innerHTML = `
-            <div class="gpa-head">
-                <div><b>GESTIÓN DE FOTOS</b><h2>Fotos del catálogo</h2><p>Selecciona un producto y administra todas sus fotos desde aquí.</p></div>
-                <span id="gpa-c">0 fotos</span>
-            </div>
-            <div class="gpa-select-wrap">
-                <label for="gpa-producto">Producto
-                    <select id="gpa-producto"><option value="">Cargando productos...</option></select>
-                </label>
-            </div>
+            <div class="gpa-head"><div><b>GESTIÓN DE FOTOS</b><h2>Fotos del catálogo</h2><p>Selecciona un producto y administra todas sus fotos desde aquí.</p></div><span id="gpa-c">0 fotos</span></div>
+            <div class="gpa-select-wrap"><label for="gpa-producto">Producto<select id="gpa-producto"><option value="">Cargando productos...</option></select></label></div>
             <div id="gpa-grid" class="gpa-grid"></div>
             <div id="gpa-empty" class="gpa-empty"><strong>📷 Selecciona un producto</strong><small>Aquí aparecerán sus fotos.</small></div>
-            <div class="gpa-actions">
-                <input id="gpa-in" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
-                <button class="gpa-add" id="gpa-add" type="button" disabled>📸 Agregar fotos</button>
-                <span class="gpa-msg" id="gpa-msg" role="status"></span>
-            </div>
+            <div class="gpa-actions"><input id="gpa-in" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden><button class="gpa-add" id="gpa-add" type="button" disabled>📸 Agregar fotos</button><span class="gpa-msg" id="gpa-msg" role="status"></span></div>
             <p class="gpa-hint">JPG, PNG o WEBP · máximo 10 MB por foto · puedes seleccionar varias a la vez.</p>`;
         carga.insertAdjacentElement("afterend", gestor);
 
@@ -87,23 +84,18 @@
     async function cargarProductosSelector() {
         const select = document.getElementById("gpa-producto");
         if (!select || !supabase) return;
-
         const { data, error } = await supabase.from("productos").select("id,nombre").order("orden", { ascending: true });
-        if (error) {
-            console.error("Error cargando productos para gestor de fotos:", error);
-            // Fallback: usar los productos ya visibles en el listado del administrador.
-            llenarSelectorDesdeListado();
-            return;
-        }
-
-        ponerOpcionesSelector(data || []);
+        if (!error && data) ponerOpcionesSelector(data);
+        else llenarSelectorDesdeListado();
     }
 
     function ponerOpcionesSelector(data) {
         const select = document.getElementById("gpa-producto");
         if (!select) return;
         const actual = productoId || select.value;
-        select.innerHTML = '<option value="">Selecciona un producto...</option>' + data.map(p => `<option value="${esc(p.id)}">${esc(p.nombre)}</option>`).join("");
+        const opciones = data.map(p => `<option value="${esc(p.id)}">${esc(p.nombre)}</option>`).join("");
+        const nuevoHTML = '<option value="">Selecciona un producto...</option>' + opciones;
+        if (select.innerHTML !== nuevoHTML) select.innerHTML = nuevoHTML;
         if (actual && data.some(p => String(p.id) === String(actual))) select.value = actual;
     }
 
@@ -111,16 +103,11 @@
         const select = document.getElementById("gpa-producto");
         const lista = document.getElementById("lista-admin");
         if (!select || !lista) return;
-
         const opciones = [];
         lista.querySelectorAll('[data-accion="editar"][data-id]').forEach((boton) => {
             const id = boton.dataset.id;
-            const tarjeta = boton.closest("article,li,.producto-admin,.item-admin,.fila-admin,div");
-            let nombre = tarjeta?.querySelector("h3,h4,strong,.nombre-producto")?.textContent?.trim() || "";
-            if (!nombre) {
-                const textos = (tarjeta?.textContent || "").split("\\n").map(x => x.trim()).filter(Boolean);
-                nombre = textos[0] || `Producto ${id}`;
-            }
+            const tarjeta = boton.closest("article,li,.producto-admin,.item-admin,.fila-admin");
+            const nombre = tarjeta?.querySelector("h3,h4,strong,.nombre-producto")?.textContent?.trim() || `Producto ${id}`;
             if (id && !opciones.some(x => x.id === id)) opciones.push({ id, nombre });
         });
         if (opciones.length) ponerOpcionesSelector(opciones);
@@ -128,20 +115,14 @@
 
     function prepararBotonesListado() {
         document.querySelectorAll('#lista-admin [data-accion="foto"][data-id], #lista-admin [data-accion="galeria"][data-id]').forEach((b) => {
-            b.dataset.accion = "galeria";
-            b.textContent = "📸 Gestionar fotos";
+            if (b.dataset.accion !== "galeria") b.dataset.accion = "galeria";
+            if (b.textContent.trim() !== "📸 Gestionar fotos") b.textContent = "📸 Gestionar fotos";
             b.title = "Abrir gestor de fotos del producto";
             b.classList.add("boton-fotos-admin-listado");
         });
-        llenarSelectorDesdeListado();
     }
 
     function observarPanel() {
-        const panel = document.getElementById("vista-panel");
-        if (panel) new MutationObserver(() => {
-            prepararBotonesListado();
-        }).observe(panel, { childList: true, subtree: true });
-
         document.getElementById("lista-admin")?.addEventListener("click", (e) => {
             const b = e.target.closest('[data-accion="galeria"][data-id]');
             if (!b) return;
@@ -157,7 +138,7 @@
     function sincronizarProducto() {
         const id = document.getElementById("producto-id")?.value?.trim() || "";
         const select = document.getElementById("gpa-producto");
-        if (id && select && !select.value) {
+        if (id && select && select.value !== id) {
             productoId = id;
             select.value = id;
             cargarFotos(id);
@@ -192,8 +173,8 @@
         empty.innerHTML = fotos.length ? "" : productoId ? "<strong>📷 Este producto todavía no tiene fotos</strong><small>Usa “Agregar fotos” para subir una o varias imágenes.</small>" : "<strong>📷 Selecciona un producto</strong><small>Aquí aparecerán sus fotos.</small>";
         grid.innerHTML = fotos.map(f => {
             const url = supabase.storage.from(BUCKET).getPublicUrl(f.path).data.publicUrl;
-            const esPrincipal = f.path === principal;
-            return `<article class="gpa-card${esPrincipal ? " principal" : ""}"><img src="${esc(url)}" alt="Foto del producto" loading="lazy"><div>${esPrincipal ? '<span class="gpa-principal">★ Foto principal</span>' : `<button type="button" data-foto-accion="principal" data-path="${esc(f.path)}">Usar como principal</button>`}<button type="button" data-foto-accion="eliminar" data-path="${esc(f.path)}">Eliminar</button></div></article>`;
+            const principalActual = f.path === principal;
+            return `<article class="gpa-card${principalActual ? " principal" : ""}"><img src="${esc(url)}" alt="Foto del producto" loading="lazy"><div>${principalActual ? '<span class="gpa-principal">★ Foto principal</span>' : `<button type="button" data-foto-accion="principal" data-path="${esc(f.path)}">Usar como principal</button>`}<button type="button" data-foto-accion="eliminar" data-path="${esc(f.path)}">Eliminar</button></div></article>`;
         }).join("");
     }
 

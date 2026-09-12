@@ -187,3 +187,69 @@ window.REORGANICO_SUPABASE = {
         iniciarEnlacesProducto();
     }
 })();
+
+/* Re Orgánico: enlace visible y copiable dentro del modal de detalle */
+(() => {
+    const PARAMETRO = 'producto';
+    const MARCADOR = 'enlace-compartible-producto';
+
+    function urlProducto(id) {
+        const url = new URL(window.location.href);
+        url.searchParams.set(PARAMETRO, id);
+        url.hash = 'productos';
+        return url.toString();
+    }
+
+    function obtenerId() {
+        try {
+            return new URL(window.location.href).searchParams.get(PARAMETRO);
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function agregarEnlaceVisible() {
+        const modal = document.getElementById('modal-producto');
+        if (!modal || modal.querySelector('.' + MARCADOR)) return;
+        const id = obtenerId();
+        if (!id) return;
+
+        const botonCerrar = modal.querySelector('[data-accion="cerrar-modal"], .cerrar-modal, button[aria-label*="errar"]');
+        const contenedor = modal.querySelector('.modal-producto-contenido, .contenido-modal, .modal-contenido') || modal;
+        const caja = document.createElement('div');
+        caja.className = MARCADOR;
+        caja.innerHTML = `
+            <div class="titulo-enlace-producto">🔗 Enlace de este producto</div>
+            <div class="fila-enlace-producto">
+                <input type="text" readonly value="${urlProducto(id).replace(/&/g, '&amp;').replace(/"/g, '&quot;')}" aria-label="Enlace directo del producto">
+                <button type="button" data-copiar-producto="1">Copiar enlace</button>
+            </div>
+            <div class="texto-enlace-producto">Puedes copiar este enlace y enviárselo directamente a un cliente.</div>
+        `;
+        if (botonCerrar && botonCerrar.parentElement) botonCerrar.parentElement.insertBefore(caja, botonCerrar);
+        else contenedor.appendChild(caja);
+
+        const copiar = caja.querySelector('[data-copiar-producto="1"]');
+        copiar.addEventListener('click', async () => {
+            const input = caja.querySelector('input');
+            try { await navigator.clipboard.writeText(input.value); }
+            catch (e) { input.select(); document.execCommand('copy'); }
+            copiar.textContent = '✓ Enlace copiado';
+            setTimeout(() => copiar.textContent = 'Copiar enlace', 1800);
+        });
+    }
+
+    const estilo = document.createElement('style');
+    estilo.textContent = `
+        .enlace-compartible-producto { margin:20px 0 8px; padding:14px; border:1px solid #d8e4da; border-radius:14px; background:#f5f9f5; }
+        .titulo-enlace-producto { margin-bottom:9px; color:#165b38; font-weight:800; font-size:14px; }
+        .fila-enlace-producto { display:flex; gap:8px; }
+        .fila-enlace-producto input { min-width:0; flex:1; padding:10px 11px; border:1px solid #d5dcd7; border-radius:9px; background:#fff; color:#555; font-size:12px; }
+        .fila-enlace-producto button { padding:10px 13px; border:0; border-radius:9px; background:#195b38; color:#fff; font-weight:800; cursor:pointer; white-space:nowrap; }
+        .texto-enlace-producto { margin-top:7px; color:#68736c; font-size:12px; }
+        @media (max-width:600px) { .fila-enlace-producto { flex-direction:column; } }
+    `;
+    document.head.appendChild(estilo);
+    new MutationObserver(agregarEnlaceVisible).observe(document.body, {childList:true, subtree:true});
+    agregarEnlaceVisible();
+})();

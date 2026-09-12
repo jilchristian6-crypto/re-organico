@@ -242,3 +242,136 @@
         iniciar();
     }
 })();
+
+/* Re Orgánico: publicaciones de Nuestro Blog administradas desde Supabase. */
+(() => {
+    const CONFIG = window.REORGANICO_SUPABASE;
+    const INTERVALO_ACTUALIZACION_BLOG = 5000;
+
+    if (!CONFIG || !window.supabase?.createClient) return;
+
+    const cliente = window.supabase.createClient(CONFIG.url, CONFIG.anonKey);
+    let publicacionesActuales = [];
+
+    function escapar(texto) {
+        return String(texto ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    function urlPublica(path) {
+        if (!path) return "";
+        return cliente.storage.from("galeria").getPublicUrl(path).data?.publicUrl || "";
+    }
+
+    async function cargarBlog() {
+        const { data, error } = await cliente
+            .from("contenido_galeria")
+            .select("id,tipo,titulo,descripcion,archivo_path,orden,created_at")
+            .eq("destino", "blog")
+            .eq("activo", true)
+            .order("orden", { ascending: true })
+            .order("created_at", { ascending: false });
+
+        if (error) {
+            console.warn("No se pudo cargar Nuestro Blog:", error);
+            return null;
+        }
+
+        return Array.isArray(data) ? data : [];
+    }
+
+    function obtenerContenedor() {
+        const seccion = document.getElementById("impacto");
+        if (!seccion) return null;
+        const contenedor = seccion.querySelector(".contenedor");
+        if (!contenedor) return null;
+
+        let publicaciones = document.getElementById("blog-publicaciones-cms");
+        if (!publicaciones) {
+            publicaciones = document.createElement("div");
+            publicaciones.id = "blog-publicaciones-cms";
+            publicaciones.setAttribute("aria-live", "polite");
+            publicaciones.style.cssText = "display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px;margin-top:40px;";
+            contenedor.appendChild(publicaciones);
+        }
+        return publicaciones;
+    }
+
+    function crearTarjeta(item) {
+        const url = urlPublica(item.archivo_path);
+        if (!url) return "";
+
+        const titulo = escapar(item.titulo || "Publicación Re Orgánico");
+        const descripcion = escapar(item.descripcion || "");
+        const fecha = item.created_at
+            ? new Intl.DateTimeFormat("es-CL", { day: "2-digit", month: "long", year: "numeric" }).format(new Date(item.created_at))
+            : "";
+
+        const media = item.tipo === "video"
+            ? `<video src="${escapar(url)}" controls muted playsinline preload="metadata" style="width:100%;height:230px;object-fit:cover;display:block;"></video>`
+            : `<img src="${escapar(url)}" alt="${titulo}" loading="lazy" decoding="async" style="width:100%;height:230px;object-fit:cover;display:block;">`;
+
+        return `
+            <article data-blog-cms-id="${escapar(item.id)}" style="overflow:hidden;border:1px solid rgba(31,77,58,.14);border-radius:22px;background:#fff;box-shadow:0 12px 30px rgba(31,77,58,.08);">
+                ${media}
+                <div style="padding:20px;">
+                    <span style="display:inline-block;margin-bottom:9px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#2c7c45;">${item.tipo === "video" ? "Video" : "Foto"}</span>
+                    <h3 style="margin:0;color:#1f4d3a;font-size:22px;line-height:1.2;">${titulo}</h3>
+                    ${descripcion ? `<p style="margin:12px 0 0;color:#626762;line-height:1.55;">${descripcion}</p>` : ""}
+                    ${fecha ? `<small style="display:block;margin-top:15px;color:#858a85;">${fecha}</small>` : ""}
+                </div>
+            </article>
+        `;
+    }
+
+    function huboCambios(nuevas) {
+        if (nuevas.length !== publicacionesActuales.length) return true;
+        return nuevas.some((item, i) => {
+            const anterior = publicacionesActuales[i];
+            return !anterior ||
+                String(item.id) !== String(anterior.id) ||
+                item.archivo_path !== anterior.archivo_path ||
+                item.titulo !== anterior.titulo ||
+                item.descripcion !== anterior.descripcion ||
+                Number(item.orden) !== Number(anterior.orden) ||
+                Boolean(item.activo) !== Boolean(anterior.activo);
+        });
+    }
+
+    function renderizarBlog(items) {
+        const contenedor = obtenerContenedor();
+        if (!contenedor) return;
+
+        contenedor.innerHTML = items.map(crearTarjeta).filter(Boolean).join("");
+        contenedor.hidden = items.length === 0;
+    }
+
+    async function actualizarBlog() {
+        const nuevas = await cargarBlog();
+        if (!nuevas) return;
+        if (!huboCambios(nuevas)) return;
+
+        publicacionesActuales = nuevas;
+        renderizarBlog(nuevas);
+    }
+
+    async function iniciarBlog() {
+        const iniciales = await cargarBlog();
+        if (iniciales) {
+            publicacionesActuales = iniciales;
+            renderizarBlog(iniciales);
+        }
+
+        setInterval(actualizarBlog, INTERVALO_ACTUALIZACION_BLOG);
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", iniciarBlog, { once: true });
+    } else {
+        iniciarBlog();
+    }
+})();

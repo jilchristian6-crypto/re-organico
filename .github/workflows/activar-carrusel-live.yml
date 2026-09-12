@@ -1,0 +1,47 @@
+name: Activar carrusel CMS en vivo
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  activar:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cargar script de carrusel en vivo
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+
+          marker = '    <script src="cms-publico.js"></script>'
+          live = '    <script src="cms-carrusel-live.js?v=20260912"></script>'
+
+          if live not in s:
+              if marker in s:
+                  s = s.replace(marker, live + '\n' + marker, 1)
+              else:
+                  marker2 = '    <script src="script.js"></script>'
+                  if marker2 not in s:
+                      raise SystemExit('No se encontró el bloque de scripts públicos')
+                  s = s.replace(marker2, marker2 + '\n' + live + '\n    <script src="cms-publico.js"></script>', 1)
+              p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Guardar cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "feat: activar carrusel CMS en vivo"
+          git push

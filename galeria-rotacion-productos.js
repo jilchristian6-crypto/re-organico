@@ -18,38 +18,23 @@
         return window.__REORGANICO_CLIENTE_ROTACION;
     }
 
-    function esperar(ms) {
-        return new Promise((resolve) => window.setTimeout(resolve, ms));
-    }
-
     async function rutasProducto(id, imagenActual) {
         if (!id) return [];
         if (cacheGalerias.has(id)) return cacheGalerias.get(id);
 
         const cliente = clientePublico();
-        if (!cliente) return imagenActual ? [imagenActual] : [];
+        if (!cliente) return [];
 
-        let data = null;
-        let error = null;
-
-        for (let intento = 0; intento < 3; intento++) {
-            const resultado = await cliente.storage
-                .from("productos")
-                .list(id, {
-                    limit: 100,
-                    sortBy: { column: "name", order: "asc" }
-                });
-
-            data = resultado.data;
-            error = resultado.error;
-
-            if (!error) break;
-            await esperar(500);
-        }
+        const { data, error } = await cliente.storage
+            .from("productos")
+            .list(id, {
+                limit: 100,
+                sortBy: { column: "name", order: "asc" }
+            });
 
         if (error) {
             console.warn("No se pudo cargar la galeria del producto:", id, error);
-            return imagenActual ? [imagenActual] : [];
+            return [];
         }
 
         const rutas = (data || [])
@@ -68,7 +53,6 @@
 
     async function prepararTarjeta(tarjeta) {
         if (tarjeta.dataset.rotacionFotos === "true" || tarjeta.dataset.rotacionFotos === "cargando") return;
-
         const id = tarjeta.dataset.id;
         const visual = tarjeta.querySelector(".producto-visual");
         const imagen = visual?.querySelector("img.producto-imagen, img.imagen-producto-escena");
@@ -90,7 +74,6 @@
             indice = (indice + 1) % rutas.length;
             imagen.style.opacity = "0.15";
             window.setTimeout(() => {
-                if (!document.body.contains(tarjeta)) return;
                 imagen.src = rutas[indice];
                 imagen.style.opacity = "1";
             }, TRANSICION / 2);
@@ -108,23 +91,13 @@
 
     function iniciar() {
         aplicar();
-
-        // Observamos todo el documento porque los productos se crean
-        // despues de cargar la pagina mediante Supabase.
-        const observador = new MutationObserver(() => {
-            aplicar();
-        });
-
-        observador.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-
-        // Reintentos para cubrir la carga asincrona del catalogo.
-        window.setTimeout(aplicar, 500);
-        window.setTimeout(aplicar, 1500);
-        window.setTimeout(aplicar, 3000);
-        window.setTimeout(aplicar, 5000);
+        const catalogo = document.getElementById("lista-productos");
+        if (catalogo) {
+            new MutationObserver(aplicar).observe(catalogo, {
+                childList: true,
+                subtree: true
+            });
+        }
     }
 
     if (document.readyState === "loading") {

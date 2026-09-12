@@ -2245,10 +2245,11 @@ function crearClienteSupabase() {
     return window.supabase.createClient(configuracion.url, configuracion.anonKey);
 }
 
+
 async function cargarProductosDesdeSupabase() {
     const { data, error } = await clienteSupabase
         .from("productos")
-        .select("id,nombre,precio,categoria,descripcion,emoji,etiqueta,estado,orden,medida,micras,presentaciones,imagen_path")
+        .select("id,nombre,precio,categoria,descripcion,emoji,etiqueta,estado,orden,medida,micras,presentaciones,imagen_path,imagen_admin_path")
         .order("orden", { ascending: true })
         .order("nombre", { ascending: true });
 
@@ -2535,7 +2536,7 @@ function crearTarjetaProducto(producto) {
         producto.micras ? `💪 MY${Number(producto.micras)}` : "",
         resumenPresentacion(principal)
     ].filter(Boolean).join(" · ");
-    const urlImagen = obtenerUrlPublicaProducto(producto.imagen_path);
+    const urlImagen = obtenerUrlPublicaProducto(producto.imagen_admin_path || producto.imagen_path);
     const visual = urlImagen
         ? `<img
                 class="producto-imagen"
@@ -2653,7 +2654,7 @@ function abrirDetalleProducto(id) {
     elementos.modalProductoVisual.style.setProperty("--fondo-producto", fondoProducto(producto));
     elementos.modalProductoVisual.replaceChildren();
 
-    const urlImagen = obtenerUrlPublicaProducto(producto.imagen_path);
+    const urlImagen = obtenerUrlPublicaProducto(producto.imagen_admin_path || producto.imagen_path);
     if (urlImagen) {
         const imagen = document.createElement("img");
         imagen.className = "modal-producto-imagen";

@@ -1,0 +1,144 @@
+name: Corregir varias fotos por producto
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Corregir carga multiple por producto
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('admin/admin.js')
+          s = p.read_text(encoding='utf-8')
+
+          old_select = '''        const usarPreferido = archivosConCupo.length === 1 && productoFotoPreferidoId;
+          const productoId = usarPreferido
+              ? productoFotoPreferidoId
+              : sugerirProductoParaFoto(archivo.name);'''
+          new_select = '''        const productoId = productoFotoPreferidoId
+              || sugerirProductoParaFoto(archivo.name);'''
+
+          if old_select not in s:
+              raise SystemExit('No se encontro el bloque de seleccion de producto')
+          s = s.replace(old_select, new_select, 1)
+
+          old_validation = '''    const porSubir = fotosProductoPendientes.filter((foto) => foto.estado !== "subida");
+    const idsAsignados = porSubir.map((foto) => foto.productoId).filter(Boolean);
+    const idsDuplicados = new Set(
+        idsAsignados.filter((id, indice) => idsAsignados.indexOf(id) !== indice)
+    );
+
+    let hayErrorAsignacion = false;
+    porSubir.forEach((foto) => {
+        if (!foto.productoId) {
+            foto.estado = "error";
+            foto.mensaje = "Selecciona un producto";
+            hayErrorAsignacion = true;
+        } else if (idsDuplicados.has(foto.productoId)) {
+            foto.estado = "error";
+            foto.mensaje = "Producto repetido en este lote";
+            hayErrorAsignacion = true;
+        }
+    });
+
+    if (hayErrorAsignacion) {
+        renderizarFotosProductoPendientes();
+        mostrarMensaje(
+            elementos.mensajeFotosProductos,
+            "Revisa las asignaciones. En cada lote debe ir una foto principal por producto."
+        );
+        return;
+    }'''
+          new_validation = '''    const porSubir = fotosProductoPendientes.filter((foto) => foto.estado !== "subida");
+
+    let hayErrorAsignacion = false;
+    porSubir.forEach((foto) => {
+        if (!foto.productoId) {
+            foto.estado = "error";
+            foto.mensaje = "Selecciona un producto";
+            hayErrorAsignacion = true;
+        }
+    });
+
+    if (hayErrorAsignacion) {
+        renderizarFotosProductoPendientes();
+        mostrarMensaje(
+            elementos.mensajeFotosProductos,
+            "Selecciona el producto para cada foto antes de subirlas."
+        );
+        return;
+    }'''
+
+          if old_validation not in s:
+              raise SystemExit('No se encontro la validacion de productos repetidos')
+          s = s.replace(old_validation, new_validation, 1)
+
+          old_upload = '''            const { error: errorProducto } = await clienteSupabase
+                .from("productos")
+                .update({ imagen_admin_path: nuevoPath })
+                .eq("id", producto.id);
+
+            if (errorProducto) {
+                await clienteSupabase.storage.from("productos").remove([nuevoPath]);
+                throw errorProducto;
+            }
+
+            const pathAnterior = producto.imagen_admin_path;
+            producto.imagen_admin_path = nuevoPath;
+
+            if (pathAnterior && pathAnterior !== nuevoPath) {
+                const { error: errorBorrado } = await clienteSupabase.storage
+                    .from("productos")
+                    .remove([pathAnterior]);
+
+                if (errorBorrado) {
+                    console.warn("La foto anterior quedó pendiente de limpieza:", errorBorrado);
+                }
+            }'''
+          new_upload = '''            // La primera foto queda como principal. Las siguientes se conservan
+            // en la carpeta del mismo producto para formar su galeria.
+            if (!producto.imagen_admin_path) {
+                const { error: errorProducto } = await clienteSupabase
+                    .from("productos")
+                    .update({ imagen_admin_path: nuevoPath })
+                    .eq("id", producto.id);
+
+                if (errorProducto) {
+                    await clienteSupabase.storage.from("productos").remove([nuevoPath]);
+                    throw errorProducto;
+                }
+
+                producto.imagen_admin_path = nuevoPath;
+            }'''
+
+          if old_upload not in s:
+              raise SystemExit('No se encontro el bloque de reemplazo de foto principal')
+          s = s.replace(old_upload, new_upload, 1)
+
+          marker = '/* REORGANICO_MULTI_FOTOS_PRODUCTO_20260912 */'
+          if marker not in s:
+              s += '\n' + marker + '\n'
+
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Guardar cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add admin/admin.js
+          git diff --cached --quiet && exit 0
+          git commit -m "fix: conservar varias fotos por producto"
+          git push

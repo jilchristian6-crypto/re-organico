@@ -141,7 +141,18 @@ jobs:
                   s = s.replace('</body>', tag + '\n</body>', 1)
               else:
                   raise SystemExit('No se encontro un lugar para cargar el script de rotacion')
-              p.write_text(s, encoding='utf-8')
+
+          cms = '    <script src="cms-publico.js?v=20260912"></script>'
+          if cms not in s:
+              marker = '    <script src="galeria-rotacion-productos.js?v=20260912"></script>'
+              if marker in s:
+                  s = s.replace(marker, cms + '\n' + marker, 1)
+              elif '</body>' in s:
+                  s = s.replace('</body>', cms + '\n</body>', 1)
+              else:
+                  raise SystemExit('No se encontro un lugar para cargar el CMS del carrusel')
+
+          p.write_text(s, encoding='utf-8')
           PY
 
       - name: Guardar cambios

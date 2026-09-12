@@ -24,64 +24,107 @@ jobs:
               const INTERVALO = 3500;
               const TRANSICION = 650;
               const temporizadores = new WeakMap();
+              const cacheGalerias = new Map();
 
-              function rutasProducto(id) {
-                  const mapa = window.REORGANICO_IMAGENES_PRODUCTOS || {};
-                  const valor = mapa[id];
-                  if (!Array.isArray(valor) || valor.length < 2) return [];
-                  return valor.filter(Boolean);
+              function clientePublico() {
+                  const config = window.REORGANICO_SUPABASE;
+                  if (!config || !window.supabase?.createClient) return null;
+                  if (!window.__REORGANICO_CLIENTE_ROTACION) {
+                      window.__REORGANICO_CLIENTE_ROTACION = window.supabase.createClient(
+                          config.url,
+                          config.anonKey
+                      );
+                  }
+                  return window.__REORGANICO_CLIENTE_ROTACION;
               }
 
-              function prepararTarjeta(tarjeta) {
-                  if (tarjeta.dataset.rotacionFotos === "true") return;
-                  const id = tarjeta.dataset.id;
-                  const rutas = rutasProducto(id);
-                  if (rutas.length < 2) return;
-                  const visual = tarjeta.querySelector(".producto-visual");
-                  if (!visual) return;
+              async function rutasProducto(id, imagenActual) {
+                  if (!id) return [];
+                  if (cacheGalerias.has(id)) return cacheGalerias.get(id);
 
-                  const iniciar = () => {
-                      const imagen = visual.querySelector("img.producto-imagen, img.imagen-producto-escena");
-                      if (!imagen) return;
-                      tarjeta.dataset.rotacionFotos = "true";
-                      imagen.style.transition = `opacity ${TRANSICION}ms ease`;
-                      imagen.style.opacity = "1";
-                      let indice = 0;
-                      const cambiar = () => {
-                          indice = (indice + 1) % rutas.length;
-                          imagen.style.opacity = "0.15";
-                          window.setTimeout(() => {
-                              imagen.src = rutas[indice];
-                              imagen.style.opacity = "1";
-                          }, TRANSICION / 2);
-                      };
-                      const temporizador = window.setInterval(cambiar, INTERVALO);
-                      temporizadores.set(tarjeta, temporizador);
+                  const cliente = clientePublico();
+                  if (!cliente) return [];
+
+                  const { data, error } = await cliente.storage
+                      .from("productos")
+                      .list(id, {
+                          limit: 100,
+                          sortBy: { column: "name", order: "asc" }
+                      });
+
+                  if (error) {
+                      console.warn("No se pudo cargar la galeria del producto:", id, error);
+                      return [];
+                  }
+
+                  const rutas = (data || [])
+                      .filter((foto) => foto?.name)
+                      .map((foto) => cliente.storage.from("productos").getPublicUrl(`${id}/${foto.name}`).data.publicUrl)
+                      .filter(Boolean);
+
+                  if (imagenActual && !rutas.includes(imagenActual)) {
+                      rutas.unshift(imagenActual);
+                  }
+
+                  const unicas = [...new Set(rutas)];
+                  cacheGalerias.set(id, unicas);
+                  return unicas;
+              }
+
+              async function prepararTarjeta(tarjeta) {
+                  if (tarjeta.dataset.rotacionFotos === "true" || tarjeta.dataset.rotacionFotos === "cargando") return;
+                  const id = tarjeta.dataset.id;
+                  const visual = tarjeta.querySelector(".producto-visual");
+                  const imagen = visual?.querySelector("img.producto-imagen, img.imagen-producto-escena");
+                  if (!id || !imagen) return;
+
+                  tarjeta.dataset.rotacionFotos = "cargando";
+                  const rutas = await rutasProducto(id, imagen.src);
+
+                  if (rutas.length < 2) {
+                      delete tarjeta.dataset.rotacionFotos;
+                      return;
+                  }
+
+                  tarjeta.dataset.rotacionFotos = "true";
+                  imagen.style.transition = `opacity ${TRANSICION}ms ease`;
+                  let indice = Math.max(0, rutas.indexOf(imagen.src));
+
+                  const cambiar = () => {
+                      indice = (indice + 1) % rutas.length;
+                      imagen.style.opacity = "0.15";
+                      window.setTimeout(() => {
+                          imagen.src = rutas[indice];
+                          imagen.style.opacity = "1";
+                      }, TRANSICION / 2);
                   };
 
-                  iniciar();
-                  const espera = window.setInterval(() => {
-                      if (tarjeta.dataset.rotacionFotos === "true") {
-                          window.clearInterval(espera);
-                          return;
-                      }
-                      iniciar();
-                  }, 150);
-                  window.setTimeout(() => window.clearInterval(espera), 5000);
+                  const temporizador = window.setInterval(cambiar, INTERVALO);
+                  temporizadores.set(tarjeta, temporizador);
               }
 
               function aplicar() {
-                  document.querySelectorAll("article.producto[data-id]").forEach(prepararTarjeta);
+                  document.querySelectorAll("article.producto[data-id]").forEach((tarjeta) => {
+                      prepararTarjeta(tarjeta);
+                  });
               }
 
               function iniciar() {
                   aplicar();
                   const catalogo = document.getElementById("lista-productos");
-                  if (catalogo) new MutationObserver(aplicar).observe(catalogo, { childList: true, subtree: true });
+                  if (catalogo) {
+                      new MutationObserver(aplicar).observe(catalogo, {
+                          childList: true,
+                          subtree: true
+                      });
+                  }
               }
 
-              if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar, { once: true });
-              else iniciar();
+              if (document.readyState === "loading") {
+                  document.addEventListener("DOMContentLoaded", iniciar, { once: true });
+              } else {
+                  iniciar();
+              }
           })();
           EOF
 
@@ -89,11 +132,11 @@ jobs:
           from pathlib import Path
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
-          tag = '    <script src="galeria-rotacion-productos.js"></script>'
+          tag = '    <script src="galeria-rotacion-productos.js?v=20260912"></script>'
           if tag not in s:
-              marker = '    <script src="cms-publico.js"></script>'
+              marker = '    <script src="script.js?v=20260912"></script>'
               if marker not in s:
-                  raise SystemExit('No se encontro el bloque de scripts publico')
+                  raise SystemExit('No se encontro el script publico principal')
               s = s.replace(marker, marker + '\n' + tag, 1)
               p.write_text(s, encoding='utf-8')
           PY
@@ -101,8 +144,8 @@ jobs:
       - name: Guardar cambios
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.email "41898282+users.noreply.github.com"
           git add galeria-rotacion-productos.js index.html
           git diff --cached --quiet && exit 0
-          git commit -m "feat: rotar fotos de productos en el catalogo"
+          git commit -m "feat: rotar fotos reales de cada producto"
           git push

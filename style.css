@@ -129,7 +129,7 @@ article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-imagen {
     align-items: center;
     justify-content: center;
     padding: 12px 8px;
-    border: 2px solid #e0e0e0 !important; /* Fuerza el borde limpio */
+    border: 2px solid #e0e0e0 !important;
     border-radius: 10px !important;
     background: #ffffff !important;
     cursor: pointer;
@@ -140,12 +140,10 @@ article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-imagen {
     margin: 0 !important;
 }
 
-/* Ocultar el círculo del radio button nativo */
 #modal-presentacion input[type="radio"] {
     display: none !important;
 }
 
-/* Estilo cuando la tarjeta está seleccionada */
 #modal-presentacion label:has(input[type="radio"]:checked) {
     border-color: #1b4d20 !important;
     background: #f0f7f1 !important;
@@ -177,7 +175,7 @@ article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-imagen {
     line-height: 1.2;
     display: inline-block;
     margin-top: 4px;
-    max-width: 150px; /* Evita que el texto empuje los botones */
+    max-width: 150px;
 }
 
 .modal-cantidad-control {
@@ -235,4 +233,94 @@ article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-imagen {
 
 #modal-agregar-carrito:hover {
     background: #143818;
+}
+
+/* ==========================================
+   5. NUESTRO BLOG - PUBLICACIONES CMS
+   ========================================== */
+#blog-publicaciones-cms {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 52px auto 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 24px !important;
+    align-items: stretch;
+}
+
+#blog-publicaciones-cms > article {
+    width: 100% !important;
+    min-width: 0;
+    overflow: hidden !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 24px !important;
+    background: rgba(255, 255, 255, 0.96) !important;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12) !important;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+#blog-publicaciones-cms > article:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 22px 44px rgba(0, 0, 0, 0.16) !important;
+}
+
+#blog-publicaciones-cms > article img,
+#blog-publicaciones-cms > article video {
+    width: 100% !important;
+    height: 230px !important;
+    display: block !important;
+    object-fit: cover !important;
+    background: #dfe9e2;
+}
+
+#blog-publicaciones-cms > article > div {
+    padding: 22px !important;
+}
+
+#blog-publicaciones-cms > article span {
+    color: #267744 !important;
+    font-size: 11px !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.12em !important;
+}
+
+#blog-publicaciones-cms > article h3 {
+    margin: 7px 0 0 !important;
+    color: #174b37 !important;
+    font-size: 21px !important;
+    line-height: 1.2 !important;
+    font-weight: 800 !important;
+}
+
+#blog-publicaciones-cms > article p {
+    margin: 11px 0 0 !important;
+    color: #5f6a63 !important;
+    font-size: 14px !important;
+    line-height: 1.55 !important;
+}
+
+#blog-publicaciones-cms > article small {
+    display: block !important;
+    margin-top: 16px !important;
+    color: #7b847e !important;
+    font-size: 12px !important;
+}
+
+@media (max-width: 900px) {
+    #blog-publicaciones-cms {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 620px) {
+    #blog-publicaciones-cms {
+        grid-template-columns: 1fr !important;
+        gap: 18px !important;
+        margin-top: 34px !important;
+    }
+
+    #blog-publicaciones-cms > article img,
+    #blog-publicaciones-cms > article video {
+        height: 220px !important;
+    }
 }

@@ -18,7 +18,7 @@
         return window.__REORGANICO_CLIENTE_ROTACION;
     }
 
-    async function rutasProducto(id, imagenActual, intento = 0) {
+    async function rutasProducto(id, imagenActual) {
         if (!id) return [];
         if (cacheGalerias.has(id)) return cacheGalerias.get(id);
 
@@ -29,23 +29,17 @@
             .from("productos")
             .list(id, {
                 limit: 100,
-                sortBy: { column: "created_at", order: "asc" }
+                sortBy: { column: "name", order: "asc" }
             });
 
         if (error) {
-            if (intento < 2) {
-                await new Promise((resolve) => window.setTimeout(resolve, 1000));
-                return rutasProducto(id, imagenActual, intento + 1);
-            }
             console.warn("No se pudo cargar la galeria del producto:", id, error);
             return [];
         }
 
         const rutas = (data || [])
-            .filter((foto) => foto?.name && !foto.name.endsWith("/"))
-            .map((foto) => cliente.storage
-                .from("productos")
-                .getPublicUrl(`${id}/${foto.name}`).data.publicUrl)
+            .filter((foto) => foto?.name)
+            .map((foto) => cliente.storage.from("productos").getPublicUrl(`${id}/${foto.name}`).data.publicUrl)
             .filter(Boolean);
 
         if (imagenActual && !rutas.includes(imagenActual)) {
@@ -59,44 +53,34 @@
 
     async function prepararTarjeta(tarjeta) {
         if (tarjeta.dataset.rotacionFotos === "true" || tarjeta.dataset.rotacionFotos === "cargando") return;
-
         const id = tarjeta.dataset.id;
         const visual = tarjeta.querySelector(".producto-visual");
         const imagen = visual?.querySelector("img.producto-imagen, img.imagen-producto-escena");
         if (!id || !imagen) return;
 
         tarjeta.dataset.rotacionFotos = "cargando";
+        const rutas = await rutasProducto(id, imagen.src);
 
-        try {
-            const rutas = await rutasProducto(id, imagen.currentSrc || imagen.src);
-
-            if (rutas.length < 2) {
-                delete tarjeta.dataset.rotacionFotos;
-                return;
-            }
-
-            tarjeta.dataset.rotacionFotos = "true";
-            imagen.style.transition = `opacity ${TRANSICION}ms ease`;
-
-            let indice = rutas.indexOf(imagen.currentSrc || imagen.src);
-            if (indice < 0) indice = 0;
-
-            const cambiar = () => {
-                indice = (indice + 1) % rutas.length;
-                imagen.style.opacity = "0.15";
-
-                window.setTimeout(() => {
-                    imagen.src = rutas[indice];
-                    imagen.style.opacity = "1";
-                }, TRANSICION / 2);
-            };
-
-            const temporizador = window.setInterval(cambiar, INTERVALO);
-            temporizadores.set(tarjeta, temporizador);
-        } catch (error) {
+        if (rutas.length < 2) {
             delete tarjeta.dataset.rotacionFotos;
-            console.warn("Error iniciando rotacion del producto:", id, error);
+            return;
         }
+
+        tarjeta.dataset.rotacionFotos = "true";
+        imagen.style.transition = `opacity ${TRANSICION}ms ease`;
+        let indice = Math.max(0, rutas.indexOf(imagen.src));
+
+        const cambiar = () => {
+            indice = (indice + 1) % rutas.length;
+            imagen.style.opacity = "0.15";
+            window.setTimeout(() => {
+                imagen.src = rutas[indice];
+                imagen.style.opacity = "1";
+            }, TRANSICION / 2);
+        };
+
+        const temporizador = window.setInterval(cambiar, INTERVALO);
+        temporizadores.set(tarjeta, temporizador);
     }
 
     function aplicar() {
@@ -107,7 +91,6 @@
 
     function iniciar() {
         aplicar();
-
         const catalogo = document.getElementById("lista-productos");
         if (catalogo) {
             new MutationObserver(aplicar).observe(catalogo, {
@@ -115,29 +98,11 @@
                 subtree: true
             });
         }
-
-        // El catalogo se carga de forma asincrona; hacemos varios intentos
-        // para asegurar que la rotacion se conecte aunque Supabase demore.
-        let intentos = 0;
-        const reintentar = window.setInterval(() => {
-            aplicar();
-            intentos += 1;
-            if (intentos >= 30) window.clearInterval(reintentar);
-        }, 1000);
-    }
-
-    function esperarDependencias() {
-        if (window.REORGANICO_SUPABASE && window.supabase?.createClient) {
-            iniciar();
-            return;
-        }
-
-        window.setTimeout(esperarDependencias, 250);
     }
 
     if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", esperarDependencias, { once: true });
+        document.addEventListener("DOMContentLoaded", iniciar, { once: true });
     } else {
-        esperarDependencias();
+        iniciar();
     }
 })();

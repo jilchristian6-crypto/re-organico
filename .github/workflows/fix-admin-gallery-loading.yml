@@ -1,0 +1,43 @@
+name: Fix admin gallery loading
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Add compatibility counter required by admin gallery
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('admin/index.html')
+          text = path.read_text(encoding='utf-8')
+          marker = '<span id="contador-carrusel-pestana">0</span>'
+          compat = '<span id="contador-galeria-pestana" hidden>0</span>'
+          if 'id="contador-galeria-pestana"' not in text:
+              if marker not in text:
+                  raise SystemExit('No se encontró el contador del carrusel')
+              text = text.replace(marker, marker + compat, 1)
+              path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit fix
+        run: |
+          if git diff --quiet -- admin/index.html; then
+            echo 'No changes needed.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add admin/index.html
+          git commit -m 'fix: restore admin gallery compatibility counter'
+          git push

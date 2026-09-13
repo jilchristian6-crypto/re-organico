@@ -1,11 +1,5 @@
 "use strict";
 
-window.REORGANICO_SUPABASE = {
-    url: "https://bkhpkiwbwdzlnjysdzqw.supabase.co",
-    anonKey: "sb_publishable_LdpztMzZKei1nBtx36dHVg_OgzsWtcr"
-};
-"use strict";
-
 // Credenciales de Supabase
 window.REORGANICO_SUPABASE = {
     url: "https://bkhpkiwbwdzlnjysdzqw.supabase.co",
@@ -41,7 +35,7 @@ window.REORGANICO_SUPABASE = {
     else instalarYouTube();
 })();
 
- /* Re Orgánico: enlaces directos por producto y opción de compartir */
+/* Re Orgánico: enlaces directos por producto y opción de compartir */
 (() => {
     const PARAMETRO_PRODUCTO = "producto";
     const CLASE_ENLACE = "enlace-producto-directo";
@@ -154,12 +148,19 @@ window.REORGANICO_SUPABASE = {
 
     const estilo = document.createElement("style");
     estilo.textContent = `
+        .producto-acciones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
         .enlace-producto-directo {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
-            margin-top: 8px;
+            width: 100%;
+            margin-top: 6px;
             padding: 9px 13px;
             border: 1px solid #6f9b73;
             border-radius: 999px;
@@ -209,13 +210,12 @@ window.REORGANICO_SUPABASE = {
     }
 
     function agregarEnlaceVisible() {
-        const modal = document.getElementById('modal-producto');
+        const modal = document.getElementById('modal-producto') || document.querySelector('.modal.activo, #modal-producto.activo');
         if (!modal || modal.querySelector('.' + MARCADOR)) return;
         const id = obtenerId();
         if (!id) return;
 
-        const botonCerrar = modal.querySelector('[data-accion="cerrar-modal"], .cerrar-modal, button[aria-label*="errar"]');
-        const contenedor = modal.querySelector('.modal-producto-contenido, .contenido-modal, .modal-contenido') || modal;
+        const contenedor = modal.querySelector('.modal-producto-contenido, .modal-contenido, .contenido-modal') || modal.querySelector('.modal-informacion') || modal;
         const caja = document.createElement('div');
         caja.className = MARCADOR;
         caja.innerHTML = `
@@ -226,8 +226,7 @@ window.REORGANICO_SUPABASE = {
             </div>
             <div class="texto-enlace-producto">Puedes copiar este enlace y enviárselo directamente a un cliente.</div>
         `;
-        if (botonCerrar && botonCerrar.parentElement) botonCerrar.parentElement.insertBefore(caja, botonCerrar);
-        else contenedor.appendChild(caja);
+        contenedor.appendChild(caja);
 
         const copiar = caja.querySelector('[data-copiar-producto="1"]');
         copiar.addEventListener('click', async () => {
@@ -252,4 +251,89 @@ window.REORGANICO_SUPABASE = {
     document.head.appendChild(estilo);
     new MutationObserver(agregarEnlaceVisible).observe(document.body, {childList:true, subtree:true});
     agregarEnlaceVisible();
+})();
+
+/* Re Orgánico: Estilos forzados en runtime para ordenar el Blog CMS */
+(() => {
+    const ID_ESTILO = "estilo-forzado-blog-cms";
+    if (document.getElementById(ID_ESTILO)) return;
+
+    const estilo = document.createElement("style");
+    estilo.id = ID_ESTILO;
+    estilo.textContent = `
+      #blog-publicaciones-cms {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+        gap: 28px !important;
+        margin: 40px auto 0 !important;
+        width: 100% !important;
+        max-width: 1200px !important;
+        box-sizing: border-box !important;
+      }
+      #blog-publicaciones-cms article[data-blog-cms-id] {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
+        background: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        border-radius: 20px !important;
+        overflow: hidden !important;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15) !important;
+        transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+      }
+      #blog-publicaciones-cms article[data-blog-cms-id]:hover {
+        transform: translateY(-4px) !important;
+        box-shadow: 0 18px 36px rgba(0, 0, 0, 0.22) !important;
+      }
+      #blog-publicaciones-cms article[data-blog-cms-id] img,
+      #blog-publicaciones-cms article[data-blog-cms-id] video {
+        width: 100% !important;
+        height: 230px !important;
+        min-height: 230px !important;
+        max-height: 230px !important;
+        object-fit: cover !important;
+        object-position: center !important;
+        display: block !important;
+      }
+      #blog-publicaciones-cms article[data-blog-cms-id] > div {
+        display: flex !important;
+        flex-direction: column !important;
+        flex: 1 1 auto !important;
+        padding: 22px !important;
+        box-sizing: border-box !important;
+      }
+      #blog-publicaciones-cms article[data-blog-cms-id] span {
+        font-size: 11px !important;
+        font-weight: 800 !important;
+        color: #2c7c45 !important;
+        text-transform: uppercase !important;
+        letter-spacing: .08em !important;
+        margin-bottom: 8px !important;
+      }
+      #blog-publicaciones-cms article[data-blog-cms-id] h3 {
+        color: #1f4d3a !important;
+        font-size: 20px !important;
+        line-height: 1.25 !important;
+        margin: 0 0 10px 0 !important;
+      }
+      #blog-publicaciones-cms article[data-blog-cms-id] p {
+        color: #55625b !important;
+        font-size: 14px !important;
+        line-height: 1.55 !important;
+        margin: 0 !important;
+      }
+      #blog-publicaciones-cms article[data-blog-cms-id] small {
+        margin-top: auto !important;
+        padding-top: 14px !important;
+        color: #858a85 !important;
+        border-top: 1px solid #eef3ee !important;
+        display: block !important;
+      }
+      @media (max-width: 640px) {
+        #blog-publicaciones-cms {
+          grid-template-columns: 1fr !important;
+        }
+      }
+    `;
+    document.head.appendChild(estilo);
 })();

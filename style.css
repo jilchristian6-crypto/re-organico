@@ -324,3 +324,72 @@ article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-imagen {
         height: 220px !important;
     }
 }
+
+/* ==========================================
+   ESTILOS MEJORADOS PARA EL BLOG DE SUPABASE
+   ========================================== */
+
+/* 1. Contenedor principal: Cuadrícula perfecta */
+#blog-publicaciones-cms {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+    gap: 32px !important;
+    margin-top: 48px !important;
+}
+
+/* 2. Tarjetas: Mismo alto y efecto hover */
+#blog-publicaciones-cms article {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important; 
+    background: #ffffff !important;
+    border: 1px solid #eef5e9 !important;
+    border-radius: 24px !important;
+    box-shadow: 0 4px 20px rgba(22, 91, 56, 0.06) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+#blog-publicaciones-cms article:hover {
+    transform: translateY(-6px) !important;
+    box-shadow: 0 16px 35px rgba(22, 91, 56, 0.12) !important;
+}
+
+/* 3. Imagen: Tamaño fijo y sin recortes raros */
+#blog-publicaciones-cms article img {
+    width: 100% !important;
+    height: 240px !important;
+    object-fit: cover !important;
+    border-bottom: 1px solid #eef5e9 !important;
+}
+
+/* 4. Caja de texto: Empuja la fecha hacia abajo */
+#blog-publicaciones-cms article > div {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-grow: 1 !important; /* Llena el espacio disponible */
+    padding: 24px !important;
+}
+
+/* Título y descripción */
+#blog-publicaciones-cms article h3 {
+    font-size: 20px !important;
+    color: #1f4d3a !important;
+    margin: 8px 0 12px 0 !important;
+}
+
+#blog-publicaciones-cms article p {
+    font-size: 14.5px !important;
+    line-height: 1.6 !important;
+    color: #55625b !important;
+    margin: 0 !important;
+}
+
+/* 5. Fecha: Siempre pegada al fondo */
+#blog-publicaciones-cms article small {
+    margin-top: auto !important; /* Magia: empuja la fecha al límite inferior */
+    padding-top: 16px !important;
+    color: #8a958e !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    border-top: 1px solid #f0f4f1 !important;
+}

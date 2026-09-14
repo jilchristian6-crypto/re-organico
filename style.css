@@ -1,341 +1,66 @@
 @import url("style-base.css");
 
 /* Ajuste visual: pote helado Bio-Eco bambú + PLA 160 cc (1BG174) */
-article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-visual {
-    min-height: 360px !important;
-}
-
-article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-imagen {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain !important;
-    object-position: center !important;
-    background: #ffffff;
-}
-
-#modal-producto-visual:has(img[data-producto-id="pote-helado-bambu-160-1bg174"]) {
-    min-height: 640px !important;
-    height: 640px !important;
-}
-
-#modal-producto-visual img[data-producto-id="pote-helado-bambu-160-1bg174"] {
-    width: 100% !important;
-    height: 640px !important;
-    object-fit: contain !important;
-    object-position: center !important;
-    background: #ffffff;
-}
-
+article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-visual { min-height: 360px !important; }
+article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-imagen { width: 100% !important; height: 100% !important; object-fit: contain !important; object-position: center !important; background: #ffffff; }
+#modal-producto-visual:has(img[data-producto-id="pote-helado-bambu-160-1bg174"]) { min-height: 640px !important; height: 640px !important; }
+#modal-producto-visual img[data-producto-id="pote-helado-bambu-160-1bg174"] { width: 100% !important; height: 640px !important; object-fit: contain !important; object-position: center !important; background: #ffffff; }
 @media (max-width: 780px) {
-    article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-visual {
-        min-height: 420px !important;
-    }
-
-    #modal-producto-visual:has(img[data-producto-id="pote-helado-bambu-160-1bg174"]) {
-        min-height: 520px !important;
-        height: 520px !important;
-    }
-
-    #modal-producto-visual img[data-producto-id="pote-helado-bambu-160-1bg174"] {
-        height: 520px !important;
-    }
-}
-/* ==========================================
-   MODAL DE PRODUCTO - DISEÑO MODERNO (CORREGIDO)
-   ========================================== */
-
-.modal-producto-contenido {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    max-width: 850px;
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 2.5rem;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    position: relative;
+    article.producto[data-id="pote-helado-bambu-160-1bg174"] .producto-visual { min-height: 420px !important; }
+    #modal-producto-visual:has(img[data-producto-id="pote-helado-bambu-160-1bg174"]) { min-height: 520px !important; height: 520px !important; }
+    #modal-producto-visual img[data-producto-id="pote-helado-bambu-160-1bg174"] { height: 520px !important; }
 }
 
-@media (max-width: 768px) {
-    .modal-producto-contenido {
-        grid-template-columns: 1fr;
-        padding: 1.5rem;
-    }
-}
+.modal-producto-contenido { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 850px; background: #ffffff; border-radius: 16px; padding: 2.5rem; box-shadow: 0 20px 40px rgba(0,0,0,.15); position: relative; }
+@media (max-width: 768px) { .modal-producto-contenido { grid-template-columns: 1fr; padding: 1.5rem; } }
+.modal-producto-info { display: flex; flex-direction: column; gap: .8rem; }
+.modal-categoria { font-size: .85rem; font-weight: 600; text-transform: uppercase; color: #2e6930; }
+#modal-producto-titulo { font-size: 1.5rem; font-weight: 700; color: #1a2e1b; line-height: 1.2; margin: 0; }
+#modal-producto-descripcion { font-size: .95rem; color: #555; margin: 0; }
+.modal-producto-datos { font-size: .85rem; color: #555; background: #f4f7f4; padding: .75rem; border-radius: 8px; margin: 0; }
+#modal-presentacion-resumen, #modal-cantidad-total { display: none !important; }
+.modal-presentacion-label { font-weight: 600; font-size: .95rem; color: #1a2e1b; margin-top: .5rem; }
+#modal-presentacion { display: flex; gap: 10px; }
+#modal-presentacion > * { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 8px; border: 2px solid #e0e0e0 !important; border-radius: 10px !important; background: #ffffff !important; cursor: pointer; transition: all .2s ease; text-align: center; font-size: .9rem; color: #333; margin: 0 !important; }
+#modal-presentacion input[type="radio"] { display: none !important; }
+#modal-presentacion label:has(input[type="radio"]:checked) { border-color: #1b4d20 !important; background: #f0f7f1 !important; }
+.modal-cantidad-compra { display: flex; justify-content: space-between; align-items: center; background: #fafafa; padding: 1rem; border-radius: 10px; border: 1px solid #eaeaea; margin-top: .5rem; }
+.modal-cantidad-texto strong { display: block; font-size: .95rem; color: #1a2e1b; }
+.modal-cantidad-texto span { font-size: .8rem; color: #777; line-height: 1.2; display: inline-block; margin-top: 4px; max-width: 150px; }
+.modal-cantidad-control { display: flex; align-items: center; background: #ffffff; border: 1px solid #dcdcdc; border-radius: 8px; height: 40px; }
+.modal-cantidad-control button { background: none; border: none; width: 35px; height: 100%; font-size: 1.2rem; cursor: pointer; color: #1b4d20; }
+.modal-cantidad-control button:hover { background: #eaf2eb; }
+#modal-cantidad-valor { font-size: 1rem; font-weight: 600; min-width: 30px; text-align: center; }
+#modal-producto-precio { font-size: 1.8rem; font-weight: 800; color: #1b4d20; margin: .5rem 0; }
+#modal-agregar-carrito { background: #1b4d20; color: #ffffff; border: none; padding: 1rem; font-size: 1rem; font-weight: 600; border-radius: 10px; cursor: pointer; transition: .2s ease; width: 100%; }
+#modal-agregar-carrito:hover { background: #143818; }
 
-.modal-producto-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-}
-
-.modal-categoria {
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: #2e6930;
-}
-
-#modal-producto-titulo {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #1a2e1b;
-    line-height: 1.2;
-    margin: 0;
-}
-
-#modal-producto-descripcion {
-    font-size: 0.95rem;
-    color: #555;
-    margin: 0;
-}
-
-.modal-producto-datos {
-    font-size: 0.85rem;
-    color: #555;
-    background: #f4f7f4;
-    padding: 0.75rem;
-    border-radius: 8px;
-    margin: 0;
-}
-
-/* ==========================================
-   1. OCULTAR TEXTOS REPETIDOS DEL JS
-   ========================================== */
-#modal-presentacion-resumen,
-#modal-cantidad-total {
-    display: none !important;
-}
-
-/* ==========================================
-   2. TARJETAS DE SELECCIÓN (PACK VS CAJA)
-   ========================================== */
-.modal-presentacion-label {
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: #1a2e1b;
-    margin-top: 0.5rem;
-}
-
-#modal-presentacion {
-    display: flex;
-    gap: 10px;
-}
-
-#modal-presentacion > * {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 8px;
-    border: 2px solid #e0e0e0 !important;
-    border-radius: 10px !important;
-    background: #ffffff !important;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: center;
-    font-size: 0.9rem;
-    color: #333;
-    margin: 0 !important;
-}
-
-#modal-presentacion input[type="radio"] {
-    display: none !important;
-}
-
-#modal-presentacion label:has(input[type="radio"]:checked) {
-    border-color: #1b4d20 !important;
-    background: #f0f7f1 !important;
-}
-
-/* ==========================================
-   3. SELECTOR DE CANTIDADES
-   ========================================== */
-.modal-cantidad-compra {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #fafafa;
-    padding: 1rem;
-    border-radius: 10px;
-    border: 1px solid #eaeaea;
-    margin-top: 0.5rem;
-}
-
-.modal-cantidad-texto strong {
-    display: block;
-    font-size: 0.95rem;
-    color: #1a2e1b;
-}
-
-.modal-cantidad-texto span {
-    font-size: 0.8rem;
-    color: #777;
-    line-height: 1.2;
-    display: inline-block;
-    margin-top: 4px;
-    max-width: 150px;
-}
-
-.modal-cantidad-control {
-    display: flex;
-    align-items: center;
-    background: #ffffff;
-    border: 1px solid #dcdcdc;
-    border-radius: 8px;
-    height: 40px;
-}
-
-.modal-cantidad-control button {
-    background: none;
-    border: none;
-    width: 35px;
-    height: 100%;
-    font-size: 1.2rem;
-    cursor: pointer;
-    color: #1b4d20;
-}
-
-.modal-cantidad-control button:hover {
-    background: #eaf2eb;
-}
-
-#modal-cantidad-valor {
-    font-size: 1rem;
-    font-weight: 600;
-    min-width: 30px;
-    text-align: center;
-}
-
-/* ==========================================
-   4. PRECIO FINAL Y BOTÓN PRINCIPAL
-   ========================================== */
-#modal-producto-precio {
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: #1b4d20;
-    margin: 0.5rem 0;
-}
-
-#modal-agregar-carrito {
-    background: #1b4d20;
-    color: #ffffff;
-    border: none;
-    padding: 1rem;
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: 0.2s ease;
-    width: 100%;
-}
-
-#modal-agregar-carrito:hover {
-    background: #143818;
-}
-
-/* ==========================================
-   BLOG / CMS SUPABASE - LAYOUT CORREGIDO
-   ========================================== */
-
-div#blog-publicaciones-cms[id="blog-publicaciones-cms"] {
-    display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 28px !important;
-    margin: 48px auto 0 !important;
-    width: 100% !important;
-    max-width: 1200px !important;
-    box-sizing: border-box !important;
-}
-
-div#blog-publicaciones-cms[id="blog-publicaciones-cms"] > article {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100% !important;
-    min-width: 0 !important;
-    background: #ffffff !important;
-    border: 1px solid rgba(31, 77, 58, 0.12) !important;
-    border-radius: 20px !important;
-    overflow: hidden !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
-    transition: transform 0.25s ease, box-shadow 0.25s ease !important;
-}
-
-div#blog-publicaciones-cms[id="blog-publicaciones-cms"] > article:hover {
-    transform: translateY(-5px) !important;
-    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12) !important;
-}
-
-div#blog-publicaciones-cms[id="blog-publicaciones-cms"] > article img,
-div#blog-publicaciones-cms[id="blog-publicaciones-cms"] > article video {
-    width: 100% !important;
-    height: 230px !important;
-    min-height: 230px !important;
-    max-height: 230px !important;
-    object-fit: cover !important;
-    object-position: center !important;
-    display: block !important;
-    border-bottom: 1px solid #eef3ee !important;
-}
-
-div#blog-publicaciones-cms[id="blog-publicaciones-cms"] > article > div {
-    display: flex !important;
-    flex-direction: column !important;
-    flex: 1 1 auto !important;
-    padding: 22px !important;
-    box-sizing: border-box !important;
-}
-
-div#blog-publicaciones-cms[id="blog-publicaciones-cms"] > article span {
-    font-size: 11px !important;
-    font-weight: 800 !important;
-    letter-spacing: 0.08em !important;
-    text-transform: uppercase !important;
-    color: #2c7c45 !important;
-    margin-bottom: 8px !important;
-}
-
-div#blog-publicaciones-cms[id="blog-publicaciones-cms"] > article h3 {
-    font-size: 20px !important;
-    font-weight: 800 !important;
-    line-height: 1.25 !important;
-    color: #1f4d3a !important;
-    margin: 0 0 10px 0 !important;
-}
-
-div#blog-publicaciones-cms[id="blog-publicaciones-cms"] > article p {
-    font-size: 14px !important;
-    line-height: 1.55 !important;
-    color: #55625b !important;
-    margin: 0 !important;
-}
-
-div#blog-publicaciones-cms[id="blog-publicaciones-cms"] > article small {
-    display: block !important;
-    margin-top: auto !important;
-    padding-top: 14px !important;
-    border-top: 1px solid #f0f4f1 !important;
-    font-size: 12px !important;
-    color: #858a85 !important;
-}
+/* BLOG / CMS SUPABASE - REDISEÑO */
+#impacto.seccion-impacto { padding: 96px 0 110px; }
+#impacto.seccion-impacto > .contenedor { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(340px, .65fr); column-gap: 30px; row-gap: 34px; align-items: start; }
+#impacto .impacto-encabezado { grid-column: 1 / -1; margin-bottom: 2px; }
+#impacto .impacto-contenido, #impacto .impacto-media { min-width: 0; }
+#impacto .impacto-ruta { min-width: 0; }
+#blog-publicaciones-cms { grid-column: 1 / -1 !important; display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 28px !important; width: 100% !important; max-width: none !important; margin: 8px 0 0 !important; box-sizing: border-box !important; }
+#blog-publicaciones-cms > article { display: flex !important; flex-direction: column !important; height: 100% !important; min-width: 0 !important; background: #fff !important; border: 1px solid rgba(31,77,58,.12) !important; border-radius: 24px !important; overflow: hidden !important; box-shadow: 0 12px 32px rgba(16,53,39,.10) !important; transition: transform .25s ease, box-shadow .25s ease !important; }
+#blog-publicaciones-cms > article:hover { transform: translateY(-6px) !important; box-shadow: 0 20px 42px rgba(16,53,39,.15) !important; }
+#blog-publicaciones-cms > article img, #blog-publicaciones-cms > article video { width: 100% !important; height: 245px !important; min-height: 245px !important; max-height: 245px !important; object-fit: cover !important; object-position: center !important; display: block !important; border: 0 !important; }
+#blog-publicaciones-cms > article > div { display: flex !important; flex-direction: column !important; flex: 1 1 auto !important; padding: 23px 24px 22px !important; box-sizing: border-box !important; }
+#blog-publicaciones-cms > article span { font-size: 11px !important; font-weight: 800 !important; letter-spacing: .1em !important; text-transform: uppercase !important; color: #2c7c45 !important; margin-bottom: 8px !important; }
+#blog-publicaciones-cms > article h3 { font-size: 21px !important; font-weight: 800 !important; line-height: 1.25 !important; color: #1f4d3a !important; margin: 0 0 10px !important; }
+#blog-publicaciones-cms > article p { font-size: 14px !important; line-height: 1.6 !important; color: #55625b !important; margin: 0 !important; }
+#blog-publicaciones-cms > article small { display: block !important; margin-top: auto !important; padding-top: 15px !important; border-top: 1px solid #edf2ee !important; font-size: 12px !important; color: #858a85 !important; }
+#blog-publicaciones-cms:has(> article:only-child) { grid-template-columns: minmax(280px, 430px) !important; justify-content: center !important; }
 
 @media (max-width: 960px) {
-    div#blog-publicaciones-cms[id="blog-publicaciones-cms"] {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 20px !important;
-    }
+    #impacto.seccion-impacto > .contenedor { grid-template-columns: 1fr; }
+    #impacto .impacto-encabezado, #blog-publicaciones-cms { grid-column: 1; }
+    #blog-publicaciones-cms { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+    #blog-publicaciones-cms:has(> article:only-child) { grid-template-columns: minmax(280px, 430px) !important; }
 }
-
 @media (max-width: 600px) {
-    div#blog-publicaciones-cms[id="blog-publicaciones-cms"] {
-        grid-template-columns: 1fr !important;
-        gap: 16px !important;
-    }
-    
-    div#blog-publicaciones-cms[id="blog-publicaciones-cms"] > article img,
-    div#blog-publicaciones-cms[id="blog-publicaciones-cms"] > article video {
-        height: 200px !important;
-        min-height: 200px !important;
-    }
+    #impacto.seccion-impacto { padding: 70px 0 80px; }
+    #blog-publicaciones-cms { grid-template-columns: 1fr !important; gap: 18px !important; }
+    #blog-publicaciones-cms:has(> article:only-child) { grid-template-columns: 1fr !important; }
+    #blog-publicaciones-cms > article img, #blog-publicaciones-cms > article video { height: 210px !important; min-height: 210px !important; }
 }

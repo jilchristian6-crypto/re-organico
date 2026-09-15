@@ -1,0 +1,118 @@
+name: Activar compartir automatico por producto
+
+on:
+  push:
+    paths-ignore:
+      - 'script.js'
+      - 'index.html'
+      - 'auto-product-share.js'
+      - '.github/workflows/activar-compartir-automatico.yml'
+  workflow_dispatch:
+
+jobs:
+  activar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Crear sincronizador de enlaces
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('auto-product-share.js')
+          p.write_text(r'''(() => {
+            "use strict";
+            const CONFIG = window.REORGANICO_SUPABASE;
+            if (!CONFIG?.url || !CONFIG?.anonKey) return;
+
+            const API = `${CONFIG.url}/rest/v1/productos`;
+            const HEADERS = { apikey: CONFIG.anonKey, Authorization: `Bearer ${CONFIG.anonKey}` };
+            const BASE = "https://reorganico.cl/";
+            const cache = new Map();
+
+            async function productoActual(id) {
+              if (!id) return null;
+              if (cache.has(id)) return cache.get(id);
+              try {
+                const r = await fetch(`${API}?select=id,updated_at& id=eq.${encodeURIComponent(id)}`.replace('& id=', '&id='), {
+                  headers: HEADERS,
+                  cache: "no-store"
+                });
+                if (!r.ok) return null;
+                const rows = await r.json();
+                const producto = rows[0] || null;
+                if (producto) cache.set(id, producto);
+                return producto;
+              } catch (_) { return null; }
+            }
+
+            function version(updatedAt) {
+              const n = Date.parse(updatedAt || "");
+              return Number.isFinite(n) ? String(n) : String(Date.now());
+            }
+
+            async function actualizarEnlace(enlace, id) {
+              const producto = await productoActual(id);
+              if (!producto) return;
+              const url = new URL(BASE);
+              url.searchParams.set("producto", id);
+              url.searchParams.set("v", version(producto.updated_at));
+              enlace.href = url.toString();
+              enlace.dataset.previewVersion = version(producto.updated_at);
+            }
+
+            function procesar() {
+              document.querySelectorAll("article.producto[data-id]").forEach(tarjeta => {
+                const id = tarjeta.dataset.id;
+                const enlace = tarjeta.querySelector(".enlace-producto-directo");
+                if (enlace && id) actualizarEnlace(enlace, id);
+              });
+
+              document.querySelectorAll(".enlace-compartible-producto input").forEach(input => {
+                const id = new URLSearchParams(location.search).get("producto");
+                if (!id) return;
+                productoActual(id).then(producto => {
+                  if (!producto) return;
+                  const url = new URL(BASE);
+                  url.searchParams.set("producto", id);
+                  url.searchParams.set("v", version(producto.updated_at));
+                  input.value = url.toString();
+                });
+              });
+            }
+
+            const observer = new MutationObserver(procesar);
+            const iniciar = () => {
+              if (!document.body) return;
+              observer.observe(document.body, { childList: true, subtree: true });
+              procesar();
+            };
+            if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar, { once: true });
+            else iniciar();
+          })();
+          ''', encoding='utf-8')
+
+      - name: Inyectar sincronizador en la pagina publica
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          tag = '    <script src="auto-product-share.js"></script>'
+          if tag not in s:
+              marker = '    <script src="script.js"></script>'
+              if marker not in s:
+                  raise SystemExit('No se encontro script.js en index.html')
+              s = s.replace(marker, marker + '\n' + tag, 1)
+              p.write_text(s, encoding='utf-8')
+
+      - name: Guardar cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add auto-product-share.js index.html
+          git diff --cached --quiet || git commit -m "feat: sincronizar enlaces de compartir con Supabase"
+          git push

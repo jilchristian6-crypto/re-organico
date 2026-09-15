@@ -4,6 +4,10 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/producto/:id",
+      "destination": "/api/producto?id=:id"
+    },
+    {
       "source": "/",
       "destination": "/turnstile-bootstrap.html"
     }
@@ -76,59 +80,50 @@
       ]
     },
     {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" },
+        { "key": "CDN-Cache-Control", "value": "no-store" },
+        { "key": "Vercel-CDN-Cache-Control", "value": "no-store" },
+        { "key": "Pragma", "value": "no-cache" }
+      ]
+    },
+    {
+      "source": "/producto/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" },
+        { "key": "CDN-Cache-Control", "value": "no-store" },
+        { "key": "Vercel-CDN-Cache-Control", "value": "no-store" },
+        { "key": "Pragma", "value": "no-cache" }
+      ]
+    },
+    {
       "source": "/admin",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, no-cache, must-revalidate, max-age=0"
-        },
-        {
-          "key": "Pragma",
-          "value": "no-cache"
-        },
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive, nosnippet"
-        }
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, max-age=0" },
+        { "key": "Pragma", "value": "no-cache" },
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }
       ]
     },
     {
       "source": "/admin/(.*)",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, no-cache, must-revalidate, max-age=0"
-        },
-        {
-          "key": "Pragma",
-          "value": "no-cache"
-        },
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive, nosnippet"
-        }
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, max-age=0" },
+        { "key": "Pragma", "value": "no-cache" },
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }
       ]
     },
     {
       "source": "/supabase-config.js",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, no-cache, must-revalidate, max-age=0"
-        },
-        {
-          "key": "Pragma",
-          "value": "no-cache"
-        }
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, max-age=0" },
+        { "key": "Pragma", "value": "no-cache" }
       ]
     },
     {
       "source": "/supabase-config-wrapper.js",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, no-cache, must-revalidate, max-age=0"
-        }
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, max-age=0" }
       ]
     }
   ]

@@ -1956,7 +1956,7 @@ const PRODUCTOS_RESPALDO = [
     {
         "id": "vermicompostera-4-niveles",
         "nombre": "Vermicompostera de 4 niveles",
-        "precio": 21000,
+        "precio": 30820,
         "categoria": "compostaje",
         "descripcion": "Casa para lombrices californianas, diseñada para producir humus de lombriz a partir de residuos orgánicos.",
         "emoji": "🪱",
@@ -1971,7 +1971,7 @@ const PRODUCTOS_RESPALDO = [
                 "nombre": "Unidad",
                 "unidades": 1,
                 "unidad": "vermicompostera",
-                "precio": 21000,
+                "precio": 30820,
                 "detalle": "1 unidad: vermicompostera de 4 niveles"
             }
         ]

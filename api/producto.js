@@ -59,8 +59,8 @@ module.exports = async function handler(req, res) {
         const precio = formatPrice(producto.precio);
         const descripcion = precio ? `${precio} | ${descripcionBase}` : descripcionBase;
         const imagen = imageUrl(producto.imagen_admin_path || producto.imagen_path);
-        const productoUrl = `${SITE_URL}/producto/${encodeURIComponent(id)}`;
-        const destino = `${SITE_URL}/?producto=${encodeURIComponent(id)}#productos`;
+        const productoUrl = `${SITE_URL}/?producto=${encodeURIComponent(id)}#productos`;
+        const destino = `${SITE_URL}/?producto=${encodeURIComponent(id)}&preview=1#productos`;
 
         const title = `${nombre} | Re Orgánico`;
         const html = `<!DOCTYPE html>

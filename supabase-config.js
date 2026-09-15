@@ -337,3 +337,61 @@ window.REORGANICO_SUPABASE = {
     `;
     document.head.appendChild(estilo);
 })();
+
+/* REORGANICO_SHARE_VERSION_V2 */
+(() => {
+    "use strict";
+    const CONFIG = window.REORGANICO_SUPABASE;
+    if (!CONFIG?.url || !CONFIG?.anonKey) return;
+    const API = `${CONFIG.url}/rest/v1/productos`;
+    const HEADERS = { apikey: CONFIG.anonKey, Authorization: `Bearer ${CONFIG.anonKey}` };
+    const BASE = "https://reorganico.cl/";
+    const cache = new Map();
+    const version = (v) => {
+        const n = Date.parse(v || "");
+        return Number.isFinite(n) ? String(n) : String(Date.now());
+    };
+    async function getVersion(id) {
+        if (!id) return null;
+        if (cache.has(id)) return cache.get(id);
+        try {
+            const r = await fetch(`${API}?select=id,updated_at&id=eq.${encodeURIComponent(id)}`, { headers: HEADERS, cache: "no-store" });
+            if (!r.ok) return null;
+            const row = (await r.json())[0] || null;
+            if (row) cache.set(id, row);
+            return row;
+        } catch (_) { return null; }
+    }
+    async function setLink(link, id) {
+        const row = await getVersion(id);
+        if (!row) return;
+        const u = new URL(BASE);
+        u.searchParams.set("producto", id);
+        u.searchParams.set("v", version(row.updated_at));
+        link.href = u.toString();
+        link.dataset.shareVersion = version(row.updated_at);
+    }
+    function process() {
+        document.querySelectorAll("article.producto[data-id]").forEach(card => {
+            const id = card.dataset.id;
+            const link = card.querySelector(".enlace-producto-directo");
+            if (link && id) setLink(link, id);
+        });
+        document.querySelectorAll(".enlace-compartible-producto input").forEach(input => {
+            const id = new URLSearchParams(location.search).get("producto");
+            if (id) getVersion(id).then(row => {
+                if (!row) return;
+                const u = new URL(BASE);
+                u.searchParams.set("producto", id);
+                u.searchParams.set("v", version(row.updated_at));
+                input.value = u.toString();
+            });
+        });
+    }
+    const start = () => {
+        process();
+        new MutationObserver(process).observe(document.body, { childList: true, subtree: true });
+    };
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true });
+    else start();
+})();

@@ -1,0 +1,55 @@
+name: Corregir precio de vermicompostera
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-vermicompostera-price.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Actualizar precio del respaldo
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('script.js')
+          text = path.read_text(encoding='utf-8')
+
+          pattern = re.compile(
+              r'(\{\s*"id":\s*"vermicompostera-4-niveles".*?)(?=\n\s*\},\n\s*\{)',
+              re.S,
+          )
+          match = pattern.search(text)
+          if not match:
+              raise SystemExit('No se encontró el bloque de vermicompostera-4-niveles')
+
+          block = match.group(1)
+          if '"precio": 21000' not in block:
+              raise SystemExit('El bloque no contiene el precio 21000 esperado; no se modifica')
+
+          block = block.replace('"precio": 21000', '"precio": 30820')
+          text = text[:match.start(1)] + block + text[match.end(1):]
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Verificar cambio
+        run: |
+          grep -A 45 '"id": "vermicompostera-4-niveles"' script.js | grep '"precio": 30820'
+
+      - name: Commit y push
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add script.js
+          git diff --cached --quiet && exit 0
+          git commit -m 'fix: actualizar precio respaldo vermicompostera'
+          git push

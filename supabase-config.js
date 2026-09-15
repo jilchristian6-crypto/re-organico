@@ -216,13 +216,15 @@ window.REORGANICO_SUPABASE = {
         const id = obtenerId();
         if (!id) return;
 
-        // 1. Inyectar imagen en el contenedor visual si está vacío
+        // 1. Limpiar ícono/emoji por defecto e insertar foto real
         const visual = modal.querySelector('#modal-producto-visual');
-        if (visual && !visual.querySelector('img')) {
+        if (visual && !visual.querySelector('img[data-producto-id]')) {
             const tarjeta = document.querySelector(`article.producto[data-id="${CSS.escape(id)}"]`);
             const imgOriginal = tarjeta ? tarjeta.querySelector('img') : null;
             
             if (imgOriginal) {
+                visual.innerHTML = '';
+                visual.style.background = '#ffffff';
                 const nuevaImg = document.createElement('img');
                 nuevaImg.src = imgOriginal.src;
                 nuevaImg.alt = imgOriginal.alt;
@@ -232,7 +234,7 @@ window.REORGANICO_SUPABASE = {
             }
         }
 
-        // 2. Caja para copiar enlace directo
+        // 2. Caja para copiar enlace
         if (modal.querySelector('.' + MARCADOR)) return;
 
         const contenedor = modal.querySelector('.modal-producto-contenido, .modal-contenido, .contenido-modal') || modal.querySelector('.modal-informacion') || modal;
@@ -260,6 +262,8 @@ window.REORGANICO_SUPABASE = {
 
     const estilo = document.createElement('style');
     estilo.textContent = `
+        #modal-producto-visual { display: flex !important; align-items: center !important; justify-content: center !important; overflow: hidden !important; }
+        #modal-producto-visual > *:not(img) { display: none !important; }
         .enlace-compartible-producto { margin:20px 0 8px; padding:14px; border:1px solid #d8e4da; border-radius:14px; background:#f5f9f5; }
         .titulo-enlace-producto { margin-bottom:9px; color:#165b38; font-weight:800; font-size:14px; }
         .fila-enlace-producto { display:flex; gap:8px; }

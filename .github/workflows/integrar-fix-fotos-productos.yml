@@ -1,0 +1,39 @@
+name: Integrar fix de fotos de productos
+
+on:
+  push:
+    paths-ignore:
+      - 'index.html'
+      - 'fix-product-image.js'
+      - '.github/workflows/integrar-fix-fotos-productos.yml'
+  workflow_dispatch:
+
+jobs:
+  integrar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Inyectar fix después de script.js
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          tag = '    <script src="fix-product-image.js"></script>'
+          if tag not in s:
+              marker = '    <script src="script.js"></script>'
+              if marker not in s:
+                  raise SystemExit('No se encontró script.js en index.html')
+              s = s.replace(marker, marker + '\n' + tag, 1)
+              p.write_text(s, encoding='utf-8')
+
+      - name: Guardar integración
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet || git commit -m "fix: cargar fotos de productos desde Supabase"
+          git push

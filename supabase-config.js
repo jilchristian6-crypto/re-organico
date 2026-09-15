@@ -189,7 +189,7 @@ window.REORGANICO_SUPABASE = {
     }
 })();
 
-/* Re Orgánico: enlace visible y copiable dentro del modal de detalle */
+/* Re Orgánico: enlace visible, copiable e inyección de imagen en el modal */
 (() => {
     const PARAMETRO = 'producto';
     const MARCADOR = 'enlace-compartible-producto';
@@ -209,11 +209,31 @@ window.REORGANICO_SUPABASE = {
         }
     }
 
-    function agregarEnlaceVisible() {
+    function procesarModal() {
         const modal = document.getElementById('modal-producto') || document.querySelector('.modal.activo, #modal-producto.activo');
-        if (!modal || modal.querySelector('.' + MARCADOR)) return;
+        if (!modal) return;
+        
         const id = obtenerId();
         if (!id) return;
+
+        // 1. Inyectar imagen en el contenedor visual si está vacío
+        const visual = modal.querySelector('#modal-producto-visual');
+        if (visual && !visual.querySelector('img')) {
+            const tarjeta = document.querySelector(`article.producto[data-id="${CSS.escape(id)}"]`);
+            const imgOriginal = tarjeta ? tarjeta.querySelector('img') : null;
+            
+            if (imgOriginal) {
+                const nuevaImg = document.createElement('img');
+                nuevaImg.src = imgOriginal.src;
+                nuevaImg.alt = imgOriginal.alt;
+                nuevaImg.setAttribute('data-producto-id', id);
+                nuevaImg.style.cssText = "width:100%; height:100%; object-fit:contain; object-position:center; display:block;";
+                visual.appendChild(nuevaImg);
+            }
+        }
+
+        // 2. Caja para copiar enlace directo
+        if (modal.querySelector('.' + MARCADOR)) return;
 
         const contenedor = modal.querySelector('.modal-producto-contenido, .modal-contenido, .contenido-modal') || modal.querySelector('.modal-informacion') || modal;
         const caja = document.createElement('div');
@@ -249,8 +269,9 @@ window.REORGANICO_SUPABASE = {
         @media (max-width:600px) { .fila-enlace-producto { flex-direction:column; } }
     `;
     document.head.appendChild(estilo);
-    new MutationObserver(agregarEnlaceVisible).observe(document.body, {childList:true, subtree:true});
-    agregarEnlaceVisible();
+    
+    new MutationObserver(procesarModal).observe(document.body, {childList:true, subtree:true});
+    procesarModal();
 })();
 
 /* Re Orgánico: Estilos forzados en runtime para ordenar el Blog CMS */

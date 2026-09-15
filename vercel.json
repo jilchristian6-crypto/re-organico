@@ -4,6 +4,23 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "producto",
+          "value": "(?<id>[^&]+)"
+        }
+      ],
+      "missing": [
+        {
+          "type": "query",
+          "key": "preview"
+        }
+      ],
+      "destination": "/api/producto?id=:id"
+    },
+    {
       "source": "/producto/:id",
       "destination": "/api/producto?id=:id"
     },
@@ -93,6 +110,7 @@
       "headers": [
         { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" },
         { "key": "CDN-Cache-Control", "value": "no-store" },
+        { "key": "Vercel-CDN-Cache-Control", "value": "no-store" },
         { "key": "Vercel-CDN-Cache-Control", "value": "no-store" },
         { "key": "Pragma", "value": "no-cache" }
       ]

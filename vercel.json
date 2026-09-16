@@ -22,7 +22,7 @@
     },
     {
       "source": "/producto/:id",
-      "destination": "/turnstile-bootstrap.html?producto=:id"
+      "destination": "/index.html?producto=:id"
     },
     {
       "source": "/",

@@ -15,15 +15,12 @@
   <script>
     (async function () {
       try {
-        // Si entramos por /producto/ID, normalizamos temporalmente la ruta a la raíz
-        // antes de insertar el HTML. Así todos los recursos relativos (CSS, JS,
-        // imágenes, etc.) se resuelven desde / y no desde /producto/.
         const ruta = new URL(window.location.href);
         const partes = ruta.pathname.split('/').filter(Boolean);
         const indiceProducto = partes.indexOf('producto');
         const idProducto = indiceProducto !== -1 && partes[indiceProducto + 1]
           ? decodeURIComponent(partes[indiceProducto + 1]).trim()
-          : null;
+          : ruta.searchParams.get('producto');
 
         if (idProducto) {
           const query = new URLSearchParams();
@@ -31,7 +28,7 @@
           history.replaceState({}, '', '/?' + query.toString());
         }
 
-        const respuesta = await fetch('/index.html?form-fix=1', {
+        const respuesta = await fetch('/index.html?form-fix=producto', {
           cache: 'no-store',
           credentials: 'same-origin'
         });
@@ -39,8 +36,53 @@
         if (!respuesta.ok) throw new Error('No se pudo cargar la página principal.');
 
         let html = await respuesta.text();
+
+        // El HTML principal usa rutas relativas (style.css, assets/..., etc.).
+        // Al entrar directamente por /producto/ID, esas rutas pueden resolverse
+        // desde /producto/ y provocar una página sin estilos. Las convertimos
+        // explícitamente a rutas absolutas antes de insertar el HTML.
+        const parser = new DOMParser();
+        const documento = parser.parseFromString(html, 'text/html');
+        const elementos = documento.querySelectorAll(
+          'link[href], script[src], img[src], source[src], video[src], audio[src], iframe[src], object[data], embed[src], track[src]'
+        );
+
+        elementos.forEach((elemento) => {
+          const atributo = elemento.hasAttribute('href')
+            ? 'href'
+            : elemento.hasAttribute('src')
+              ? 'src'
+              : elemento.hasAttribute('data')
+                ? 'data'
+                : null;
+
+          if (!atributo) return;
+
+          const valor = elemento.getAttribute(atributo);
+          if (!valor) return;
+
+          const limpio = valor.trim();
+          if (
+            limpio.startsWith('/') ||
+            limpio.startsWith('#') ||
+            limpio.startsWith('?') ||
+            limpio.startsWith('http://') ||
+            limpio.startsWith('https://') ||
+            limpio.startsWith('//') ||
+            limpio.startsWith('data:') ||
+            limpio.startsWith('blob:') ||
+            limpio.startsWith('mailto:') ||
+            limpio.startsWith('tel:') ||
+            limpio.startsWith('javascript:')
+          ) return;
+
+          elemento.setAttribute(atributo, '/' + limpio.replace(/^\.\//, ''));
+        });
+
+        html = '<!DOCTYPE html>\n' + documento.documentElement.outerHTML;
+
         const scriptTurnstile = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer>' + '</' + 'script>';
-        const scriptProducto = '<script src="/producto-directo.js?v=20260918"></' + 'script>';
+        const scriptProducto = '<script src="/producto-directo.js?v=20260919"></' + 'script>';
 
         if (!html.includes('https://challenges.cloudflare.com/turnstile/v0/api.js')) {
           html = html.replace('</head>', scriptTurnstile + '</head>');

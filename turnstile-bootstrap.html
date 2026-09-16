@@ -15,6 +15,22 @@
   <script>
     (async function () {
       try {
+        // Si entramos por /producto/ID, normalizamos temporalmente la ruta a la raíz
+        // antes de insertar el HTML. Así todos los recursos relativos (CSS, JS,
+        // imágenes, etc.) se resuelven desde / y no desde /producto/.
+        const ruta = new URL(window.location.href);
+        const partes = ruta.pathname.split('/').filter(Boolean);
+        const indiceProducto = partes.indexOf('producto');
+        const idProducto = indiceProducto !== -1 && partes[indiceProducto + 1]
+          ? decodeURIComponent(partes[indiceProducto + 1]).trim()
+          : null;
+
+        if (idProducto) {
+          const query = new URLSearchParams();
+          query.set('producto', idProducto);
+          history.replaceState({}, '', '/?' + query.toString());
+        }
+
         const respuesta = await fetch('/index.html?form-fix=1', {
           cache: 'no-store',
           credentials: 'same-origin'
@@ -24,14 +40,7 @@
 
         let html = await respuesta.text();
         const scriptTurnstile = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer>' + '</' + 'script>';
-        const scriptProducto = '<script src="/producto-directo.js?v=20260917"></' + 'script>';
-
-        // La página de producto se sirve bajo /producto/ID. Sin una base absoluta,
-        // los CSS, JS, imágenes y demás recursos relativos intentarían cargarse
-        // desde /producto/ en vez de desde la raíz del sitio.
-        if (!html.match(/<base\s/i)) {
-          html = html.replace('<head>', '<head><base href="/">');
-        }
+        const scriptProducto = '<script src="/producto-directo.js?v=20260918"></' + 'script>';
 
         if (!html.includes('https://challenges.cloudflare.com/turnstile/v0/api.js')) {
           html = html.replace('</head>', scriptTurnstile + '</head>');

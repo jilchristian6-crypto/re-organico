@@ -22,6 +22,10 @@
           ? decodeURIComponent(partes[indiceProducto + 1]).trim()
           : ruta.searchParams.get('producto');
 
+        // Conservamos temporalmente la consulta para que todo el contenido
+        // relativo del sitio se resuelva desde la raíz mientras construimos
+        // la página. El script del producto la dejará nuevamente como
+        // /producto/ID al terminar.
         if (idProducto) {
           const query = new URLSearchParams();
           query.set('producto', idProducto);
@@ -36,13 +40,10 @@
         if (!respuesta.ok) throw new Error('No se pudo cargar la página principal.');
 
         let html = await respuesta.text();
-
-        // El HTML principal usa rutas relativas (style.css, assets/..., etc.).
-        // Al entrar directamente por /producto/ID, esas rutas pueden resolverse
-        // desde /producto/ y provocar una página sin estilos. Las convertimos
-        // explícitamente a rutas absolutas antes de insertar el HTML.
         const parser = new DOMParser();
         const documento = parser.parseFromString(html, 'text/html');
+
+        // Convertimos recursos relativos del HTML a rutas absolutas.
         const elementos = documento.querySelectorAll(
           'link[href], script[src], img[src], source[src], video[src], audio[src], iframe[src], object[data], embed[src], track[src]'
         );
@@ -57,7 +58,6 @@
                 : null;
 
           if (!atributo) return;
-
           const valor = elemento.getAttribute(atributo);
           if (!valor) return;
 
@@ -79,10 +79,59 @@
           elemento.setAttribute(atributo, '/' + limpio.replace(/^\.\//, ''));
         });
 
+        // FIX DEFINITIVO DEL CSS:
+        // En vez de depender de que el navegador cargue style.css después de
+        // document.write(), descargamos los CSS explícitamente y los insertamos
+        // como <style>. Así /producto/ID no puede romper la hoja de estilos por
+        // resolución de rutas, caché o rewrites de Vercel.
+        const hojas = Array.from(documento.querySelectorAll('link[rel="stylesheet"]'));
+        for (const hoja of hojas) {
+          const href = hoja.getAttribute('href');
+          if (!href) continue;
+
+          const cssRespuesta = await fetch(new URL(href, window.location.origin).href, {
+            cache: 'no-store',
+            credentials: 'same-origin'
+          });
+
+          if (!cssRespuesta.ok) throw new Error('No se pudo cargar el estilo: ' + href);
+
+          let css = await cssRespuesta.text();
+
+          // style.css importa style-base.css. Lo incorporamos también dentro
+          // del documento para que no exista ninguna dependencia CSS externa.
+          const importaciones = [];
+          const regexImport = /@import\s+url\(["']?([^"')]+)["']?\)\s*;?/gi;
+          let coincidencia;
+          while ((coincidencia = regexImport.exec(css)) !== null) {
+            importaciones.push(coincidencia[1]);
+          }
+
+          for (const importacion of importaciones) {
+            try {
+              const baseRespuesta = await fetch(new URL(importacion, new URL(href, window.location.origin)).href, {
+                cache: 'no-store',
+                credentials: 'same-origin'
+              });
+              if (baseRespuesta.ok) {
+                const baseCss = await baseRespuesta.text();
+                css = css.replace(regexImport, baseCss);
+              }
+            } catch (error) {
+              console.warn('No se pudo incorporar CSS importado:', importacion, error);
+            }
+          }
+
+          const estilo = documento.createElement('style');
+          estilo.setAttribute('data-reorganico-css', href);
+          estilo.textContent = css;
+          hoja.replaceWith(estilo);
+        }
+
         html = '<!DOCTYPE html>\n' + documento.documentElement.outerHTML;
 
         const scriptTurnstile = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer>' + '</' + 'script>';
-        const scriptProducto = '<script src="/producto-directo.js?v=20260919"></' + 'script>';
+        const scriptProducto = '<script src="/producto-directo.js?v=20260920"></' + 'script>';
 
         if (!html.includes('https://challenges.cloudflare.com/turnstile/v0/api.js')) {
           html = html.replace('</head>', scriptTurnstile + '</head>');

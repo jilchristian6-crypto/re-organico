@@ -26,8 +26,9 @@ jobs:
 
           if marcador in texto:
               print('La funcionalidad ya estaba instalada.')
-          else:
-              codigo = r'''/* Re Orgánico: enlaces directos por producto */
+              raise SystemExit(0)
+
+          codigo = r'''/* Re Orgánico: enlaces directos por producto */
           (() => {
               const PARAMETRO_PRODUCTO = "producto";
               const CLASE_ENLACE = "enlace-producto-directo";
@@ -64,30 +65,19 @@ jobs:
                   });
               }
 
-              function buscarBotonProducto(id) {
-                  if (!id) return null;
-                  const botones = document.querySelectorAll('[data-accion="detalle"][data-id]');
-                  let encontrado = null;
-                  botones.forEach((boton) => {
-                      if (!encontrado && boton.dataset.id === id) encontrado = boton;
-                  });
-                  return encontrado;
-              }
-
               function abrirProductoDesdeUrl() {
                   const id = obtenerIdDesdeUrl();
-                  if (!id || id === ultimoProductoAbierto) return false;
+                  if (!id || id === ultimoProductoAbierto) return;
 
-                  const boton = buscarBotonProducto(id);
-                  if (!boton) return false;
+                  const boton = document.querySelector(`[data-accion="detalle"][data-id="${CSS.escape(id)}"]`);
+                  if (!boton) return;
 
                   ultimoProductoAbierto = id;
                   boton.click();
                   setTimeout(() => {
                       const modal = document.getElementById("modal-producto");
                       if (modal) modal.scrollIntoView({ behavior: "smooth", block: "center" });
-                  }, 150);
-                  return true;
+                  }, 100);
               }
 
               function actualizarUrlAlAbrirProducto() {
@@ -98,30 +88,54 @@ jobs:
                       if (!id) return;
                       const url = new URL(window.location.href);
                       url.searchParams.set(PARAMETRO_PRODUCTO, id);
-                      url.hash = "productos";
                       history.replaceState({ producto: id }, "", url.toString());
                       ultimoProductoAbierto = id;
                   }, true);
               }
 
               function iniciarEnlacesProducto() {
-                  agregarEnlacesProducto();
-                  actualizarUrlAlAbrirProducto();
-                  abrirProductoDesdeUrl();
+                  const catalogo = document.getElementById("lista-productos");
+                  if (!catalogo) return;
 
-                  const observador = new MutationObserver(() => {
+                  const observer = new MutationObserver(() => {
                       agregarEnlacesProducto();
                       abrirProductoDesdeUrl();
                   });
-                  observador.observe(document.body, { childList: true, subtree: true });
+                  observer.observe(catalogo, { childList: true, subtree: true });
 
-                  let intentos = 0;
-                  const reintento = setInterval(() => {
-                      intentos += 1;
-                      agregarEnlacesProducto();
-                      if (abrirProductoDesdeUrl() || intentos >= 40) clearInterval(reintento);
-                  }, 500);
+                  agregarEnlacesProducto();
+                  abrirProductoDesdeUrl();
+                  actualizarUrlAlAbrirProducto();
               }
+
+              const estilo = document.createElement("style");
+              estilo.textContent = `
+                  .enlace-producto-directo {
+                      display: inline-flex;
+                      align-items: center;
+                      justify-content: center;
+                      gap: 6px;
+                      margin-top: 8px;
+                      padding: 9px 13px;
+                      border: 1px solid #6f9b73;
+                      border-radius: 999px;
+                      background: #f3f8f1;
+                      color: #2f6840;
+                      font-size: 13px;
+                      font-weight: 800;
+                      line-height: 1.1;
+                      text-decoration: none;
+                      cursor: pointer;
+                      transition: .2s ease;
+                  }
+                  .enlace-producto-directo:hover,
+                  .enlace-producto-directo:focus-visible {
+                      background: #e5f0e3;
+                      color: #235331;
+                      transform: translateY(-1px);
+                  }
+              `;
+              document.head.append(estilo);
 
               if (document.readyState === "loading") {
                   document.addEventListener("DOMContentLoaded", iniciarEnlacesProducto, { once: true });
@@ -131,70 +145,9 @@ jobs:
           })();
           '''
 
-              codigo = '\n'.join(line[10:] if line.startswith('          ') else line for line in codigo.splitlines())
-              path.write_text(texto.rstrip() + '\n\n' + codigo.strip() + '\n', encoding='utf-8')
-              print('Funcionalidad agregada a script.js')
-
-          # Siempre agregamos una segunda capa de apertura robusta. Esta evita
-          # depender del momento exacto en que el catálogo termina de renderizar.
-          marcador2 = '/* Re Orgánico: apertura robusta de producto desde URL v2 */'
-          if marcador2 not in texto:
-              texto = path.read_text(encoding='utf-8')
-              robusto = r'''/* Re Orgánico: apertura robusta de producto desde URL v2 */
-          (() => {
-              const PARAMETRO = "producto";
-              let abierto = null;
-
-              function idProducto() {
-                  try { return new URL(window.location.href).searchParams.get(PARAMETRO); }
-                  catch (_) { return null; }
-              }
-
-              function intentarAbrir() {
-                  const id = idProducto();
-                  if (!id || id === abierto) return false;
-
-                  const botones = document.querySelectorAll('[data-accion="detalle"][data-id]');
-                  let boton = null;
-                  botones.forEach((item) => {
-                      if (!boton && item.dataset.id === id) boton = item;
-                  });
-
-                  if (!boton) return false;
-
-                  abierto = id;
-                  boton.click();
-                  setTimeout(() => {
-                      const modal = document.getElementById("modal-producto");
-                      if (modal) modal.scrollIntoView({ behavior: "smooth", block: "center" });
-                  }, 200);
-                  return true;
-              }
-
-              function iniciar() {
-                  intentarAbrir();
-                  const observador = new MutationObserver(intentarAbrir);
-                  observador.observe(document.body, { childList: true, subtree: true });
-
-                  let intentos = 0;
-                  const temporizador = setInterval(() => {
-                      intentos += 1;
-                      if (intentarAbrir() || intentos >= 60) clearInterval(temporizador);
-                  }, 500);
-              }
-
-              if (document.readyState === "loading") {
-                  document.addEventListener("DOMContentLoaded", iniciar, { once: true });
-              } else {
-                  iniciar();
-              }
-          })();
-          '''
-              robusto = '\n'.join(line[10:] if line.startswith('          ') else line for line in robusto.splitlines())
-              path.write_text(path.read_text(encoding='utf-8').rstrip() + '\n\n' + robusto.strip() + '\n', encoding='utf-8')
-              print('Capa robusta v2 agregada a script.js')
-          else:
-              print('La capa robusta v2 ya estaba instalada.')
+          codigo = '\n'.join(line[10:] if line.startswith('          ') else line for line in codigo.splitlines())
+          path.write_text(texto.rstrip() + '\n\n' + codigo.strip() + '\n', encoding='utf-8')
+          print('Funcionalidad agregada a script.js')
           PY
 
       - name: Guardar cambios
@@ -207,5 +160,5 @@ jobs:
             echo "No hay cambios para guardar."
             exit 0
           fi
-          git commit -m "fix: abrir productos enlazados de forma robusta"
+          git commit -m "feat: agregar enlaces directos por producto"
           git push

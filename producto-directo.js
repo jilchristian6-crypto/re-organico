@@ -14,14 +14,25 @@
             }
 
             const idQuery = url.searchParams.get("producto");
-            if (idQuery) {
-                return decodeURIComponent(idQuery).trim().toLowerCase();
-            }
+            if (idQuery) return decodeURIComponent(idQuery).trim().toLowerCase();
         } catch (error) {
             console.error("Re Orgánico: error obteniendo ID", error);
         }
 
         return null;
+    }
+
+    function normalizarUrlProducto() {
+        const id = obtenerIdProducto();
+        if (!id) return;
+
+        const url = new URL(window.location.href);
+        const partes = url.pathname.split("/").filter(Boolean);
+        const yaEsRutaProducto = partes[0]?.toLowerCase() === "producto";
+
+        if (!yaEsRutaProducto && url.searchParams.has("producto")) {
+            history.replaceState({}, "", `/producto/${encodeURIComponent(id)}`);
+        }
     }
 
     function crearUrlProducto(id) {
@@ -34,7 +45,6 @@
         ).forEach((elemento) => {
             const tarjeta = elemento.closest("article.producto[data-id]");
             const id = tarjeta?.dataset.id;
-
             if (!id) return;
 
             const url = crearUrlProducto(id);
@@ -119,6 +129,7 @@
     }
 
     function iniciar() {
+        normalizarUrlProducto();
         normalizarEnlaces();
         abrirProductoDesdeUrl();
         interceptarEnlaces();
@@ -136,6 +147,7 @@
         let intentos = 0;
         const temporizador = setInterval(() => {
             intentos++;
+            normalizarUrlProducto();
             normalizarEnlaces();
 
             if (abrirProductoDesdeUrl() || intentos >= 120) {

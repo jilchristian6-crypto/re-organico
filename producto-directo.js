@@ -1,47 +1,66 @@
 "use strict";
 
-/* Re Orgánico: abre automáticamente el producto indicado por ?producto=ID o /producto/ID. */
+/* Re Orgánico: URLs limpias /producto/ID y apertura directa del producto. */
 (() => {
-    const PARAMETRO = "producto";
-    let productoAbierto = null;
 
     function obtenerIdProducto() {
         try {
             const url = new URL(window.location.href);
-            const desdeQuery = url.searchParams.get(PARAMETRO);
-            if (desdeQuery) return decodeURIComponent(desdeQuery).trim();
-
             const partes = url.pathname.split("/").filter(Boolean);
-            if (partes.length >= 2 && partes[0].toLowerCase() === "producto") {
-                return decodeURIComponent(partes[partes.length - 1]).trim();
+            const indiceProducto = partes.indexOf("producto");
+
+            if (indiceProducto !== -1 && partes[indiceProducto + 1]) {
+                return decodeURIComponent(partes[indiceProducto + 1]).trim().toLowerCase();
+            }
+
+            const idQuery = url.searchParams.get("producto");
+            if (idQuery) {
+                return decodeURIComponent(idQuery).trim().toLowerCase();
             }
         } catch (error) {
-            return null;
+            console.error("Re Orgánico: error obteniendo ID", error);
         }
+
         return null;
     }
 
-    function normalizarId(valor) {
-        return String(valor || "")
-            .trim()
-            .toLowerCase();
+    function crearUrlProducto(id) {
+        return `${window.location.origin}/producto/${encodeURIComponent(id)}`;
     }
 
-    function encontrarBoton(id) {
-        const buscado = normalizarId(id);
-        if (!buscado) return null;
+    function normalizarEnlaces() {
+        document.querySelectorAll(
+            'a.enlace-producto-directo, .enlace-compartible-producto input'
+        ).forEach((elemento) => {
+            const tarjeta = elemento.closest("article.producto[data-id]");
+            const id = tarjeta?.dataset.id;
 
-        const tarjetas = document.querySelectorAll("article.producto[data-id]");
-        for (const tarjeta of tarjetas) {
-            if (normalizarId(tarjeta.dataset.id) === buscado) {
-                const boton = tarjeta.querySelector('[data-accion="detalle"][data-id]');
-                if (boton) return boton;
+            if (!id) return;
+
+            const url = crearUrlProducto(id);
+
+            if (elemento.tagName === "A") {
+                elemento.href = url;
+                elemento.dataset.urlProductoLimpia = url;
+            } else {
+                elemento.value = url;
             }
-        }
+        });
+    }
 
-        const botones = document.querySelectorAll('[data-accion="detalle"][data-id]');
+    function buscarBoton(id) {
+        if (!id) return null;
+
+        const botones = document.querySelectorAll(
+            '[data-accion="detalle"][data-id]'
+        );
+
         for (const boton of botones) {
-            if (normalizarId(boton.dataset.id) === buscado) return boton;
+            const idBoton = String(boton.dataset.id || "")
+                .trim()
+                .toLowerCase();
+
+            if (idBoton === id) return boton;
         }
 
         return null;
@@ -49,35 +68,79 @@
 
     function abrirProductoDesdeUrl() {
         const id = obtenerIdProducto();
-        if (!id || normalizarId(id) === normalizarId(productoAbierto)) return false;
+        if (!id) return false;
 
-        const boton = encontrarBoton(id);
+        const boton = buscarBoton(id);
         if (!boton) return false;
 
-        productoAbierto = id;
+        if (boton.dataset.productoDirectoAbierto === "1") return true;
+
+        boton.dataset.productoDirectoAbierto = "1";
         boton.click();
 
         setTimeout(() => {
             const modal = document.getElementById("modal-producto");
-            if (modal) modal.scrollIntoView({ behavior: "smooth", block: "center" });
+            if (modal) {
+                modal.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            }
         }, 250);
 
         return true;
     }
 
+    function interceptarEnlaces() {
+        document.addEventListener("click", async (evento) => {
+            const enlace = evento.target.closest("a.enlace-producto-directo");
+            if (!enlace) return;
+
+            const tarjeta = enlace.closest("article.producto[data-id]");
+            const id = tarjeta?.dataset.id;
+            if (!id) return;
+
+            evento.preventDefault();
+            evento.stopImmediatePropagation();
+
+            const url = crearUrlProducto(id);
+
+            try {
+                await navigator.clipboard.writeText(url);
+                const texto = enlace.textContent;
+                enlace.textContent = "✓ Link copiado";
+                setTimeout(() => {
+                    enlace.textContent = texto || "🔗 Link de Producto";
+                }, 1800);
+            } catch (error) {
+                window.prompt("Copia este link:", url);
+            }
+        }, true);
+    }
+
     function iniciar() {
+        normalizarEnlaces();
         abrirProductoDesdeUrl();
+        interceptarEnlaces();
 
         const observador = new MutationObserver(() => {
+            normalizarEnlaces();
             abrirProductoDesdeUrl();
         });
 
-        observador.observe(document.body, { childList: true, subtree: true });
+        observador.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
 
         let intentos = 0;
         const temporizador = setInterval(() => {
-            intentos += 1;
-            if (abrirProductoDesdeUrl() || intentos >= 120) clearInterval(temporizador);
+            intentos++;
+            normalizarEnlaces();
+
+            if (abrirProductoDesdeUrl() || intentos >= 120) {
+                clearInterval(temporizador);
+            }
         }, 500);
     }
 

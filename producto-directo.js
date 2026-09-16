@@ -1,37 +1,55 @@
 "use strict";
 
-/* Re Orgánico: abre el producto indicado por ?producto=ID incluso si el catálogo carga después. */
+/* Re Orgánico: abre automáticamente el producto indicado por ?producto=ID o /producto/ID. */
 (() => {
     const PARAMETRO = "producto";
     let productoAbierto = null;
 
     function obtenerIdProducto() {
         try {
-            return new URL(window.location.href).searchParams.get(PARAMETRO);
+            const url = new URL(window.location.href);
+            const desdeQuery = url.searchParams.get(PARAMETRO);
+            if (desdeQuery) return decodeURIComponent(desdeQuery).trim();
+
+            const partes = url.pathname.split("/").filter(Boolean);
+            if (partes.length >= 2 && partes[0].toLowerCase() === "producto") {
+                return decodeURIComponent(partes[partes.length - 1]).trim();
+            }
         } catch (error) {
             return null;
         }
+        return null;
+    }
+
+    function normalizarId(valor) {
+        return String(valor || "")
+            .trim()
+            .toLowerCase();
     }
 
     function encontrarBoton(id) {
-        if (!id) return null;
+        const buscado = normalizarId(id);
+        if (!buscado) return null;
+
+        const tarjetas = document.querySelectorAll("article.producto[data-id]");
+        for (const tarjeta of tarjetas) {
+            if (normalizarId(tarjeta.dataset.id) === buscado) {
+                const boton = tarjeta.querySelector('[data-accion="detalle"][data-id]');
+                if (boton) return boton;
+            }
+        }
 
         const botones = document.querySelectorAll('[data-accion="detalle"][data-id]');
-        let encontrado = null;
+        for (const boton of botones) {
+            if (normalizarId(boton.dataset.id) === buscado) return boton;
+        }
 
-        botones.forEach((boton) => {
-            if (!encontrado && boton.dataset.id === id) {
-                encontrado = boton;
-            }
-        });
-
-        return encontrado;
+        return null;
     }
 
     function abrirProductoDesdeUrl() {
         const id = obtenerIdProducto();
-
-        if (!id || id === productoAbierto) return false;
+        if (!id || normalizarId(id) === normalizarId(productoAbierto)) return false;
 
         const boton = encontrarBoton(id);
         if (!boton) return false;
@@ -41,10 +59,8 @@
 
         setTimeout(() => {
             const modal = document.getElementById("modal-producto");
-            if (modal) {
-                modal.scrollIntoView({ behavior: "smooth", block: "center" });
-            }
-        }, 200);
+            if (modal) modal.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 250);
 
         return true;
     }
@@ -56,18 +72,12 @@
             abrirProductoDesdeUrl();
         });
 
-        observador.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
+        observador.observe(document.body, { childList: true, subtree: true });
 
         let intentos = 0;
         const temporizador = setInterval(() => {
             intentos += 1;
-
-            if (abrirProductoDesdeUrl() || intentos >= 60) {
-                clearInterval(temporizador);
-            }
+            if (abrirProductoDesdeUrl() || intentos >= 120) clearInterval(temporizador);
         }, 500);
     }
 

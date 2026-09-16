@@ -16,7 +16,14 @@
     },
     {
       "source": "/producto/:id",
+      "has": [
+        { "type": "header", "key": "user-agent", "value": "(facebookexternalhit|WhatsApp|Twitterbot|Slackbot|LinkedInBot|Googlebot|bingbot|TelegramBot)" }
+      ],
       "destination": "/api/producto?id=:id"
+    },
+    {
+      "source": "/producto/:id",
+      "destination": "/turnstile-bootstrap.html"
     },
     {
       "source": "/",

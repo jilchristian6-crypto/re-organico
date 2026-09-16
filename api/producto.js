@@ -1,6 +1,6 @@
 const SUPABASE_URL = process.env.SUPABASE_URL || "https://bkhpkiwbwdzlnjysdzqw.supabase.co";
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || "sb_publishable_LdpztMzZKei1nBtx36dHVg_OgsWtcr";
-const SITE_URL = "https://re-organico.cl";
+const SITE_URL = "https://reorganico.cl";
 
 function escapeHtml(value) {
     return String(value ?? "")

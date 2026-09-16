@@ -6,7 +6,8 @@
     {
       "source": "/",
       "has": [
-        { "type": "query", "key": "producto", "value": "(?<id>[^&]+)" }
+        { "type": "query", "key": "producto", "value": "(?<id>[^&]+)" },
+        { "type": "header", "key": "user-agent", "value": "(facebookexternalhit|WhatsApp|Twitterbot|Slackbot|LinkedInBot|Googlebot|bingbot|TelegramBot)" }
       ],
       "missing": [
         { "type": "query", "key": "preview" }
@@ -80,7 +81,7 @@
     {
       "source": "/admin",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, max-age=0" },
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" },
         { "key": "Pragma", "value": "no-cache" },
         { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }
       ]
@@ -88,7 +89,7 @@
     {
       "source": "/admin/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, max-age=0" },
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" },
         { "key": "Pragma", "value": "no-cache" },
         { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }
       ]
@@ -96,14 +97,14 @@
     {
       "source": "/supabase-config.js",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, max-age=0" },
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" },
         { "key": "Pragma", "value": "no-cache" }
       ]
     },
     {
       "source": "/supabase-config-wrapper.js",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, max-age=0" }
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" }
       ]
     }
   ]

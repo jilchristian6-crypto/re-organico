@@ -24,9 +24,14 @@
 
         let html = await respuesta.text();
         const scriptTurnstile = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer>' + '</' + 'script>';
+        const scriptProducto = '<script src="/producto-directo.js?v=20260916"></' + 'script>';
 
         if (!html.includes('https://challenges.cloudflare.com/turnstile/v0/api.js')) {
           html = html.replace('</head>', scriptTurnstile + '</head>');
+        }
+
+        if (!html.includes('/producto-directo.js')) {
+          html = html.replace('</body>', scriptProducto + '</body>');
         }
 
         document.open();

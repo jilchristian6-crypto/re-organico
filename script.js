@@ -3643,3 +3643,53 @@ function actualizarNavegacion() {
         iniciar();
     }
 })();
+
+/* Re Orgánico: apertura robusta de producto desde URL v2 */
+(() => {
+    const PARAMETRO = "producto";
+    let abierto = null;
+
+    function idProducto() {
+        try { return new URL(window.location.href).searchParams.get(PARAMETRO); }
+        catch (_) { return null; }
+    }
+
+    function intentarAbrir() {
+        const id = idProducto();
+        if (!id || id === abierto) return false;
+
+        const botones = document.querySelectorAll('[data-accion="detalle"][data-id]');
+        let boton = null;
+        botones.forEach((item) => {
+  if (!boton && item.dataset.id === id) boton = item;
+        });
+
+        if (!boton) return false;
+
+        abierto = id;
+        boton.click();
+        setTimeout(() => {
+  const modal = document.getElementById("modal-producto");
+  if (modal) modal.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 200);
+        return true;
+    }
+
+    function iniciar() {
+        intentarAbrir();
+        const observador = new MutationObserver(intentarAbrir);
+        observador.observe(document.body, { childList: true, subtree: true });
+
+        let intentos = 0;
+        const temporizador = setInterval(() => {
+  intentos += 1;
+  if (intentarAbrir() || intentos >= 60) clearInterval(temporizador);
+        }, 500);
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", iniciar, { once: true });
+    } else {
+        iniciar();
+    }
+})();

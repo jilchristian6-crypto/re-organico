@@ -5,6 +5,13 @@
     {
       "source": "/",
       "has": [
+        { "type": "query", "key": "producto", "value": "(?<id>[^&]+)" }
+      ],
+      "destination": "/index.html?producto=:id"
+    },
+    {
+      "source": "/",
+      "has": [
         { "type": "query", "key": "producto", "value": "(?<id>[^&]+)" },
         { "type": "header", "key": "user-agent", "value": "(facebookexternalhit|WhatsApp|Twitterbot|Slackbot|LinkedInBot|Googlebot|bingbot|TelegramBot)" }
       ],

@@ -1,41 +1,28 @@
 "use strict";
 
-/* Re Orgánico: URLs limpias /producto/ID y apertura directa del producto. */
+/* Re Orgánico: apertura fiable de productos mediante /producto/ID o ?producto=ID. */
 (() => {
-
-    // Usar siempre el dominio oficial para que el enlace copiado funcione
-    // aunque el administrador esté en Vercel, localhost o un dominio alternativo.
     const DOMINIO_SITIO = "https://reorganico.cl";
+    const MARCA_ABIERTO = "productoDirectoAbierto";
+    let ultimoIntentoId = null;
+    let observador = null;
+    let temporizador = null;
 
     function obtenerIdProducto() {
         try {
             const url = new URL(window.location.href);
             const partes = url.pathname.split("/").filter(Boolean);
-            const indiceProducto = partes.indexOf("producto");
+            const indice = partes.findIndex((parte) => parte.toLowerCase() === "producto");
 
-            if (indiceProducto !== -1 && partes[indiceProducto + 1]) {
-                return decodeURIComponent(partes[indiceProducto + 1]).trim().toLowerCase();
+            if (indice !== -1 && partes[indice + 1]) {
+                return decodeURIComponent(partes[indice + 1]).trim().toLowerCase();
             }
 
-            const idQuery = url.searchParams.get("producto");
-            if (idQuery) return decodeURIComponent(idQuery).trim().toLowerCase();
+            const id = url.searchParams.get("producto");
+            return id ? decodeURIComponent(id).trim().toLowerCase() : null;
         } catch (error) {
-            console.error("Re Orgánico: error obteniendo ID", error);
-        }
-
-        return null;
-    }
-
-    function normalizarUrlProducto() {
-        const id = obtenerIdProducto();
-        if (!id) return;
-
-        const url = new URL(window.location.href);
-        const partes = url.pathname.split("/").filter(Boolean);
-        const yaEsRutaProducto = partes[0]?.toLowerCase() === "producto";
-
-        if (!yaEsRutaProducto && url.searchParams.has("producto")) {
-            history.replaceState({}, "", `/producto/${encodeURIComponent(id)}`);
+            console.error("Re Orgánico: no se pudo obtener el producto", error);
+            return null;
         }
     }
 
@@ -43,122 +30,101 @@
         return `${DOMINIO_SITIO}/producto/${encodeURIComponent(String(id).trim())}`;
     }
 
+    function normalizarUrl() {
+        const id = obtenerIdProducto();
+        if (!id) return;
+
+        const url = new URL(window.location.href);
+        const esRutaProducto = url.pathname.split("/").filter(Boolean)[0]?.toLowerCase() === "producto";
+
+        if (!esRutaProducto) {
+            history.replaceState({ producto: id }, "", `/producto/${encodeURIComponent(id)}`);
+        }
+    }
+
     function normalizarEnlaces() {
-        document.querySelectorAll(
-            'a.enlace-producto-directo, .enlace-compartible-producto input'
-        ).forEach((elemento) => {
-            const tarjeta = elemento.closest("article.producto[data-id]");
-            const id = tarjeta?.dataset.id;
+        document.querySelectorAll("article.producto[data-id]").forEach((tarjeta) => {
+            const id = tarjeta.dataset.id;
             if (!id) return;
 
-            const url = crearUrlProducto(id);
-
-            if (elemento.tagName === "A") {
-                elemento.href = url;
-                elemento.dataset.urlProductoLimpia = url;
-            } else {
-                elemento.value = url;
-            }
+            tarjeta.querySelectorAll("a.enlace-producto-directo").forEach((enlace) => {
+                enlace.href = crearUrlProducto(id);
+                enlace.dataset.urlProductoLimpia = enlace.href;
+            });
         });
     }
 
     function buscarBoton(id) {
         if (!id) return null;
 
-        const botones = document.querySelectorAll(
-            '[data-accion="detalle"][data-id]'
-        );
-
-        for (const boton of botones) {
-            const idBoton = String(boton.dataset.id || "")
-                .trim()
-                .toLowerCase();
-
-            if (idBoton === id) return boton;
-        }
-
-        return null;
+        return Array.from(document.querySelectorAll('[data-accion="detalle"][data-id]'))
+            .find((boton) => String(boton.dataset.id || "").trim().toLowerCase() === id) || null;
     }
 
-    function abrirProductoDesdeUrl() {
+    function abrirProducto() {
         const id = obtenerIdProducto();
         if (!id) return false;
 
         const boton = buscarBoton(id);
         if (!boton) return false;
 
-        if (boton.dataset.productoDirectoAbierto === "1") return true;
+        if (boton.dataset[MARCA_ABIERTO] === "1") return true;
 
-        boton.dataset.productoDirectoAbierto = "1";
+        boton.dataset[MARCA_ABIERTO] = "1";
+        ultimoIntentoId = id;
         boton.click();
 
         setTimeout(() => {
             const modal = document.getElementById("modal-producto");
-            if (modal) {
-                modal.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center"
-                });
-            }
-        }, 250);
+            if (modal) modal.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 300);
 
+        if (temporizador) clearInterval(temporizador);
+        if (observador) observador.disconnect();
         return true;
     }
 
-    function interceptarEnlaces() {
-        document.addEventListener("click", async (evento) => {
-            const enlace = evento.target.closest("a.enlace-producto-directo");
-            if (!enlace) return;
-
-            const tarjeta = enlace.closest("article.producto[data-id]");
-            const id = tarjeta?.dataset.id;
-            if (!id) return;
-
-            evento.preventDefault();
-            evento.stopImmediatePropagation();
-
-            const url = crearUrlProducto(id);
-
-            try {
-                await navigator.clipboard.writeText(url);
-                const texto = enlace.textContent;
-                enlace.textContent = "✓ Link copiado";
-                setTimeout(() => {
-                    enlace.textContent = texto || "🔗 Link de Producto";
-                }, 1800);
-            } catch (error) {
-                window.prompt("Copia este link:", url);
-            }
-        }, true);
-    }
-
     function iniciar() {
-        normalizarUrlProducto();
+        normalizarUrl();
         normalizarEnlaces();
-        abrirProductoDesdeUrl();
-        interceptarEnlaces();
 
-        const observador = new MutationObserver(() => {
-            normalizarEnlaces();
-            abrirProductoDesdeUrl();
-        });
-
-        observador.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-
+        // Intenta abrir el producto repetidamente mientras el catálogo se carga desde Supabase.
+        abrirProducto();
         let intentos = 0;
-        const temporizador = setInterval(() => {
+        temporizador = setInterval(() => {
             intentos++;
-            normalizarUrlProducto();
             normalizarEnlaces();
-
-            if (abrirProductoDesdeUrl() || intentos >= 120) {
-                clearInterval(temporizador);
-            }
+            if (abrirProducto() || intentos >= 120) clearInterval(temporizador);
         }, 500);
+
+        observador = new MutationObserver(() => {
+            normalizarEnlaces();
+            if (ultimoIntentoId === null) abrirProducto();
+        });
+
+        if (document.body) {
+            observador.observe(document.body, { childList: true, subtree: true });
+        }
     }
+
+    document.addEventListener("click", (evento) => {
+        const enlace = evento.target.closest("a.enlace-producto-directo");
+        if (!enlace) return;
+
+        const tarjeta = enlace.closest("article.producto[data-id]");
+        const id = tarjeta?.dataset.id;
+        if (!id) return;
+
+        evento.preventDefault();
+        evento.stopImmediatePropagation();
+
+        const url = crearUrlProducto(id);
+        navigator.clipboard.writeText(url).then(() => {
+            const texto = enlace.textContent;
+            enlace.textContent = "✓ Link copiado";
+            setTimeout(() => enlace.textContent = texto || "🔗 Link de Producto", 1800);
+        }).catch(() => window.prompt("Copia este link:", url));
+    }, true);
 
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", iniciar, { once: true });

@@ -3,6 +3,10 @@
 /* Re Orgánico: URLs limpias /producto/ID y apertura directa del producto. */
 (() => {
 
+    // Usar siempre el dominio oficial para que el enlace copiado funcione
+    // aunque el administrador esté en Vercel, localhost o un dominio alternativo.
+    const DOMINIO_SITIO = "https://reorganico.cl";
+
     function obtenerIdProducto() {
         try {
             const url = new URL(window.location.href);
@@ -36,7 +40,7 @@
     }
 
     function crearUrlProducto(id) {
-        return `${window.location.origin}/producto/${encodeURIComponent(id)}`;
+        return `${DOMINIO_SITIO}/producto/${encodeURIComponent(String(id).trim())}`;
     }
 
     function normalizarEnlaces() {

@@ -111,13 +111,11 @@ window.REORGANICO_SUPABASE = {
 
         const observer = new MutationObserver(() => {
             agregarEnlacesProducto();
-            activarCopia();
             abrirProductoDesdeUrl();
         });
         observer.observe(catalogo, { childList: true, subtree: true });
 
         agregarEnlacesProducto();
-        activarCopia();
         abrirProductoDesdeUrl();
         actualizarUrlAlAbrirProducto();
     }

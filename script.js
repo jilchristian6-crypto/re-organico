@@ -2490,7 +2490,34 @@ function resumenCantidadItem(item) {
     return `${cantidad} ${pluralPresentacion(item.presentacion.nombre, cantidad)}: ${new Intl.NumberFormat("es-CL").format(unidades)} ${item.presentacion.unidad}`;
 }
 
+function obtenerIdProductoDesdeRutaDirecta() {
+    try {
+        const url = new URL(window.location.href);
+        const partes = url.pathname.split("/").filter(Boolean);
+        const indice = partes.findIndex((parte) => parte.toLowerCase() === "producto");
+
+        if (indice !== -1 && partes[indice + 1]) {
+            return decodeURIComponent(partes[indice + 1]).trim().toLowerCase();
+        }
+
+        const id = url.searchParams.get("producto");
+        return id ? decodeURIComponent(id).trim().toLowerCase() : null;
+    } catch (error) {
+        return null;
+    }
+}
+
 function renderizarCatalogo() {
+    const idProductoDirecto = obtenerIdProductoDesdeRutaDirecta();
+    if (idProductoDirecto) {
+        const indiceProducto = productos.findIndex(
+            (producto) => String(producto.id || "").trim().toLowerCase() === idProductoDirecto
+        );
+        if (indiceProducto !== -1) {
+            cantidadProductosVisibles = Math.max(PRODUCTOS_POR_PAGINA, indiceProducto + 1);
+        }
+    }
+
     const filtrados = productosFiltrados();
     const visibles = filtrados.slice(0, cantidadProductosVisibles);
 

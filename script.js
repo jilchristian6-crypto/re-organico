@@ -3647,3 +3647,52 @@ function actualizarNavegacion() {
         iniciar();
     }
 })();
+
+
+/* Re Orgánico: copiar link de producto al hacer clic */
+(() => {
+    const CLASE = '.enlace-producto-directo';
+
+    function activarCopia() {
+        document.querySelectorAll(CLASE).forEach((enlace) => {
+            if (enlace.dataset.copiaActivada === '1') return;
+            enlace.dataset.copiaActivada = '1';
+            enlace.addEventListener('click', async (evento) => {
+                evento.preventDefault();
+                const url = enlace.href;
+                const textoOriginal = '🔗 Link de Producto';
+                try {
+                    await navigator.clipboard.writeText(url);
+                    enlace.textContent = '✓ Link copiado';
+                } catch (error) {
+                    const auxiliar = document.createElement('textarea');
+                    auxiliar.value = url;
+                    auxiliar.style.position = 'fixed';
+                    auxiliar.style.opacity = '0';
+                    document.body.appendChild(auxiliar);
+                    auxiliar.select();
+                    document.execCommand('copy');
+                    auxiliar.remove();
+                    enlace.textContent = '✓ Link copiado';
+                }
+                setTimeout(() => {
+                    enlace.textContent = textoOriginal;
+                }, 1800);
+            });
+        });
+    }
+
+    const iniciar = () => {
+        activarCopia();
+        const catalogo = document.getElementById('lista-productos');
+        if (catalogo) {
+            new MutationObserver(activarCopia).observe(catalogo, { childList: true, subtree: true });
+        }
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', iniciar, { once: true });
+    } else {
+        iniciar();
+    }
+})();

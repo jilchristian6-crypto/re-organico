@@ -2118,6 +2118,26 @@ const elementos = {
 
 inicializar();
 
+function asegurarProductoDirectoVisible() {
+    try {
+        const url = new URL(window.location.href);
+        const partes = url.pathname.split("/").filter(Boolean);
+        const indice = partes.findIndex((parte) => parte.toLowerCase() === "producto");
+        if (indice === -1 || !partes[indice + 1]) return;
+
+        const id = decodeURIComponent(partes[indice + 1]).trim().toLowerCase();
+        const indiceProducto = productos.findIndex(
+            (producto) => String(producto.id || "").trim().toLowerCase() === id
+        );
+
+        if (indiceProducto !== -1) {
+            cantidadProductosVisibles = Math.max(PRODUCTOS_POR_PAGINA, indiceProducto + 1);
+        }
+    } catch (error) {
+        console.warn("No se pudo preparar el producto directo:", error);
+    }
+}
+
 async function inicializar() {
     aplicarDatosTienda();
     actualizarCamposEntrega();
@@ -2125,6 +2145,7 @@ async function inicializar() {
     inicializarEventos();
     inicializarAnimaciones();
     actualizarNavegacion();
+    asegurarProductoDirectoVisible();
     renderizarCatalogo();
     renderizarCarrito();
     renderizarSelectorProductos();
@@ -2271,6 +2292,7 @@ async function cargarProductosDesdeSupabase() {
             return porOrden || a.nombre.localeCompare(b.nombre, "es");
         });
         limpiarCarritoDesactualizado();
+        asegurarProductoDirectoVisible();
         renderizarCatalogo();
         renderizarCarrito();
         renderizarSelectorProductos();
@@ -2510,16 +2532,6 @@ function obtenerIdProductoDesdeRutaDirecta() {
 }
 
 function renderizarCatalogo() {
-    const idProductoDirecto = obtenerIdProductoDesdeRutaDirecta();
-    if (idProductoDirecto) {
-        const indiceProducto = productos.findIndex(
-            (producto) => String(producto.id || "").trim().toLowerCase() === idProductoDirecto
-        );
-        if (indiceProducto !== -1) {
-            cantidadProductosVisibles = Math.max(PRODUCTOS_POR_PAGINA, indiceProducto + 1);
-        }
-    }
-
     const filtrados = productosFiltrados();
     const visibles = filtrados.slice(0, cantidadProductosVisibles);
 

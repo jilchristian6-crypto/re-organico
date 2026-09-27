@@ -107,25 +107,6 @@
         }
     }
 
-    document.addEventListener("click", (evento) => {
-        const enlace = evento.target.closest("a.enlace-producto-directo");
-        if (!enlace) return;
-
-        const tarjeta = enlace.closest("article.producto[data-id]");
-        const id = tarjeta?.dataset.id;
-        if (!id) return;
-
-        evento.preventDefault();
-        evento.stopImmediatePropagation();
-
-        const url = crearUrlProducto(id);
-        navigator.clipboard.writeText(url).then(() => {
-            const texto = enlace.textContent;
-            enlace.textContent = "✓ Link copiado";
-            setTimeout(() => enlace.textContent = texto || "🔗 Link de Producto", 1800);
-        }).catch(() => window.prompt("Copia este link:", url));
-    }, true);
-
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", iniciar, { once: true });
     } else {

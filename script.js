@@ -3420,9 +3420,15 @@ function actualizarNavegacion() {
 
     function obtenerIdDesdeUrl() {
         try {
-  return new URL(window.location.href).searchParams.get(PARAMETRO_PRODUCTO);
+            const url = new URL(window.location.href);
+            const partes = url.pathname.split("/").filter(Boolean);
+            const indice = partes.findIndex((parte) => parte.toLowerCase() === "producto");
+            if (indice !== -1 && partes[indice + 1]) {
+                return decodeURIComponent(partes[indice + 1]).trim();
+            }
+            return url.searchParams.get(PARAMETRO_PRODUCTO);
         } catch (error) {
-  return null;
+            return null;
         }
     }
 
@@ -3532,15 +3538,18 @@ function actualizarNavegacion() {
     const MARCADOR = 'enlace-compartible-producto';
 
     function urlProducto(id) {
-        const url = new URL(window.location.href);
-        url.searchParams.set(PARAMETRO, id);
-        url.hash = 'productos';
-        return url.toString();
+        return `https://reorganico.cl/producto/${encodeURIComponent(String(id).trim())}`;
     }
 
     function obtenerId() {
         try {
-            return new URL(window.location.href).searchParams.get(PARAMETRO);
+            const url = new URL(window.location.href);
+            const partes = url.pathname.split("/").filter(Boolean);
+            const indice = partes.findIndex((parte) => parte.toLowerCase() === "producto");
+            if (indice !== -1 && partes[indice + 1]) {
+                return decodeURIComponent(partes[indice + 1]).trim();
+            }
+            return url.searchParams.get(PARAMETRO);
         } catch (e) {
             return null;
         }
@@ -3601,8 +3610,17 @@ function actualizarNavegacion() {
     let abierto = null;
 
     function idProducto() {
-        try { return new URL(window.location.href).searchParams.get(PARAMETRO); }
-        catch (_) { return null; }
+        try {
+            const url = new URL(window.location.href);
+            const partes = url.pathname.split("/").filter(Boolean);
+            const indice = partes.findIndex((parte) => parte.toLowerCase() === "producto");
+            if (indice !== -1 && partes[indice + 1]) {
+                return decodeURIComponent(partes[indice + 1]).trim();
+            }
+            return url.searchParams.get(PARAMETRO);
+        } catch (_) {
+            return null;
+        }
     }
 
     function intentarAbrir() {

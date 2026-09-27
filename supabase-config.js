@@ -43,17 +43,20 @@ window.REORGANICO_SUPABASE = {
 
     function obtenerIdDesdeUrl() {
         try {
-            return new URL(window.location.href).searchParams.get(PARAMETRO_PRODUCTO);
+            const url = new URL(window.location.href);
+            const partes = url.pathname.split("/").filter(Boolean);
+            const indice = partes.findIndex((parte) => parte.toLowerCase() === "producto");
+            if (indice !== -1 && partes[indice + 1]) {
+                return decodeURIComponent(partes[indice + 1]).trim();
+            }
+            return url.searchParams.get(PARAMETRO_PRODUCTO);
         } catch (error) {
             return null;
         }
     }
 
     function crearUrlProducto(id) {
-        const url = new URL(window.location.href);
-        url.searchParams.set(PARAMETRO_PRODUCTO, id);
-        url.hash = "productos";
-        return url.toString();
+        return `https://reorganico.cl/producto/${encodeURIComponent(String(id).trim())}`;
     }
 
     function agregarEnlacesProducto() {
@@ -94,39 +97,12 @@ window.REORGANICO_SUPABASE = {
             const id = boton.dataset.id;
             if (!id) return;
             const url = new URL(window.location.href);
-            url.searchParams.set(PARAMETRO_PRODUCTO, id);
-            history.replaceState({ producto: id }, "", url.toString());
+            if (url.pathname === "/" || !url.pathname.split("/").filter(Boolean).length) {
+                url.searchParams.set(PARAMETRO_PRODUCTO, id);
+                history.replaceState({ producto: id }, "", url.toString());
+            }
             ultimoProductoAbierto = id;
         }, true);
-    }
-
-    function activarCopia() {
-        document.querySelectorAll(`.${CLASE_ENLACE}`).forEach((enlace) => {
-            if (enlace.dataset.copiaActivada === '1') return;
-            enlace.dataset.copiaActivada = '1';
-            enlace.addEventListener('click', async (evento) => {
-                evento.preventDefault();
-                const url = enlace.href;
-                const textoOriginal = '🔗 Link de Producto';
-                try {
-                    await navigator.clipboard.writeText(url);
-                    enlace.textContent = '✓ Link copiado';
-                } catch (error) {
-                    const auxiliar = document.createElement('textarea');
-                    auxiliar.value = url;
-                    auxiliar.style.position = 'fixed';
-                    auxiliar.style.opacity = '0';
-                    document.body.appendChild(auxiliar);
-                    auxiliar.select();
-                    document.execCommand('copy');
-                    auxiliar.remove();
-                    enlace.textContent = '✓ Link copiado';
-                }
-                setTimeout(() => {
-                    enlace.textContent = textoOriginal;
-                }, 1800);
-            });
-        });
     }
 
     function iniciarEnlacesProducto() {

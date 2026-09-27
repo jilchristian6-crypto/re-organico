@@ -2500,8 +2500,10 @@ function obtenerIdProductoDesdeRutaDirecta() {
             return decodeURIComponent(partes[indice + 1]).trim().toLowerCase();
         }
 
-        const id = url.searchParams.get("producto");
-        return id ? decodeURIComponent(id).trim().toLowerCase() : null;
+        // Solo ampliamos el catálogo automáticamente cuando se entra por la ruta canónica.
+        // No usamos ?producto= aquí porque esa URL también se utiliza al abrir un producto desde la portada,
+        // y en ese caso Ver Más Productos debe seguir aumentando normalmente el catálogo.
+        return null;
     } catch (error) {
         return null;
     }

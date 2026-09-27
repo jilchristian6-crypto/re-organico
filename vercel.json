@@ -25,7 +25,7 @@
       "has": [
         { "type": "query", "key": "producto", "value": "(?<id>[^&]+)" }
       ],
-      "destination": "/turnstile-bootstrap.html?producto=:id"
+      "destination": "/index.html?producto=:id"
     },
     {
       "source": "/producto/:id",
@@ -33,7 +33,7 @@
     },
     {
       "source": "/",
-      "destination": "/turnstile-bootstrap.html"
+      "destination": "/index.html"
     }
   ],
   "headers": [
